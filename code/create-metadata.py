@@ -4,7 +4,7 @@ This script implements the functionality required to do initial preprocessing of
 Digital Collection and associated raw data files, prior to setting up Curatr.
 
 Same usage:
-	python code/prep-data.py core all
+	python code/create-metadata.py core all
 """
 import logging as log
 import math, sys
