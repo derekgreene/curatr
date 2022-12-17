@@ -1,6 +1,7 @@
 """ 
 Functions for cleaning various fields in metadata associated with the British Library Digital Collection dataset.
 """
+import logging as log
 import re
 import ftfy
 

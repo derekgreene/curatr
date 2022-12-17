@@ -27,13 +27,13 @@ class CorePrep(CoreBase):
 					log.info("Creating directory %s" % dir_path )
 					dir_path.mkdir( parents=True, exist_ok=True )
 				except Exception as e:
-					log.error("Error: Failed to create directory %s" % dir_path )
+					log.error("Failed to create directory %s" % dir_path )
 					log.error(str(e))
 
 	def get_filter_book_ids(self):
 		""" Get list of book identifiers which are to be excluded from Curatr """
 		if not self.filter_path.exists():
-			log.warning("Warning: Filter list file does not exist: %s" % self.filter_path.absolute())
+			log.warning("Filter list file does not exist: %s" % self.filter_path.absolute())
 			return set()
 		filter_book_ids = set()
 		with open(self.filter_path, "r") as fin:
