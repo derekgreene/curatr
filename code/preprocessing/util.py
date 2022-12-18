@@ -30,20 +30,6 @@ class CorePrep(CoreBase):
 					log.error("Failed to create directory %s" % dir_path )
 					log.error(str(e))
 
-	def get_filter_book_ids(self):
-		""" Get list of book identifiers which are to be excluded from Curatr """
-		if not self.filter_path.exists():
-			log.warning("Filter list file does not exist: %s" % self.filter_path.absolute())
-			return set()
-		filter_book_ids = set()
-		with open(self.filter_path, "r") as fin:
-			for line in fin.readlines():
-				line = line.strip()
-				if len(line) > 0:
-					filter_book_ids.add(line)
-		log.info("Read filter list of %d book IDs from %s" % (len(filter_book_ids), self.filter_path.absolute()) )
-		return filter_book_ids
-
 	def get_original_rawdata(self):
 		""" Load and return raw UCD Curatr metadata as a Pandas DataFrame """
 		log.info("Reading raw data from %s" % self.original_path)
@@ -95,3 +81,28 @@ class CorePrep(CoreBase):
 		df_volumes = pd.read_csv(self.meta_volumes_path, sep="\t")
 		log.info("Read %d rows, %d columns" % df_volumes.shape)
 		return df_volumes	
+
+	def get_filter_book_ids(self):
+		""" Get list of book identifiers which are to be excluded from Curatr """
+		if not self.filter_path.exists():
+			log.warning("Filter list file does not exist: %s" % self.filter_path.absolute())
+			return set()
+		filter_book_ids = set()
+		with open(self.filter_path, "r") as fin:
+			for line in fin.readlines():
+				line = line.strip()
+				if len(line) > 0:
+					filter_book_ids.add(line)
+		log.info("Read filter list of %d book IDs from %s" % (len(filter_book_ids), self.filter_path.absolute()) )
+		return filter_book_ids
+
+	def get_stopwords(self):
+		""" Returns the default set of Curatr stopwords """
+		import pkgutil
+		data = pkgutil.get_data(__name__, "stopwords.txt")
+		stopwords = set()
+		for line in data.decode('utf-8').splitlines():
+			line = line.strip()
+			if len(line) > 0:
+				stopwords.add(line.lower())
+		return stopwords
