@@ -18,16 +18,16 @@ class CorePrep(CoreBase):
 		self.ark_path = self.dir_raw / "MicrosoftBooks_FullIndex_27_09_2018.xlsx"
 		self.filter_path = self.dir_raw / "books-filter.txt"
 		# ensure the key Core directories exist
-		self.ensure_directories_exists([self.dir_fulltext, self.dir_metadata, self.dir_export])
+		self.ensure_directories_exists([self.dir_fulltext, self.dir_metadata, self.dir_embeddings, self.dir_export])
 
 	def ensure_directories_exists(self, paths):
 		for dir_path in paths:
 			if not dir_path.exists():
 				try:
-					log.info("Creating directory %s" % dir_path )
+					log.info("Creating directory %s" % dir_path)
 					dir_path.mkdir( parents=True, exist_ok=True )
 				except Exception as e:
-					log.error("Failed to create directory %s" % dir_path )
+					log.error("Failed to create directory %s" % dir_path)
 					log.error(str(e))
 
 	def get_original_rawdata(self):

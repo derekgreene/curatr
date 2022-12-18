@@ -24,8 +24,7 @@ def main():
 	parser.add_option("-d","--dimensions", action="store", type="int", dest="dimensions", help="the dimensionality of the word vectors", default=100)
 	parser.add_option("--window", action="store", type="int", dest="window_size", 
 		help="the maximum distance for Word2Vec to use between the current and predicted word within a sentence", default=5)
-	parser.add_option("-m", action="store", type="string", dest="embed_type", help="type of word embedding to build (sg or cbow)", default="sg")
-	parser.add_option("-o", action="store", type="string", dest="out_path", help="output path for embedding file", default=None)
+	parser.add_option("-m", action="store", type="string", dest="embed_type", help="type of word embedding to build (sg or cbow)", default="cbow")
 	(options, args) = parser.parse_args()
 	if len(args) < 1:
 		parser.error("Must specify core directory" )
@@ -48,7 +47,8 @@ def main():
 
 	# build the Word2Vec embedding from the documents that we have found
 	token_generator = BookTokenGenerator(core.dir_fulltext, book_ids, stopwords=stopwords)
-	log.info("Building word2vec %s embedding from %d books ..." % (options.embed_type, len(book_ids)))
+	log.info("Building word2vec-%s embedding from %d books (window=%d dimensions=%d)..." 
+		% (options.embed_type, len(book_ids), options.window_size, options.dimensions))
 	if options.embed_type == "cbow":
 		sg = 0
 	elif options.embed_type == "sg":
@@ -61,9 +61,8 @@ def main():
 	log.info( "Built word embedding %s" % embed)
 
 	# save the Word2Vec model
-	out_path = options.out_path
-	if out_path is None:
-		out_path = "britishlib-w2v-%s-d%d.bin" % (options.embed_type, options.dimensions)
+	fname = "bl-w2v-%s-d%d.bin" % (options.embed_type, options.dimensions)
+	out_path = core.dir_embeddings / fname
 	log.info("Writing word embedding to %s ..." % out_path)
 	# always save in binary format
 	embed.wv.save_word2vec_format(out_path, binary=True) 
