@@ -5,6 +5,7 @@ import logging as log
 from core import CoreBase
 from pathlib import Path
 import pandas as pd
+import numpy as np
 
 # --------------------------------------------------------------
 
@@ -65,6 +66,8 @@ class CorePrep(CoreBase):
 		""" Return the book classification metadata as a Pandas DataFrame """
 		log.info("Reading classification metadata from %s" % self.meta_classifications_path)
 		df_classifications = pd.read_csv(self.meta_classifications_path, sep="\t")
+		# make sure we don't have any np.nan values as these won't work with MySQL
+		df_classifications = df_classifications.replace({np.nan: None})
 		log.info("Read %d rows, %d columns" % df_classifications.shape)
 		return df_classifications		
 
@@ -78,7 +81,7 @@ class CorePrep(CoreBase):
 	def get_volumes_metadata(self):
 		""" Return the book volumes metadata as a Pandas DataFrame """
 		log.info("Reading volume metadata from %s" % self.meta_volumes_path)
-		df_volumes = pd.read_csv(self.meta_volumes_path, sep="\t")
+		df_volumes = pd.read_csv(self.meta_volumes_path, sep="\t").set_index("volume_id")
 		log.info("Read %d rows, %d columns" % df_volumes.shape)
 		return df_volumes	
 
