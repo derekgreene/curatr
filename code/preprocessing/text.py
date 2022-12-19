@@ -1,6 +1,8 @@
 import re
 import logging as log
 from pathlib import Path
+from sklearn.feature_extraction.text import TfidfVectorizer
+from preprocessing.cleaning import clean_content
 
 # --------------------------------------------------------------
 
@@ -15,10 +17,30 @@ def custom_tokenizer(s, min_term_length=2):
 	"""
 	return [x.lower() for x in token_pattern.findall(s) if (len(x) >= min_term_length and x[0].isalpha() ) ]
 
+def build_bow(docgen, stopwords=[], min_df=10, apply_tfidf=True, apply_norm=True):
+	""" 
+	Build the Vector Space Model, apply TF-IDF and normalize lines to unit length all in one call
+	"""
+	if apply_norm:
+		norm_function = "l2"
+	else:
+		norm_function = None
+	tfidf = TfidfVectorizer(stop_words=stopwords, lowercase=True, strip_accents="unicode", tokenizer=custom_tokenizer, 
+		use_idf=apply_tfidf, norm=norm_function, min_df=min_df) 
+	X = tfidf.fit_transform(docgen)
+	terms = []
+	# store the vocabulary map
+	v = tfidf.vocabulary_
+	for i in range(len(v)):
+		terms.append("")
+	for term in v.keys():
+		terms[v[term]] = term
+	return (X,terms)
+
 # --------------------------------------------------------------
 
 class BookContentGenerator:
-	""" Iterator class for easily accessing full-text volumes files """
+	""" Iterator class for easily accessing full-text content for books """
 	def __init__(self, root_path, book_ids):
 		self.root_path = Path(root_path)
 		self.book_ids = book_ids
@@ -76,3 +98,26 @@ class BookTokenGenerator:
 				else:
 					tokens.append(tok)
 			yield tokens
+
+class VolumeGenerator:
+	""" Iterator for working with volumes associated with a Curatr Core """
+	def __init__(self, core):
+		self.core = core
+
+	def __iter__(self):	
+		self.volume_ids = []
+		db = self.core.get_db()
+		volumes = db.get_volumes()
+		for volume in volumes:
+			log.debug("Volume %d/%d: Counting tokens in %s" % (len(self.volume_ids)+1, len(volumes), volume["path"]))
+			volume_path = self.core.dir_fulltext / volume["path"]
+			if not volume_path.exists():
+				log.error("Missing volume file %s" % volume_path)
+				continue
+			with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
+				content = clean_content(fin.read())
+				self.volume_ids.append(volume["id"])
+				yield content
+		if len(self.volume_ids) % 1000 == 0:
+			log.info("Completed processing %d/%d volumes" % (len(self.volume_ids), len(volumes)))
+
