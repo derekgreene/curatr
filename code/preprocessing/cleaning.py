@@ -13,7 +13,6 @@ title_remove_suffixes = ["selected and arranged by", "collected and arranged wit
 title_remove_suffixes.sort(key=len)
 title_remove_suffixes.reverse()
 
-
 def clean(s, default_value=None):
 	if s is None or type(s) is float:
 		return default_value
@@ -23,8 +22,7 @@ def clean(s, default_value=None):
 	if len(s) < 2:
 		return default_value
 	return s
-
-
+	
 def clean_title(title, default_title=None):
 	if title is None or type(title) is float:
 		return default_title
@@ -153,4 +151,3 @@ def extract_publication_location(place_str, country_str):
 			out_countries = [place_map[out_places[0]]]
 	# missing country?
 	return out_places, out_countries
-
