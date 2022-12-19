@@ -34,6 +34,8 @@ def prep_book_metadata(core):
 		row_bl = df_bl.loc[book_id]
 		matched += 1
 		row = {"book_id": book_id}
+		# TODO: should we change this?
+		row["year"] = row_curatr["year"]
 		# handle title
 		row["title"] = clean_title(row_bl["Title"])
 		row["title_full"] = clean(row_bl["Title"])
@@ -124,6 +126,8 @@ def prep_book_links(core):
 	df_merged2 = df_merged1[["book_id","kind","Link"]].copy()
 	df_merged2.rename(columns={"Link": "url"}, inplace=True)
 	log.info("Merged Curatr books and Ark links: %d rows" % len(df_merged2))
+	df_merged2.dropna(subset=["url"], inplace=True)
+	log.info("After dropping missing values, merged Curatr books and Ark links: %d rows" % len(df_merged2))
 	# add Ark links
 	df_links2 = pd.concat([df_links, df_merged2])
 	df_links2.sort_values(by=["book_id","kind"], inplace=True)
@@ -163,7 +167,7 @@ def prep_book_volumes(core):
 			if not volume_path.exists():
 				break
 			relative_path = str(volume_path).replace( str(core.dir_fulltext), "" )[1:]
-			row = {"volume_id":volume_id, "book_id":book_id, "volume_num": volume_number, "total":0,
+			row = {"volume_id":volume_id, "book_id":book_id, "num": volume_number, "total":0,
 				"path":str(relative_path)}
 			# add file size in kb
 			row["filesize"] = math.ceil(volume_path.stat().st_size / 1024.0)
@@ -193,6 +197,7 @@ def verify_data(core):
 		log.info("Columns: %s" % list(df_books.columns))
 		if not "volumes" in df_books.columns:
 			log.warning("Book metadata does not contain volumes field")
+		log.info("Missing values\n%s" % df_books.isna().sum())
 	# check classification data
 	log.info("Checking classification metadata ...")
 	if not core.meta_classifications_path.exists():
@@ -200,6 +205,7 @@ def verify_data(core):
 	else:
 		df_classifications = core.get_book_classifications()
 		log.info("Columns: %s" % list(df_classifications.columns))
+		log.info("Missing values\n%s" % df_classifications.isna().sum())
 	# check link data
 	log.info("Checking link metadata ...")
 	if not core.meta_links_path.exists():
@@ -208,6 +214,7 @@ def verify_data(core):
 		df_links = core.get_book_links()
 		log.info("Columns: %s" % list(df_links.columns))	
 		log.info("Links associated with %d books" % len(df_links["book_id"].unique()) )
+		log.info("Missing values\n%s" % df_links.isna().sum())
 	# check volume data
 	log.info("Checking volume metadata ...")
 	if not core.meta_volumes_path.exists():
@@ -216,6 +223,7 @@ def verify_data(core):
 		df_volumes = core.get_volumes_metadata()
 		log.info("Columns: %s" % list(df_volumes.columns))
 		log.info("Volumes associated with %d books" % len(df_volumes["book_id"].unique()) )
+		log.info("Missing values\n%s" % df_volumes.isna().sum())
 
 
 
@@ -232,7 +240,7 @@ def main():
 	parser = OptionParser(usage="usage: %prog [options] dir_core action1 action2 actions3...")
 	(options, args) = parser.parse_args()
 	if len(args) < 2:
-		parser.error("Must specify core directory and one or more actions from %s (or 'all')" % str(valid_actions.keys()) )
+		parser.error("Must specify Curatr core directory and one or more actions from %s (or 'all')" % str(valid_actions.keys()) )
 	# set up the basic Curatr core
 	dir_root = Path(args[0])
 	if not dir_root.exists():
