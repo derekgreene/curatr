@@ -1,4 +1,4 @@
-volume_id	book_id	volume_num	total	path	filesize
+volume_id	book_id	num	total	path	filesize
 000000037_01	000000037	1	1	0000/000000037_01_text.txt	43
 000000196_01	000000196	1	1	0000/000000196_01_text.txt	217
 000000206_01	000000206	1	1	0000/000000206_01_text.txt	380
