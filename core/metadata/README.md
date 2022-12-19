@@ -9,6 +9,7 @@ The file *book-metadata.json* is in JSON format:
 - title_full: original form of the book title, from the British Library Microsoft Digital Collection
 - authors: cleaned form of book author(s), stored as a list
 - authors_full: original form of the book title, from the British Library Microsoft Digital Collection, stored as a list of tuples (name, role)
+- year: publication year
 - publisher: cleaned form of the publisher name
 - publisher_full: original form of the holdings publication source, from the British Library Microsoft Digital Collection
 - publication_places: one or more publication place (e.g. city), stored as a list
@@ -41,7 +42,7 @@ The tab-separated file *book-volumes.csv* contains one volume per line, with the
 
 - volume_id: unique identifier of this volume
 - book_id: identifier referring back to book metadata
-- volume_num: the number of the volume for a given book
+- num: the number of the volume for a given book
 - total: total number of volumes for this book
 - path: relative path of the full-text file of this volume
 - filesize: size of the full-text file of this volume, in kilobyte
