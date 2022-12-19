@@ -6,7 +6,10 @@ Curatr is an online platform which provides access to the British Library Digita
 
 The following Python packages should be installed prior to installing Curatr, which are available via PIP:
 
-- Pandas - https://pandas.pydata.org
-- ftfy - https://pypi.org/project/ftfy
-- PyMySQL - https://pypi.org/project/PyMySQL
-- Gensim - https://radimrehurek.com/gensim
+- NumPy: https://numpy.org
+- Pandas: https://pandas.pydata.org
+- PyMySQL: https://pypi.org/project/PyMySQL
+- Gensim: https://radimrehurek.com/gensim
+- scikit-learn: https://scikit-learn.org/stable
+- ftfy: https://pypi.org/project/ftfy
+
