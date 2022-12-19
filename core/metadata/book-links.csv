@@ -1266,7 +1266,6 @@ book_id	kind	url
 000078394	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000108C6
 000078580	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000055F2C
 000078677	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000053E20
-000078735	ark	
 000078740	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000B78A
 000078885	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000002A0
 000079163	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003482A
@@ -1906,7 +1905,6 @@ book_id	kind	url
 000124578	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003E3D6
 000124633	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000055FA4
 000124897	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000472E0
-000124912	ark	
 000124931	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000043CA4
 000125518	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005B58A
 000125518	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005C1E4
@@ -2562,7 +2560,6 @@ book_id	kind	url
 000174014	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000051894
 000174014	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000174014
 000174014	pdf	http://access.bl.uk/item/pdf/lsidyv2aeb7b58
-000174209	ark	
 000174209	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000174209
 000174209	pdf	http://access.bl.uk/item/pdf/lsidyv32c01aaf
 000174954	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000002322
@@ -3646,7 +3643,6 @@ book_id	kind	url
 000239776	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000014574
 000239776	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000239776
 000239776	pdf	http://access.bl.uk/item/pdf/lsidyv37382f58
-000239877	ark	
 000239879	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031950
 000239879	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031956
 000239895	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000027AFE
@@ -4485,7 +4481,6 @@ book_id	kind	url
 000310689	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000297A8
 000311305	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003696C
 000311305	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000036972
-000316590	ark	
 000318867	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002FE98
 000320915	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C59E
 000320918	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002BD34
@@ -6404,7 +6399,6 @@ book_id	kind	url
 000471197	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000005E50
 000471335	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000051E40
 000471459	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000511E
-000471774	ark	
 000471797	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028044
 000471812	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000002E44
 000472143	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005253C
@@ -6493,7 +6487,6 @@ book_id	kind	url
 000477823	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000005B7A
 000478054	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000007452
 000478054	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000008D30
-000478468	ark	
 000478513	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029E0E
 000478742	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000035FA
 000478742	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000360C
@@ -7638,7 +7631,6 @@ book_id	kind	url
 000538244	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000015E82
 000538703	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000008010
 000538808	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000046590
-000538906	ark	
 000539075	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000035010
 000539075	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000035016
 000539796	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005DCEA
@@ -7722,13 +7714,11 @@ book_id	kind	url
 000543198	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037A94
 000543198	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000543198
 000543198	pdf	http://access.bl.uk/item/pdf/lsidyv35090833
-000543199	ark	
 000543200	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001F020
 000543200	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000293DC
 000543200	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000543200
 000543200	pdf	http://access.bl.uk/item/pdf/lsidyv3026795e
 000543202	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031D64
-000543203	ark	
 000543204	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031D28
 000543204	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000038568
 000543205	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031EC6
@@ -8233,7 +8223,6 @@ book_id	kind	url
 000558506	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002B52A
 000558509	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028BDE
 000558519	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031746
-000558547	ark	
 000558610	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000022A8E
 000558616	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002961C
 000558617	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002A1CE
@@ -8482,7 +8471,6 @@ book_id	kind	url
 000578773	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001283A
 000578774	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001282E
 000578776	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000162AE
-000578923	ark	
 000579443	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000024204
 000579536	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C478
 000579573	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000028D4
@@ -8955,7 +8943,6 @@ book_id	kind	url
 000608010	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004AB08
 000608010	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004AB0E
 000608010	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004B702
-000608015	ark	
 000608021	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000046B1E
 000608055	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000066C
 000608095	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000053F76
@@ -8972,7 +8959,6 @@ book_id	kind	url
 000608870	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000059748
 000608917	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003A9DA
 000609023	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002AB70
-000609086	ark	
 000609189	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000012B58
 000609189	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000012B5E
 000609189	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000012BB8
@@ -9307,7 +9293,6 @@ book_id	kind	url
 000639633	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000056F8E
 000639695	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002F7A2
 000640153	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000035040
-000640331	ark	
 000640762	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000EA48
 000640762	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000640762
 000640762	pdf	http://access.bl.uk/item/pdf/lsidyv36893299
@@ -9544,7 +9529,6 @@ book_id	kind	url
 000663581	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000473FA
 000664462	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004B7F2
 000664949	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028E84
-000664990	ark	
 000665167	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000027FE4
 000665232	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000132E4
 000665232	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000132F0
@@ -9795,7 +9779,6 @@ book_id	kind	url
 000680485	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000040B30
 000680487	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000041688
 000680915	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005757C
-000681300	ark	
 000681421	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000049740
 000681591	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000035F28
 000681867	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000017C0A
@@ -10372,7 +10355,6 @@ book_id	kind	url
 000725050	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005E686
 000725125	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000003BA6
 000725440	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003F0D8
-000725461	ark	
 000725465	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000039F2A
 000725498	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005655C
 000725591	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001656C
@@ -10784,7 +10766,6 @@ book_id	kind	url
 000742144	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002E57E
 000742144	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002E584
 000742144	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002E8DE
-000742145	ark	
 000742164	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002995E
 000742164	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000742164
 000742164	pdf	http://access.bl.uk/item/pdf/lsidyv307f49aa
@@ -10831,8 +10812,6 @@ book_id	kind	url
 000744703	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002D222
 000744703	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002ED1C
 000744703	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002ED22
-000744707	ark	
-000744708	ark	
 000744749	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002A25E
 000744750	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029742
 000744764	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004400A
@@ -10947,7 +10926,6 @@ book_id	kind	url
 000747645	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002BBCC
 000747646	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000320D0
 000747647	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000307F8
-000747651	ark	
 000747652	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000502D4
 000747652	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000502DA
 000747652	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000502E0
@@ -11653,7 +11631,6 @@ book_id	kind	url
 000781698	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000781698
 000781698	pdf	http://access.bl.uk/item/pdf/lsidyv3bbfcabd
 000781820	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004F5AE
-000782088	ark	
 000782170	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000571CE
 000782294	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001105E
 000782570	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029934
@@ -11978,7 +11955,6 @@ book_id	kind	url
 000803913	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000001C7A
 000803915	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000E076
 000803969	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000477EA
-000803996	ark	
 000803996	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000803996
 000803996	pdf	http://access.bl.uk/item/pdf/lsidyv39a7d014
 000804035	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002EFBC
@@ -14365,13 +14341,11 @@ book_id	kind	url
 000930454	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000054ACE
 000930486	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000045480
 000930489	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005DB22
-000930551	ark	
 000930989	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031D58
 000930989	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037D16
 000930989	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037D1C
 000930994	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037E9C
 000930996	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000523CE
-000931072	ark	
 000931072	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000931072
 000931072	pdf	http://access.bl.uk/item/pdf/lsidyv3963a7c1
 000931137	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000593D0
@@ -14487,7 +14461,6 @@ book_id	kind	url
 000939424	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004BE04
 000939424	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004C5AE
 000939425	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000050268
-000939521	ark	
 000939524	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000375D8
 000939524	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000038670
 000939536	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000527A6
@@ -14828,7 +14801,6 @@ book_id	kind	url
 000967162	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum000967162
 000967162	pdf	http://access.bl.uk/item/pdf/lsidyv315194e5
 000967245	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000024528
-000967261	ark	
 000967555	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003B20E
 000967634	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000362D0
 000967634	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000059BB0
@@ -16603,7 +16575,6 @@ book_id	kind	url
 001086735	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000057D68
 001087358	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000E028
 001087439	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000015126
-001087806	ark	
 001087806	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001087806
 001087806	pdf	http://access.bl.uk/item/pdf/lsidyv3070c6d7
 001088394	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000DDE8
@@ -16658,10 +16629,8 @@ book_id	kind	url
 001091666	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001091666
 001091666	pdf	http://access.bl.uk/item/pdf/lsidyv3762bc30
 001091668	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000034488
-001091669	ark	
 001091669	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001091669
 001091669	pdf	http://access.bl.uk/item/pdf/lsidyv37e6c7f1
-001091680	ark	
 001091723	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000034500
 001091752	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000340B0
 001091754	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000341EE
@@ -17197,7 +17166,6 @@ book_id	kind	url
 001169479	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001169479
 001169479	pdf	http://access.bl.uk/item/pdf/lsidyv2b00873a
 001169570	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000001AB8
-001169574	ark	
 001169627	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003B08E
 001169717	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002CC4C
 001169895	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000033BA
@@ -18524,7 +18492,6 @@ book_id	kind	url
 001258720	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000AA04
 001258795	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003A626
 001258817	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000036FA2
-001258834	ark	
 001258842	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002F0A6
 001258842	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001258842
 001258842	pdf	http://access.bl.uk/item/pdf/lsidyv3470d46a
@@ -19343,7 +19310,6 @@ book_id	kind	url
 001323702	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006E4C
 001324076	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000025782
 001324444	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000718E
-001324565	ark	
 001324565	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001324565
 001324565	pdf	http://access.bl.uk/item/pdf/lsidyv352ec898
 001324638	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000056D96
@@ -19599,8 +19565,6 @@ book_id	kind	url
 001345638	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005B5F6
 001345693	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000021498
 001345724	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001A53E
-001345746	ark	
-001345851	ark	
 001345909	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000047706
 001345955	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000032FE2
 001346112	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028E60
@@ -19636,7 +19600,6 @@ book_id	kind	url
 001351860	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001351860
 001351860	pdf	http://access.bl.uk/item/pdf/lsidyv3a6567fb
 001351861	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000334A4
-001351862	ark	
 001352092	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000005EBC
 001352092	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001352092
 001352092	pdf	http://access.bl.uk/item/pdf/lsidyv35b0e78e
@@ -20020,7 +19983,6 @@ book_id	kind	url
 001384312	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005D738
 001384350	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005ABA0
 001385820	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005E0CE
-001385823	ark	
 001385828	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000559CE
 001385828	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001385828
 001385828	pdf	http://access.bl.uk/item/pdf/lsidyv3bf52928
@@ -20494,9 +20456,6 @@ book_id	kind	url
 001422416	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000001C80
 001422427	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002E84E
 001422544	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C9E8
-001422632	ark	
-001422634	ark	
-001422638	ark	
 001422642	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002A246
 001422642	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002BBA8
 001422642	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002DEAC
@@ -21938,7 +21897,6 @@ book_id	kind	url
 001513401	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000369C6
 001513401	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001513401
 001513401	pdf	http://access.bl.uk/item/pdf/lsidyv393f3399
-001513427	ark	
 001513462	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000042B2E
 001513462	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000042B3A
 001513462	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000042B40
@@ -22075,7 +22033,6 @@ book_id	kind	url
 001521309	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005830E
 001521309	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001521309
 001521309	pdf	http://access.bl.uk/item/pdf/lsidyv3c3832f5
-001522168	ark	
 001522305	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000058734
 001522305	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001522305
 001522305	pdf	http://access.bl.uk/item/pdf/lsidyv3c3c9541
@@ -22400,7 +22357,6 @@ book_id	kind	url
 001551836	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002ECE0
 001551954	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028B24
 001552020	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000336D8
-001552179	ark	
 001552187	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003DC9E
 001552224	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004B828
 001552224	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004B82E
@@ -23036,7 +22992,6 @@ book_id	kind	url
 001586275	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001586275
 001586275	pdf	http://access.bl.uk/item/pdf/lsidyv2ae0c014
 001586276	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002A19E
-001586491	ark	
 001586536	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004CE4E
 001586536	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004CE54
 001586676	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003DDFA
@@ -23217,7 +23172,6 @@ book_id	kind	url
 001593901	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001593901
 001593901	pdf	http://access.bl.uk/item/pdf/lsidyv3aa16093
 001593909	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003C8A6
-001593976	ark	
 001594126	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000469AA
 001594129	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004D4A2
 001594129	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004D4A8
@@ -23304,7 +23258,6 @@ book_id	kind	url
 001596303	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000150DE
 001596444	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031428
 001596448	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000301EC
-001596461	ark	
 001596465	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001EC06
 001596469	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000042E34
 001596577	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004105E
@@ -23569,7 +23522,6 @@ book_id	kind	url
 001610692	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000002BE6
 001610692	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001610692
 001610692	pdf	http://access.bl.uk/item/pdf/lsidyv32d339a7
-001610801	ark	
 001610827	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000096FC
 001611003	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000039A98
 001611068	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000A02C
@@ -23695,7 +23647,6 @@ book_id	kind	url
 001616109	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004EF6C
 001616109	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004EF72
 001616111	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003D170
-001616114	ark	
 001616115	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005057A
 001616115	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000050580
 001616115	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000050586
@@ -23913,7 +23864,6 @@ book_id	kind	url
 001625718	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum001625718
 001625718	pdf	http://access.bl.uk/item/pdf/lsidyv37155512
 001626297	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000424DA
-001626316	ark	
 001626330	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000047C64
 001626345	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002DF30
 001626346	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C0FA
@@ -24373,7 +24323,6 @@ book_id	kind	url
 001658378	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000498C0
 001658378	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000498C6
 001658378	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000498CC
-001658385	ark	
 001658392	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002D41A
 001658393	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006B1C
 001658407	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029FDC
@@ -25558,7 +25507,6 @@ book_id	kind	url
 001727811	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000008A66
 001727811	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005B398
 001727815	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000540B4
-001727872	ark	
 001727962	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000053D2A
 001727963	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000055FE6
 001727992	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000352E6
@@ -28561,7 +28509,6 @@ book_id	kind	url
 001916863	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C0B8
 001916922	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004269C
 001916949	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000036786
-001916959	ark	
 001917048	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000043CAA
 001917068	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004CEEA
 001917068	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005CC9A
@@ -31354,7 +31301,6 @@ book_id	kind	url
 002167255	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000051150
 002167255	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000051156
 002167266	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029F34
-002167280	ark	
 002167324	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000030CFC
 002167324	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003E286
 002167334	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000021DE
@@ -31412,7 +31358,6 @@ book_id	kind	url
 002169427	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000050A42
 002169427	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000050A48
 002169430	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000042120
-002169627	ark	
 002169718	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029694
 002171280	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000043074
 002171552	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000581CA
@@ -31836,7 +31781,6 @@ book_id	kind	url
 002208473	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004F416
 002208475	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029232
 002208524	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001EE5E
-002208528	ark	
 002208560	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000021582
 002208563	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000021366
 002208715	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003A566
@@ -33466,7 +33410,6 @@ book_id	kind	url
 002316073	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001D2C2
 002316073	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001D2D4
 002316073	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001D2DA
-002316201	ark	
 002316232	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000016BAE
 002316237	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000017F22
 002316237	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000017F3A
@@ -35041,7 +34984,6 @@ book_id	kind	url
 002399752	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003B9A0
 002399862	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005DEFA
 002399895	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002F3A6
-002400048	ark	
 002400049	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004C068
 002400130	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003EA60
 002400130	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum002400130
@@ -35093,7 +35035,6 @@ book_id	kind	url
 002401633	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005E392
 002401642	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001F2E4
 002401743	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005E044
-002401931	ark	
 002402127	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002B39E
 002402190	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005AEB8
 002402284	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003570C
@@ -35837,7 +35778,6 @@ book_id	kind	url
 002459628	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000015DEC
 002459628	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum002459628
 002459628	pdf	http://access.bl.uk/item/pdf/lsidyv2b1728b1
-002459630	ark	
 002460233	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002B308
 002460521	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000033EC4
 002460941	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000017520
@@ -35868,7 +35808,6 @@ book_id	kind	url
 002462763	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000010062
 002462763	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001006E
 002462763	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000010086
-002462764	ark	
 002462855	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003323A
 002462920	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000490C8
 002462920	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000490CE
@@ -38514,7 +38453,6 @@ book_id	kind	url
 002671148	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000030A2
 002671148	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum002671148
 002671148	pdf	http://access.bl.uk/item/pdf/lsidyv34f58cb8
-002671482	ark	
 002671485	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000884A
 002671485	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000CCA2
 002671539	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000001AA6
@@ -39896,7 +39834,6 @@ book_id	kind	url
 002749433	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000375EA
 002749433	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000378A2
 002749433	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003837C
-002749448	ark	
 002749751	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C0E8
 002749807	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005196C
 002749807	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000054162
@@ -41029,7 +40966,6 @@ book_id	kind	url
 002839842	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005A018
 002839842	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum002839842
 002839842	pdf	http://access.bl.uk/item/pdf/lsidyv3c58bafa
-002840104	ark	
 002841017	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000007DE2
 002845083	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000052E7E
 002847692	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000000DFE
@@ -41641,7 +41577,6 @@ book_id	kind	url
 002921203	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000544EC
 002921203	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum002921203
 002921203	pdf	http://access.bl.uk/item/pdf/lsidyv3bccecd4
-002921217	ark	
 002921217	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum002921217
 002921217	pdf	http://access.bl.uk/item/pdf/lsidyv3c423eec
 002921218	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000056D24
@@ -41859,7 +41794,6 @@ book_id	kind	url
 002941094	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000038754
 002941416	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000424E0
 002941419	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028242
-002941499	ark	
 002941501	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006CA2
 002941512	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000424FE
 002941523	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002BD40
@@ -41907,7 +41841,6 @@ book_id	kind	url
 002941842	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002DD44
 002942148	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002A08A
 002942193	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000047DCC
-002942264	ark	
 002942295	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006C5A
 002942305	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002DD5C
 002942310	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006C54
@@ -42966,7 +42899,6 @@ book_id	kind	url
 003030594	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000003030
 003030595	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000023C4
 003030765	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000042396
-003030988	ark	
 003031021	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003B7C6
 003031023	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003D272
 003031046	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005791E
@@ -43596,7 +43528,6 @@ book_id	kind	url
 003079908	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000012174
 003079909	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000026AF0
 003080113	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000051B9A
-003080487	ark	
 003080916	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003D446
 003081709	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000034A6A
 003082779	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005B0C2
@@ -44556,7 +44487,6 @@ book_id	kind	url
 003136552	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000299B2
 003136724	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000036762
 003136881	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001A748
-003136924	ark	
 003136929	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002BE0C
 003136968	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000028FF2
 003136968	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003136968
@@ -44867,7 +44797,6 @@ book_id	kind	url
 003172771	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000040734
 003173351	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000043D9A
 003174726	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000374EE
-003174747	ark	
 003174747	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003174747
 003174747	pdf	http://access.bl.uk/item/pdf/lsidyv39c6c42a
 003174834	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000022800
@@ -44890,7 +44819,6 @@ book_id	kind	url
 003176310	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003D0C8
 003176315	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000039EB2
 003176434	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000406B0
-003176460	ark	
 003176604	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002C046
 003176605	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002D4A4
 003176610	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002B560
@@ -45171,7 +45099,6 @@ book_id	kind	url
 003194956	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004FFBC
 003194957	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000045BD0
 003194957	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000045BD6
-003194960	ark	
 003194962	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004F734
 003194962	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004F746
 003194962	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004F752
@@ -46105,7 +46032,6 @@ book_id	kind	url
 003313333	pdf	http://access.bl.uk/item/pdf/lsidyv3c327888
 003313335	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000582DE
 003313345	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000029730
-003313351	ark	
 003313373	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005407E
 003313432	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004E684
 003313432	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004E68A
@@ -48361,7 +48287,6 @@ book_id	kind	url
 003461613	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002D3EA
 003461613	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002D3F0
 003461613	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002D3F6
-003461622	ark	
 003461700	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000045F60
 003461947	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000017D0C
 003461948	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005A5D0
@@ -49291,13 +49216,11 @@ book_id	kind	url
 003516073	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005986E
 003516159	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002CDF0
 003516269	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004586A
-003516347	ark	
 003516376	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003ECEE
 003516450	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000035298
 003516474	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000033D26
 003516571	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000239B8
 003516571	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000239DC
-003517003	ark	
 003517003	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003517003
 003517003	pdf	http://access.bl.uk/item/pdf/lsidyv34f5a119
 003517332	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004A3C4
@@ -49413,7 +49336,6 @@ book_id	kind	url
 003524394	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000455BE
 003524439	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000153A2
 003524606	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000310B0
-003524614	ark	
 003524799	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000447A8
 003524812	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004C6E6
 003524812	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004C6EC
@@ -49804,7 +49726,6 @@ book_id	kind	url
 003556464	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003556464
 003556464	pdf	http://access.bl.uk/item/pdf/lsidyv3d78e8f9
 003556509	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002AFC6
-003556511	ark	
 003556603	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000039E76
 003556634	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000056E98
 003556634	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003556634
@@ -49826,12 +49747,10 @@ book_id	kind	url
 003557181	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000317B8
 003557260	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037140
 003557261	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037506
-003557262	ark	
 003557266	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031A28
 003557266	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031A2E
 003557266	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003557266
 003557266	pdf	http://access.bl.uk/item/pdf/lsidyv34fc25c0
-003557362	ark	
 003557443	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000039234
 003557452	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037AEE
 003557452	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003557452
@@ -50038,7 +49957,6 @@ book_id	kind	url
 003574940	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002CD90
 003575016	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000417CC
 003575063	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003DF56
-003575090	ark	
 003575171	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004EADA
 003575293	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005B602
 003575474	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000174FC
@@ -50717,7 +50635,6 @@ book_id	kind	url
 003613006	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001816E
 003613006	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003613006
 003613006	pdf	http://access.bl.uk/item/pdf/lsidyv376bf0b7
-003613023	ark	
 003613954	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004860C
 003613954	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000048612
 003613954	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000048618
@@ -51380,7 +51297,6 @@ book_id	kind	url
 003645283	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003645283
 003645283	pdf	http://access.bl.uk/item/pdf/lsidyv357a3205
 003645295	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000000ACE
-003645329	ark	
 003645332	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000045030
 003645357	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000000552
 003645357	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003645357
@@ -52894,7 +52810,6 @@ book_id	kind	url
 003809494	pdf	http://access.bl.uk/item/pdf/lsidyv3aae97fd
 003810594	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000154B6
 003810856	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000352B6
-003811019	ark	
 003811042	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037440
 003811046	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000045E82
 003812913	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000020C1C
@@ -53522,7 +53437,6 @@ book_id	kind	url
 003850545	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000590FA
 003850545	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003850545
 003850545	pdf	http://access.bl.uk/item/pdf/lsidyv3c455105
-003850560	ark	
 003850622	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000193D4
 003850622	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000193F8
 003850779	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002F988
@@ -53946,7 +53860,6 @@ book_id	kind	url
 003871647	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000469EC
 003872120	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000007B60
 003873105	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002BFFE
-003873166	ark	
 003873263	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000001A574
 003873347	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000096B4
 003873678	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000012A2C
@@ -54003,7 +53916,6 @@ book_id	kind	url
 003883007	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000568DA
 003883288	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000012666
 003883298	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000031E1E
-003883433	ark	
 003883448	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006FD8
 003883469	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000556B0
 003883473	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000055926
@@ -54744,7 +54656,6 @@ book_id	kind	url
 003921819	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000058908
 003921844	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000000130E
 003921845	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000001338
-003922156	ark	
 003922156	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum003922156
 003922156	pdf	http://access.bl.uk/item/pdf/lsidyv3a8bd8e1
 003922164	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000033ED0
@@ -54900,7 +54811,6 @@ book_id	kind	url
 003932079	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004C7A0
 003932079	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004C7AC
 003932079	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000004CB1E
-003932106	ark	
 003932148	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000036FBA
 003932222	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000026928
 003932240	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000252D2
@@ -55087,7 +54997,6 @@ book_id	kind	url
 003941169	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003A78E
 003941169	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003B5B0
 003941169	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003B5BC
-003941171	ark	
 003941173	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003BE02
 003941173	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003BE0E
 003941173	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003C6C0
@@ -55871,7 +55780,6 @@ book_id	kind	url
 003976861	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000043236
 003976863	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000006C36
 003976867	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_0000000211AA
-003976869	ark	
 003976873	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000037DA0
 003976893	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002953E
 003976906	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002A084
@@ -56114,7 +56022,6 @@ book_id	kind	url
 003988097	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003013E
 003988191	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000005A786
 003988290	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000002983E
-003988430	ark	
 003988464	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000011568
 003988465	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000011574
 003988465	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000039AC2
@@ -56667,7 +56574,6 @@ book_id	kind	url
 004114390	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum004114390
 004114390	pdf	http://access.bl.uk/item/pdf/lsidyv3428bd09
 004114594	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_00000003D488
-004114889	ark	
 004114889	flickr	https://www.flickr.com/photos/britishlibrary/tags/sysnum004114889
 004114889	pdf	http://access.bl.uk/item/pdf/lsidyv39f0d47a
 004114984	ark	http://access.bl.uk/item/viewer/ark:/81055/vdc_000000043D76
