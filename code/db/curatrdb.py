@@ -8,7 +8,7 @@ from db.booksql import sql_statements
 # core_tables = [ "Users", "Books", "Authors", "BookAuthors", "Volumes", "Classifications", "Lexicons", "LexiconWords", "LexiconIgnores", "Corpora", "CorpusMetadata", 
 # 	"Recommendations", "MudiesMatches", "Ngrams", "VolumeExtracts", "VolumeWordCounts", "VolumeFileSizes" ]
 core_tables = ["Books", "Authors", "BookAuthors", "BookPublished", "BookShelfmarks",
-	"Volumes", "BookLinks", "Classifications", "Users", "Recommendations"]
+	"Volumes", "BookLinks", "Classifications", "Users", "Recommendations", "Ngrams"]
 
 # --------------------------------------------------------------
 
@@ -87,7 +87,7 @@ class CuratrDB(GenericDB):
 
 	def add_recommendation(self, volume_id, rec_volume_id, rank ):
 		sql = "INSERT INTO Recommendations (volume_id, rec_volume_id, rank_num) VALUES(%s,%s,%s)"
-		self.cursor.execute(sql, (volume_id, rec_volume_id, rank))		
+		self.cursor.execute(sql, (volume_id, rec_volume_id, rank))	
 
 	def book_count(self):
 		try:
@@ -160,12 +160,21 @@ class CuratrDB(GenericDB):
 			return []
 
 	def get_volume(self, volume_id):
-		""" Return basic details for the volume with the specified ID """
+		""" Return the details for the volume with the specified ID """
 		try:
 			return self._sql_to_dict("SELECT * FROM Volumes WHERE id=%s", volume_id)
 		except Exception as e:
 			log.error("SQL error: %s" % str(e))
 			return None
+
+	def get_volumes_by_year(self, year):
+		""" Return the details of all volumes associated with books published in the specified year """
+		try:
+			sql = "SELECT Volumes.* FROM Books, Volumes WHERE Volumes.book_id = Books.id and Books.year=%s"
+			return self._bulk_sql_to_dict(sql, year)
+		except Exception as e:
+			log.error("SQL error in get_volumes_by_year(): %s" % str(e))
+			return []
 
 	def set_volume_word_count(self, volume_id, count):
 		""" Update the word count for the volume with the specified identifier """
@@ -176,3 +185,51 @@ class CuratrDB(GenericDB):
 			log.error( "SQL error in set_volume_word_count(): %s" % str(e) )
 			return False
 		return True
+
+	def get_book_year_map(self):
+		""" Return a dictionary which maps each book ID to its publication year """
+		year_map = {}
+		try:
+			self.cursor.execute("SELECT year, id FROM Books")
+			for row in self.cursor.fetchall():
+				year_map[row[1]] = row[0]
+		except Exception as e:
+			log.error("SQL error in get_book_year_map(): %s" % str(e))
+		return year_map
+
+	def get_book_year_range(self):
+		""" Return the earliest and latest publication years from all books in the collection """
+		try:
+			self.cursor.execute("SELECT min(year), max(year) FROM Books")
+			result = self.cursor.fetchone()
+			return (result[0], result[1])
+		except Exception as e:
+			log.error("SQL error in get_book_year_range(): %s" % str(e))
+			return (0,0)		
+
+	def add_ngram_count(self, ngram, year, count):
+		""" Add the count for the specific ngram for a givne year"""
+		sql = "INSERT INTO Ngrams (ngram, year, count) VALUES(%s,%s,%s)"
+		self.cursor.execute(sql, (ngram, year, count) )	
+
+	def get_ngram_count(self, ngram, year_start, year_end):
+		""" Return the counts for the specified ngram within the given year range"""
+		count_map = {}
+		try:
+			sql = "SELECT year,count FROM Ngrams WHERE year >= %s AND year <= %s AND ngram=%s"		
+			self.cursor.execute(sql, (year_start, year_end, ngram) )
+			for row in self.cursor.fetchall():
+				count_map[row[0]] = row[1]
+		except Exception as e:
+			log.error("SQL error in get_ngram_count(): %s" % str(e))
+		return count_map			
+
+	def total_ngram_count(self):
+		""" Return total number of ngrams stored in the database """
+		try:
+			self.cursor.execute("SELECT COUNT(*) FROM Ngrams")
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in total_ngram_count(): %s" % str(e))
+			return 0

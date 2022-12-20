@@ -90,6 +90,14 @@ CREATE TABLE Recommendations (
 );
 """
 
+sql_statements["TableNgrams"] = """
+CREATE TABLE Ngrams (
+	ngram VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+	year SMALLINT NOT NULL,
+	count INT NOT NULL
+);
+"""
+
 sql_statements["TableUsers"] = """
 CREATE TABLE Users (
 	id INT AUTO_INCREMENT NOT NULL, 
