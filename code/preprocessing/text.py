@@ -107,7 +107,9 @@ class VolumeGenerator:
 	def __iter__(self):	
 		self.volume_ids = []
 		db = self.core.get_db()
+		# get list of all of the volumes we're going to process
 		volumes = db.get_volumes()
+		# process eaach volume
 		for volume in volumes:
 			log.debug("Volume %d/%d: Counting tokens in %s" % (len(self.volume_ids)+1, len(volumes), volume["path"]))
 			volume_path = self.core.dir_fulltext / volume["path"]
