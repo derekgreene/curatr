@@ -10,6 +10,7 @@ import sys
 import logging as log
 from optparse import OptionParser
 from pathlib import Path
+from collections import Counter
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from preprocessing.util import CorePrep
@@ -190,10 +191,54 @@ def add_recommendations(core, top=50):
 	db.commit()
 	log.info("Database now has %d recommendation entries" % db.recommendation_count())
 
+def add_ngrams(core, max_ngram_length=99):
+	""" Function to add unigram or bigram count data to the Curatr database.
+	Note that this takes a while to run."""
+	log.info("++ Adding volume ngrams to database ...")
+	core_prep = CorePrep(core.dir_root)
+	db = core.get_db()
+	# get default stopwords list
+	stopwords = core_prep.get_stopwords()
+	log.info("Using default list of %d stopwords" % len(stopwords))
+	# get collection date range
+	year_map = db.get_book_year_map()
+	year_min, year_max = db.get_book_year_range()
+	log.info("Extracting unigrams by year for range [%d,%d] ..." % (year_min, year_max))
+	# process each volume by year
+	for year in range(year_min, year_max+1):
+		volumes = db.get_volumes_by_year(year)
+		if len(volumes) == 0:
+			continue
+		log.info("Year %d: Extracting ngrams from %d volumes ..." % (year, len(volumes)))
+		# get the number of volumes in which this word appears
+		year_counts = Counter()
+		for volume in volumes:
+			volume_path = core.dir_fulltext / volume["path"]
+			if not volume_path.exists():
+				log.error("Missing volume file %s" % volume_path)
+				continue
+			# get all unique tokens in this file
+			with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
+				content = clean_content(fin.read())
+				tokens = custom_tokenizer(content)
+				volume_unique_tokens = set()
+				for token in tokens:
+					if not (token in stopwords or len(token) > max_ngram_length):
+						volume_unique_tokens.add(token)
+			# now update the year counts
+			for token in volume_unique_tokens:
+				year_counts[token] += 1
+		# add the counts for this year to the database
+		log.info("Adding counts for %d ngrams and %d volumes to database" % (len(year_counts),len(volumes)) )
+		for token in year_counts:
+			db.add_ngram_count(token, year, year_counts[token])
+		db.commit()
+	log.info("Database now has %d ngram entries" % db.total_ngram_count())
+
 # --------------------------------------------------------------
 
 valid_actions = {"create":create_tables, "metadata":add_metadata, 
-"wordcounts":add_wordcounts, "recs":add_recommendations}
+"wordcounts":add_wordcounts, "recs":add_recommendations, "ngrams":add_ngrams}
 
 def main():
 	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO)
