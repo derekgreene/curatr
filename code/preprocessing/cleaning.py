@@ -71,6 +71,17 @@ def clean_content(content):
 	content = content.replace("\r","\n")
 	return content.strip()
 
+def clean_shelfmarks(shelfmarks):
+	if shelfmarks is None:
+		return None
+	cleaned = []
+	for shelfmark in shelfmarks:
+		shelfmark = shelfmark.replace("British Library", "")
+		shelfmark = re.sub("\s+", " ", shelfmark).strip()
+		cleaned.append(shelfmark)
+	return cleaned
+	
+
 def extract_authors(authors, default_value = None):
 	if authors is None or type(authors) is float:
 		return default_value

@@ -65,7 +65,7 @@ class CorePrep(CoreBase):
 	def get_book_classifications(self):
 		""" Return the book classification metadata as a Pandas DataFrame """
 		log.info("Reading classification metadata from %s" % self.meta_classifications_path)
-		df_classifications = pd.read_csv(self.meta_classifications_path, sep="\t")
+		df_classifications = pd.read_csv(self.meta_classifications_path, sep="\t", dtype={'book_id':object})
 		# make sure we don't have any np.nan values as these won't work with MySQL
 		df_classifications = df_classifications.replace({np.nan: None})
 		log.info("Read %d rows, %d columns" % df_classifications.shape)
@@ -74,14 +74,14 @@ class CorePrep(CoreBase):
 	def get_book_links(self):
 		""" Return the book external link metadata as a Pandas DataFrame """
 		log.info("Reading link metadata from %s" % self.meta_links_path)
-		df_links = pd.read_csv(self.meta_links_path, sep="\t")
+		df_links = pd.read_csv(self.meta_links_path, sep="\t", dtype={'book_id':object})
 		log.info("Read %d rows, %d columns" % df_links.shape)
 		return df_links	
 
 	def get_volumes_metadata(self):
 		""" Return the book volumes metadata as a Pandas DataFrame """
 		log.info("Reading volume metadata from %s" % self.meta_volumes_path)
-		df_volumes = pd.read_csv(self.meta_volumes_path, sep="\t").set_index("volume_id")
+		df_volumes = pd.read_csv(self.meta_volumes_path, sep="\t", dtype={'book_id':object}).set_index("volume_id")
 		log.info("Read %d rows, %d columns" % df_volumes.shape)
 		return df_volumes	
 

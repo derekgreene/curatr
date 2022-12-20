@@ -12,7 +12,7 @@ from optparse import OptionParser
 from pathlib import Path
 import pandas as pd
 from preprocessing.util import CorePrep
-from preprocessing.cleaning import clean, clean_title, clean_location, extract_publication_location, extract_authors
+from preprocessing.cleaning import clean, clean_title, clean_shelfmarks, extract_publication_location, extract_authors
 
 # --------------------------------------------------------------
 
@@ -55,7 +55,7 @@ def prep_book_metadata(core):
 		# other fields
 		row["edition"] = clean(row_bl['Edition'])
 		row["physical_descr"] = clean(row_bl['Physical description'])
-		row["shelfmarks"] = row_curatr["shelfmarks"]
+		row["shelfmarks"] = clean_shelfmarks(row_curatr["shelfmarks"])
 		row["bl_record_id"] = row_bl["BL record ID"]
 		rows.append(row)
 	df_books = pd.DataFrame(rows).set_index("book_id").sort_index()
