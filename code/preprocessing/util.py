@@ -66,6 +66,7 @@ class CorePrep(CoreBase):
 		""" Return the book classification metadata as a Pandas DataFrame """
 		log.info("Reading classification metadata from %s" % self.meta_classifications_path)
 		df_classifications = pd.read_csv(self.meta_classifications_path, sep="\t", dtype={'book_id':object})
+		df_classifications = df_classifications.set_index("book_id")
 		# make sure we don't have any np.nan values as these won't work with MySQL
 		df_classifications = df_classifications.replace({np.nan: None})
 		log.info("Read %d rows, %d columns" % df_classifications.shape)
