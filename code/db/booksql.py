@@ -111,3 +111,9 @@ CREATE TABLE Users (
 );
 """
 
+sql_statements["TableVolumeExtracts"] = """
+CREATE TABLE VolumeExtracts (
+	volume_id VARCHAR(12) NOT NULL,
+	content VARCHAR(460) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+);
+"""

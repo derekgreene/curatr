@@ -27,6 +27,7 @@ def create_tables(core):
 	log.info("++ Creating database tables ...")
 	db.create_tables()
 	db.commit()
+	db.close()
 
 def add_metadata(core):
 	""" Add all key metadata to the database """
@@ -114,6 +115,7 @@ def add_metadata(core):
 	db.commit()
 	log.info("Added %d links" % num_added)
 	log.info("Database now has %d link entries" % db.link_count())
+	db.close()
 
 def add_wordcounts(core):
 	""" Add all volume word counts to the database """
@@ -141,6 +143,7 @@ def add_wordcounts(core):
 		if num_volumes % 5000 == 0:
 			log.info("Completed processing %d/%d volumes" % (num_volumes, len(volumes)))
 	log.info("Updated word counts for %d volumes" % num_volumes)
+	db.close()
 
 def add_recommendations(core, top=50):
 	""" Add volume recommendations, based on pairwise cosine similarities
@@ -190,6 +193,7 @@ def add_recommendations(core, top=50):
 	# commit the changes
 	db.commit()
 	log.info("Database now has %d recommendation entries" % db.recommendation_count())
+	db.close()
 
 def add_ngrams(core, max_ngram_length=99):
 	""" Function to add unigram or bigram count data to the Curatr database.
@@ -234,11 +238,49 @@ def add_ngrams(core, max_ngram_length=99):
 			db.add_ngram_count(token, year, year_counts[token])
 		db.commit()
 	log.info("Database now has %d ngram entries" % db.total_ngram_count())
+	db.close()
 
+def add_extracts(core, extract_length=450):
+	log.info("++ Adding volume extracts to database ...")
+	core_prep = CorePrep(core.dir_root)
+	db = core.get_db()
+	# get all volume details
+	volumes = db.get_volumes()
+	log.info("Processing %d volumes ..." % len(volumes))
+	# process all volumes
+	num_volumes = 0
+	for volume in volumes:
+		num_volumes += 1
+		volume_id = volume["id"]
+		volume_path = core.dir_fulltext / volume["path"]
+		if not volume_path.exists():
+			log.error("Missing volume file %s" % volume_path)
+			continue
+		# process the content of the current volume
+		with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
+			content = clean_content(fin.read())
+			# tidy the content
+			content = content.replace( '" ', '"' ).replace( '..', '.' ).replace( '. .', '.' ).replace( '..', '.').strip()
+			# find first alphanumeric
+			for start_pos in range(len(content)):
+				if content[start_pos].isalnum():
+					break
+			# create the final extract
+			actual_extract_length = min(extract_length, len(content)-start_pos)
+			extract = content[start_pos:actual_extract_length+start_pos] + "..."
+			# add it to the database
+			db.add_volume_extract(volume_id, extract)
+		if num_volumes % 5000 == 0:
+			log.info("Completed processing %d/%d volume extracts" % (num_volumes, len(volumes)))	
+	db.commit()
+	log.info("Database now has %d extracts" % db.extract_count())
+	db.close()
+	
 # --------------------------------------------------------------
 
 valid_actions = {"create":create_tables, "metadata":add_metadata, 
-"wordcounts":add_wordcounts, "recs":add_recommendations, "ngrams":add_ngrams}
+"wordcounts":add_wordcounts, "recs":add_recommendations, "ngrams":add_ngrams,
+"extracts":add_extracts}
 
 def main():
 	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO)
@@ -251,7 +293,6 @@ def main():
 	if not dir_root.exists():
 		parser.error("Invalid core directory: %s" % dir_root)
 	core = CoreCuratr(dir_root)
-
 	# try connecting to the database
 	if not core.init_db():
 		sys.exit(1)
@@ -278,9 +319,6 @@ def main():
 		# except KeyError:
 		# 	log.error("Unknown action '%s'" % action)
 		# 	sys.exit(1)
-
-	# disconnect from the database
-	core.get_db().close()
 
 # --------------------------------------------------------------
 

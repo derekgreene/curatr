@@ -72,15 +72,14 @@ def clean_content(content):
 	return content.strip()
 
 def clean_shelfmarks(shelfmarks):
-	if shelfmarks is None:
+	if shelfmarks is None or type(shelfmarks) is float:
 		return None
 	cleaned = []
 	for shelfmark in shelfmarks:
-		shelfmark = shelfmark.replace("British Library", "")
+		shelfmark = shelfmark.replace("British Library", "").replace(";",":")
 		shelfmark = re.sub("\s+", " ", shelfmark).strip()
 		cleaned.append(shelfmark)
 	return cleaned
-	
 
 def extract_authors(authors, default_value = None):
 	if authors is None or type(authors) is float:
@@ -114,15 +113,6 @@ def extract_authors(authors, default_value = None):
 	if len(author_list) == 0:
 		return default_value
 	return author_list
-
-def extract_shelf_ids(shelf_marks):
-	if shelf_marks is None or type(shelf_marks) is float:
-		return None
-	shelf_list = []
-	for shelf_mark in shelf_marks:
-		shelf_list.append(shelf_mark.replace("British Library ","").replace(";",":").strip())
-	return shelf_list
-
 
 place_map = {"Calcutta":"India", "Springfield, Massachusetts": "United States of America", "Oxford":"England", 
 	"Lancaster":"England", "Dublin":"Ireland", "Eton":"England", "Quebec":"Canada", "Beaumaris":"Wales",
