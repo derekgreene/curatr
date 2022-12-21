@@ -60,7 +60,8 @@ def clean_location(location, default_location=None):
 	if len(location) < 2:
 		return default_location
 	# NB: convert to title case
-	return location.title()
+	location = location.title()
+	return location.replace(" Of ", " of ")
 
 def clean_content(content):
 	if content is None or type(content) is float:
@@ -152,3 +153,59 @@ def extract_publication_location(place_str, country_str):
 			out_countries = [place_map[out_places[0]]]
 	# missing country?
 	return out_places, out_countries
+
+def format_author_sortname( author ):
+	""" Convert an author name to a sortable format string 'Lastname, Firstname' """
+	if author is None or author.lower() == "unknown":
+		return "Unknown"
+	s = re.sub("\[.*\]", "", author).strip()
+	# handle case
+	parts = re.split("[ ,\.'']", s)
+	parts = sorted(parts, key=lambda x: len(x))[::-1]
+	for word in parts:
+		if len(word) > 2 and word.isupper():
+			s = s.replace(word, word.capitalize())
+	# manual replacements
+	s = re.sub(" \- Sir$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Mrs$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Mr$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Dr$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Esq$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Lord$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Lady$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Esquire$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Esq\.,.*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- M\.P$", "", s, re.IGNORECASE)
+	s = re.sub(" \- M\.P\.$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Esq\.$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Right Hon.*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Artist$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Missionary$", "", s, re.IGNORECASE)
+	s = re.sub(" \- the Poet$", "", s, re.IGNORECASE)
+	s = re.sub(" \- a Poet$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Poet$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Anthropologist$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Minister at Etal$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Lecturer$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Esq\., of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Author of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Fellow of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Late Fellow of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Late of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Vicar of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Earl of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Mayor of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Baron of .*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Lord Protector.*$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Baron$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Novelist$", "", s, re.IGNORECASE)
+	s = re.sub(" \- Author$", "", s, re.IGNORECASE)
+	s = re.sub(" \- B\.A\.. *$", "", s, re.IGNORECASE)
+	s = re.sub("\(Margaret\)", "Margaret", s)
+	s = re.sub(" \- of the 62nd Regiment$", "", s, re.IGNORECASE)
+	s = s.replace(", the Historian","")
+	s = re.sub("\s+", " ", s)
+	if len(s) > 10 and s[-1] in "., -_?":
+		s = s[0:len(s)-1]
+	return s.strip()
