@@ -38,8 +38,8 @@ CREATE TABLE BookAuthors (
 );
 """
 
-sql_statements["TableBookPublished"] = """
-CREATE TABLE BookPublished (
+sql_statements["TableBookLocations"] = """
+CREATE TABLE BookLocations (
 	book_id VARCHAR(12) NOT NULL,
 	kind VARCHAR(20) NOT NULL,
 	location VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
@@ -98,6 +98,13 @@ CREATE TABLE Ngrams (
 );
 """
 
+sql_statements["TableVolumeExtracts"] = """
+CREATE TABLE VolumeExtracts (
+	volume_id VARCHAR(12) NOT NULL,
+	content VARCHAR(460) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+);
+"""
+
 sql_statements["TableUsers"] = """
 CREATE TABLE Users (
 	id INT AUTO_INCREMENT NOT NULL, 
@@ -111,9 +118,118 @@ CREATE TABLE Users (
 );
 """
 
-sql_statements["TableVolumeExtracts"] = """
-CREATE TABLE VolumeExtracts (
+sql_statements["TableBookmarks"] = """
+CREATE TABLE Bookmarks (
+	id INT NOT NULL AUTO_INCREMENT,
+	user_id INT NOT NULL,
 	volume_id VARCHAR(12) NOT NULL,
-	content VARCHAR(460) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+	segment_id VARCHAR(30) DEFAULT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+"""
+
+# --------------------------------------------------------------
+# LEXICON & CORPORA TABLES
+# --------------------------------------------------------------
+
+sql_statements["TableLexicons"] = """
+CREATE TABLE Lexicons (
+	id INT NOT NULL AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	name VARCHAR(255) NOT NULL,
+	description VARCHAR(3000) DEFAULT NULL,
+	class_name VARCHAR(255) NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+"""
+
+sql_statements["TableLexiconWords"] = """
+CREATE TABLE LexiconWords (
+	lexicon_id int NOT NULL,
+	word VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL
+);
+"""
+
+sql_statements["TableLexiconIgnores"] = """
+CREATE TABLE LexiconIgnores (
+	lexicon_id int NOT NULL,
+	word VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL
+);
+"""
+
+sql_statements["TableCorpora"] = """
+CREATE TABLE Corpora (
+	id int NOT NULL AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	name VARCHAR(255) NOT NULL,
+	format VARCHAR(255) NOT NULL,
+	documents int NOT NULL,
+	filename VARCHAR(300)  NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+"""
+
+sql_statements["TableCorpusMetadata"] = """
+CREATE TABLE CorpusMetadata (
+	corpus_id int NOT NULL,
+	field VARCHAR(100) NOT NULL,
+	value VARCHAR(3000)  CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+);
+"""
+
+# --------------------------------------------------------------
+# CACHE TABLES
+# --------------------------------------------------------------
+
+sql_statements["TableCachedAuthors"] = """
+CREATE TABLE CachedAuthors (
+	author_id MEDIUMINT NOT NULL,
+	author_name VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+	sort_name VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+	start_year SMALLINT NOT NULL,
+	end_year SMALLINT NOT NULL,
+	count INT NOT NULL,
+	PRIMARY KEY (author_id)
+);
+"""
+
+sql_statements["TableCachedBookYears"] = """
+CREATE TABLE CachedBookYears (
+	year SMALLINT NOT NULL,
+	count INT NOT NULL,
+	PRIMARY KEY (year)
+);
+"""
+
+sql_statements["TableCachedVolumeYears"] = """
+CREATE TABLE CachedVolumeYears (
+	year SMALLINT NOT NULL,
+	count INT NOT NULL,
+	PRIMARY KEY (year)
+);
+"""
+
+sql_statements["TableCachedPlaceCounts"] = """
+CREATE TABLE CachedPlaceCounts (
+	location VARCHAR(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+	count INT NOT NULL
+);
+"""
+
+sql_statements["TableCachedCountryCounts"] = """
+CREATE TABLE CachedCountryCounts (
+	location VARCHAR(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+	count INT NOT NULL
+);
+"""
+
+sql_statements["TableCachedClassificationCounts"] = """
+CREATE TABLE CachedClassificationCounts (
+	class_name VARCHAR(255) NOT NULL,
+	level SMALLINT NOT NULL,
+	count INT NOT NULL
 );
 """
