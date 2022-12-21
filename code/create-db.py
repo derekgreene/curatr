@@ -15,7 +15,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from preprocessing.util import CorePrep
 from core import CoreCuratr
-from preprocessing.cleaning import clean_content
+from preprocessing.cleaning import clean_content, format_author_sortname
 from preprocessing.text import custom_tokenizer, build_bow, VolumeGenerator
 
 # --------------------------------------------------------------
@@ -87,7 +87,7 @@ def add_metadata(core):
 			log.info("Completed adding %d/%d books" % (num_added, len(df_books)))
 	db.commit()
 	log.info("Added %d books" % num_added)
-	log.info("Database now has %d books, %d authors, %d published" % (db.book_count(), db.author_count(), db.published_count()))
+	log.info("Database now has %d books, %d authors, %d locations" % (db.book_count(), db.author_count(), db.published_location_count()))
 
 	# add the classifications
 	df_classifications = core_prep.get_book_classifications()
@@ -112,6 +112,7 @@ def add_metadata(core):
 	df_links = core_prep.get_book_links()
 	for _, row in df_links.iterrows():
 		db.add_link(row["book_id"], row["kind"], row["url"])
+		num_added += 1
 	db.commit()
 	log.info("Added %d links" % num_added)
 	log.info("Database now has %d link entries" % db.link_count())
@@ -276,11 +277,123 @@ def add_extracts(core, extract_length=450):
 	log.info("Database now has %d extracts" % db.extract_count())
 	db.close()
 	
+def add_caches(core):
+	""" Add all of the additional cache tables which are used by Curatr for performance reasons """
+	log.info("++ Adding cache tables to database ...")
+	db = core.get_db()
+	# get the core book data that we need
+	books = db.get_books()
+	log.info("Building maps...")
+	volume_year_map = db.get_volume_year_map()
+	author_name_map = db.get_author_name_map()
+	log.info("Corpus contains %d books, %d volumes, %d authors ..." % 
+		(len(books), len(volume_year_map), len(author_name_map)))
+	corpus_year_min, corpus_year_max = db.get_book_year_range()
+	log.info("Corpus year range: [%d,%d]" % (corpus_year_min, corpus_year_max))
+
+	# delete any cache tables and re-create them
+	db.clear_cache_tables()
+	
+	# populate CachedBookYears
+	log.info("Populating CachedBookYears ...")
+	year_counts = {}
+	for y in range(corpus_year_min,corpus_year_max+1):
+		year_counts[y] = 0
+	for book in books:
+		year_counts[book["year"]] += 1
+	# add to the database
+	for year in year_counts:
+		db.add_cached_book_years(year, year_counts[year])
+	db.commit()
+
+	# populate CachedVolumeYears
+	log.info("Populating CachedVolumeYears ...")
+	year_counts = {}
+	for y in range(corpus_year_min,corpus_year_max+1):
+		year_counts[y] = 0
+	for volume_id in volume_year_map:
+		year_counts[volume_year_map[volume_id]] += 1
+	# add to the database
+	for year in year_counts:
+		db.add_cached_volume_years(year, year_counts[year])
+	db.commit()
+
+	# populate CachedPlaceCounts & CachedCountryCounts
+	log.info("Populating CachedPlaceCounts and CachedCountryCounts ...")
+	num = 0
+	country_counts, place_counts = Counter(), Counter()
+	locations_map = db.get_book_published_locations_map()
+	for book_id in locations_map:
+		num += 1
+		if num % 5000 == 0:
+			log.info("Processed %d books" % num)
+		for pair in locations_map[book_id]:
+			if pair[0] == "country":
+				country_counts[pair[1]] += 1
+			elif pair[0] == "place":
+				place_counts[pair[1]] += 1
+	log.info("Adding counts for %d places to database" % len(place_counts))
+	# add to the database
+	for location in place_counts:
+		db.add_cached_place_count(location, place_counts[location])
+	db.commit()
+	log.info("Adding counts for %d countries to database" % len(country_counts))
+	for location in country_counts:
+		db.add_cached_country_count(location, country_counts[location])
+	db.commit()
+
+	# populate CachedClassificationCounts
+	log.info("Populating CachedClassificationCounts ...")
+	class_map = db.get_book_classifications_map()
+	class_counts = [Counter(), Counter(), Counter()]
+	for book_id in class_map:
+		primary, secondary, tertiary = class_map[book_id]
+		if not primary is None:
+			class_counts[0][primary] += 1
+		if not secondary is None:
+			class_counts[1][secondary] += 1
+		if not tertiary is None:
+			class_counts[2][tertiary] += 1
+	for level in range(0, 3):
+		log.info("Adding classification counts for %d classes at level %d" % (len(class_counts[level]), level))
+		for class_name in class_counts[level]:
+			db.add_cached_classification_count(class_name, level, class_counts[level][class_name])
+		db.commit()
+
+	# populate CachedAuthors
+	log.info("Populating CachedAuthors ...")
+	# get the author stats
+	author_book_count = {}
+	author_min_year, author_max_year, author_sort_name = {}, {}, {}
+	num = 0
+	for book in books:
+		num += 1
+		if num % 5000 == 0:
+			log.info("Processed %d books" % num)
+		author_ids = db.get_book_author_ids(book["id"])
+		for author_id in author_ids:
+			if not author_id in author_book_count:
+				author_book_count[author_id] = 1	
+				author_min_year[author_id] = book["year"]
+				author_max_year[author_id] = book["year"]
+			else:
+				author_book_count[author_id] += 1
+				author_min_year[author_id] = min(book["year"], author_min_year[author_id])
+				author_max_year[author_id] = max(book["year"], author_max_year[author_id])
+			author_sort_name[author_id] = format_author_sortname(author_name_map[author_id])
+	log.info("Found %d authors" % len(author_book_count))
+	# add to the database
+	for author_id in author_book_count:
+		db.add_cached_author_details(author_id, author_name_map[author_id], author_sort_name[author_id], author_min_year[author_id], author_max_year[author_id], author_book_count[author_id])
+	db.commit()
+	# finished
+	db.close()
+
 # --------------------------------------------------------------
 
 valid_actions = {"create":create_tables, "metadata":add_metadata, 
 "wordcounts":add_wordcounts, "recs":add_recommendations, "ngrams":add_ngrams,
-"extracts":add_extracts}
+"extracts":add_extracts, "caches": add_caches}
 
 def main():
 	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO)
@@ -313,12 +426,10 @@ def main():
 	for action in requested_actions:
 		if action == 'delete':
 			continue
+		elif not action in valid_actions:
+			log.error("Unknown action '%s'" % action)
+			sys.exit(1)
 		valid_actions[action](core)
-		# try:
-		# 	valid_actions[action](core)
-		# except KeyError:
-		# 	log.error("Unknown action '%s'" % action)
-		# 	sys.exit(1)
 
 # --------------------------------------------------------------
 
