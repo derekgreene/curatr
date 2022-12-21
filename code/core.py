@@ -53,3 +53,13 @@ class CoreCuratr(CoreBase):
 
 	def get_db(self):
 		return self.db
+
+	def volume_full_paths(self):
+		""" Return back a dictionary of volume ID to full path to the corresponding plain-text file """
+		db = self.get_db()
+		volumes = db.get_volumes()
+		volume_path_map = {}
+		for volume in volumes:
+			volume_path_map[volume["id"]] = self.dir_fulltext / volume["path"]
+		db.close()
+		return volume_path_map

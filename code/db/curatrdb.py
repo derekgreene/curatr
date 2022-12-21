@@ -8,7 +8,7 @@ from db.booksql import sql_statements
 # core_tables = [ "Users", "Books", "Authors", "BookAuthors", "Volumes", "Classifications", "Lexicons", "LexiconWords", "LexiconIgnores", "Corpora", "CorpusMetadata", 
 # 	"Recommendations", "MudiesMatches", "Ngrams", "VolumeExtracts", "VolumeWordCounts", "VolumeFileSizes" ]
 core_tables = ["Books", "Authors", "BookAuthors", "BookPublished", "BookShelfmarks",
-	"Volumes", "BookLinks", "Classifications", "Users", "Recommendations", "Ngrams"]
+	"Volumes", "BookLinks", "Classifications", "Users", "Recommendations", "Ngrams", "VolumeExtracts"]
 
 # --------------------------------------------------------------
 
@@ -233,3 +233,28 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in total_ngram_count(): %s" % str(e))
 			return 0
+
+	def add_volume_extract(self, volume_id, content):
+		sql = "INSERT INTO VolumeExtracts (volume_id, content) VALUES(%s,%s)"
+		self.cursor.execute(sql, (volume_id, content))	
+
+	def get_volume_extract(self, volume_id):
+		try:
+			sql = "SELECT content FROM VolumeExtracts WHERE volume_id=%s"
+			self.cursor.execute( sql, volume_id)
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in get_volume_extract(): %s" % str(e))
+			return None
+
+	def extract_count(self):
+		""" Return total number of volume extracts stored in the database """
+		try:
+			self.cursor.execute("SELECT COUNT(*) FROM VolumeExtracts")
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in extract_count(): %s" % str(e))
+			return 0
+			
