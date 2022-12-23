@@ -418,6 +418,8 @@ def main():
 		db.delete_tables()
 		db.commit()
 		db.close()
+		log.info("Actions complete")
+		core.shutdown()
 		sys.exit(0)
 	# note 'all' overrides everything
 	if "all" in requested_actions:
@@ -430,6 +432,9 @@ def main():
 			log.error("Unknown action '%s'" % action)
 			sys.exit(1)
 		valid_actions[action](core)
+	# finished
+	log.info("Actions complete")
+	core.shutdown()
 
 # --------------------------------------------------------------
 

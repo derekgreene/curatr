@@ -1,7 +1,7 @@
 from pathlib import Path
 import configparser
 import logging as log
-from db.curatrdb import CuratrDB
+from db.pool import CuratrDBPool
 
 # --------------------------------------------------------------
 
@@ -29,6 +29,8 @@ class CoreBase:
 			log.info("Loading configuration from %s ..." % self.config_path)
 			self.config = configparser.ConfigParser()
 			self.config.read(self.config_path)
+		self._pool = None
+		self.cache = {}
 	
 # --------------------------------------------------------------
 
@@ -39,20 +41,30 @@ class CoreCuratr(CoreBase):
 	def init_db(self, autocommit=False):
 		""" Creates a connection to the Curatr MySQL database """
 		try:
-			db_hostname = self.config["db"].get( "hostname", "localhost" )
-			db_port = self.config["db"].getint( "port", 3306 )
-			db_name = self.config["db"].get( "dbname", "curatr" )
-			db_username = self.config["db"].get( "username", "curatr" )
-			db_password = self.config["db"].get( "pass", "" )
-			# pool_size = self.config["db"].getint( "pool_size", 5 )
-			self.db = CuratrDB(db_hostname, db_port, db_username, db_password, db_name, autocommit)
+			db_hostname = self.config["db"].get("hostname", "localhost")
+			db_port = self.config["db"].getint("port", 3306)
+			db_name = self.config["db"].get("dbname", "curatr")
+			db_username = self.config["db"].get("username", "curatr")
+			db_password = self.config["db"].get("pass", "")
+			pool_size = self.config["db"].getint("pool_size", 5)
+			self._pool = CuratrDBPool(pool_size, db_hostname, db_port, db_username, db_password, db_name, autocommit)
 			return True
 		except Exception as e:
-			log.error( "Failed to initalize database: %s" % str(e))
+			log.error("Failed to initalize database: %s" % str(e))
 			return False
 
 	def get_db(self):
-		return self.db
+		return self._pool.get_connection()
+
+	def shutdown(self):
+		log.info("Shutting down core ...")
+		try:
+			if not self._pool is None:
+				self._pool.close()
+				self._pool = None
+		except Exception as e:
+			log.error("Failed to close database pool: %s" % str(e))
+		return None
 
 	def volume_full_paths(self):
 		""" Return back a dictionary of volume ID to full path to the corresponding plain-text file """
