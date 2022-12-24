@@ -34,7 +34,7 @@ def main():
 	if len(args) < 1:
 		parser.error("Must specify core directory" )
 
-	# set up the basic Curatr core
+	# set up the Curatr preprocessing  core
 	dir_root = Path(args[0])
 	if not dir_root.exists():
 		log.error("Invalid core directory: %s" % dir_root.absolute())
@@ -80,7 +80,7 @@ def main():
 	log.info( "Built word embedding %s" % embed)
 
 	# save the Word2Vec model
-	if options.collections == "all":
+	if options.collection == "all":
 		fname = "bl-w2v-%s-d%d.bin" % (options.embed_type, options.dimensions)
 	else:
 		fname = "bl%s-w2v-%s-d%d.bin" % (options.collection, options.embed_type, options.dimensions)
