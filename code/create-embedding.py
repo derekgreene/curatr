@@ -32,14 +32,14 @@ def main():
 	parser.add_option("-c","--collection", action="store", type="string", dest="collection", help="set of books to use (all, fiction, nonfiction)", default="all")
 	(options, args) = parser.parse_args()
 	if len(args) < 1:
-		parser.error("Must specify core directory" )
+		parser.error("Must specify core directory")
 
 	# set up the Curatr preprocessing  core
-	dir_root = Path(args[0])
-	if not dir_root.exists():
-		log.error("Invalid core directory: %s" % dir_root.absolute())
+	dir_core = Path(args[0])
+	if not dir_core.exists():
+		log.error("Invalid core directory: %s" % dir_core.absolute())
 		sys.exit(1)
-	core_prep = CorePrep(dir_root)
+	core_prep = CorePrep(dir_core)
 	if not core_prep.dir_fulltext.exists():
 		log.error("Cannot create embedding. Directory of full-text files does not exist: %s" % core_prep.dir_fulltext.absolute())
 		sys.exit(1)
