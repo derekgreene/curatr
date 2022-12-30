@@ -1,5 +1,6 @@
 """ 
-Functions for cleaning various fields in metadata associated with the British Library Digital Collection dataset.
+Functions for cleaning various fields in the raw metadata associated with the British Library 
+Digital Collection.
 """
 import logging as log
 import re
@@ -14,6 +15,7 @@ title_remove_suffixes.sort(key=len)
 title_remove_suffixes.reverse()
 
 def clean(s, default_value=None):
+	""" General string cleaning function """
 	if s is None or type(s) is float:
 		return default_value
 	s = ftfy.fix_text(s)
@@ -24,6 +26,8 @@ def clean(s, default_value=None):
 	return s
 	
 def clean_title(title, default_title=None):
+	""" Clean a string containing a book title as originally provided in
+	the metadata from the British Library Digital Collection """
 	if title is None or type(title) is float:
 		return default_title
 	title = ftfy.fix_text(title)
@@ -73,6 +77,8 @@ def clean_content(content):
 	return content.strip()
 
 def clean_shelfmarks(shelfmarks):
+	""" Extract a list of formatted library shelfmarks from the string originally provided in
+	the metadata from the British Library Digital Collection """
 	if shelfmarks is None or type(shelfmarks) is float:
 		return None
 	cleaned = []
@@ -83,6 +89,8 @@ def clean_shelfmarks(shelfmarks):
 	return cleaned
 
 def extract_authors(authors, default_value = None):
+	""" Extract a list of formatted author names from the string originally provided in
+	the metadata from the British Library Digital Collection """
 	if authors is None or type(authors) is float:
 		return default_value
 	author_list = []
@@ -106,11 +114,11 @@ def extract_authors(authors, default_value = None):
 					part = part[0:len(part)-1]
 				if len(part) > 3 and part[-1] == ".":
 					part = part[0:len(part)-1]
-				name_parts.append(part.capitalize())
+				name_parts.append(part.capitalize().strip())
 			if len(name_parts) == 0:
 				log.warning("Could not parse name '%s'" % fullname)
 			else:
-				author_list.append(" ".join(name_parts))
+				author_list.append(" ".join(name_parts).strip())
 	if len(author_list) == 0:
 		return default_value
 	return author_list
@@ -154,9 +162,10 @@ def extract_publication_location(place_str, country_str):
 	# missing country?
 	return out_places, out_countries
 
-def format_author_sortname( author ):
-	""" Convert an author name to a sortable format string 'Lastname, Firstname' """
-	if author is None or author.lower() == "unknown":
+def format_author_sortname(author):
+	""" Convert an author name to a sortable format string 'Lastname, Firstname' with extra
+	title words removed """
+	if author is None or type(author) is float or author.lower() == "unknown":
 		return "Unknown"
 	s = re.sub("\[.*\]", "", author).strip()
 	# handle case

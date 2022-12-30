@@ -6,7 +6,7 @@ required by Curatr.
 Same usage:
 	python code/create-db.py core all
 """
-import sys
+import sys, json
 import logging as log
 from optparse import OptionParser
 from pathlib import Path
@@ -15,7 +15,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from preprocessing.util import CorePrep
 from core import CoreCuratr
-from preprocessing.cleaning import clean_content, format_author_sortname
+from preprocessing.cleaning import clean, clean_content, format_author_sortname
 from preprocessing.text import custom_tokenizer, build_bow, VolumeGenerator
 
 # --------------------------------------------------------------
@@ -44,7 +44,7 @@ def add_metadata(core):
 	# add default author
 	default_author = "Unknown"
 	db.add_author(1, default_author)
-	authors = {"default_author": 1}
+	authors = {default_author: 1}
 
 	# add core book metadata
 	log.info("Adding %d books ..." % len(df_books))
@@ -54,6 +54,12 @@ def add_metadata(core):
 		# add authors, if necessary
 		if book["authors"] is None:
 			book["authors"] = [default_author]
+		# do we have a full version?
+		if book["authors_full"] is None:
+			book["authors_full"] = json.dumps({"creator":default_author})
+		else:
+			# need to convert the JSON to a string
+			book["authors_full"] = json.dumps(book["authors_full"])
 		author_ids = []
 		for author in book["authors"]:
 			if author in authors:
@@ -63,6 +69,7 @@ def add_metadata(core):
 				db.add_author(author_id, author)
 				authors[author] = author_id
 				author_ids.append(author_id)
+		book["publisher_full"] = clean(book["publisher_full"])
 		# add the published locations
 		if not book["publication_place"] is None:
 			for place in book["publication_place"]:
@@ -80,7 +87,7 @@ def add_metadata(core):
 		del book["publication_place"]
 		del book["publication_country"]
 		del book["shelfmarks"]
-		log.debug("%d/%d: Adding book %s" % ( (num_added+1), len(df_books), book_id ) )
+		log.debug("%d/%d: Adding book %s" % ((num_added+1), len(df_books), book_id))
 		db.add_book(book_id, book, author_ids)
 		num_added += 1
 		if num_added % 5000 == 0:
