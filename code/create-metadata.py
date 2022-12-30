@@ -225,8 +225,6 @@ def verify_data(core):
 		log.info("Volumes associated with %d books" % len(df_volumes["book_id"].unique()) )
 		log.info("Missing values\n%s" % df_volumes.isna().sum())
 
-
-
 # --------------------------------------------------------------
 
 valid_actions = {"books":prep_book_metadata,

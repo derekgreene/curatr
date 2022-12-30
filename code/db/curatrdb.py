@@ -138,6 +138,32 @@ class CuratrDB(GenericDB):
 			log.error("SQL error: %s" % str(e))
 			return 0
 
+	def get_shelfmarks(self, book_id):
+		""" Return back list of shelmarks associated with the specified book. """
+		shelfmarks = []
+		try:
+			sql = "SELECT shelfmark FROM BookShelfmarks WHERE book_id = %s"
+			self.cursor.execute(sql, book_id)
+			for row in self.cursor.fetchall():
+				shelfmarks.append(row[0])
+		except Exception as e:
+			log.error("SQL error in get_shelfmarks(): %s" % str(e))
+		return shelfmarks
+
+	def get_book_shelfmarks_map(self):
+		""" Return back all shelfmarks associatd with all books. """
+		shelfmark_map = {}
+		try:
+			sql = "SELECT book_id,shelfmark FROM BookShelfmarks"
+			self.cursor.execute(sql)
+			for row in self.cursor.fetchall():
+				if not row[0] in shelfmark_map:
+					shelfmark_map[row[0]] = []
+				shelfmark_map[row[0]].append(row[1])
+		except Exception as e:
+			log.error("SQL error in get_book_shelfmarks_map(): %s" % str(e))
+		return shelfmark_map
+
 	def published_location_count(self):
 		try:
 			self.cursor.execute("SELECT COUNT(*) FROM BookLocations")
@@ -231,6 +257,7 @@ class CuratrDB(GenericDB):
 			return 0
 
 	def get_volumes(self):
+		""" Return back all volumes in the database. """
 		try:
 			return self._bulk_sql_to_dict("SELECT * FROM Volumes")
 		except Exception as e:
@@ -244,6 +271,15 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error: %s" % str(e))
 			return None
+
+	def get_book_volumes(self, book_id):
+		""" Return the details for all volumes associated with the specified book """
+		try:
+			sql = "SELECT * FROM Volumes WHERE book_id=%s" 
+			return self._bulk_sql_to_dict( sql, book_id )
+		except Exception as e:
+			log.error("SQL error in get_book_volumes(): %s" % str(e))
+			return []
 
 	def get_volumes_by_year(self, year):
 		""" Return the details of all volumes associated with books published in the specified year """
