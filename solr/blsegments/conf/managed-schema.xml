@@ -923,7 +923,8 @@
 
     <!-- Start Custom Fields for Curatr -->
     <field name="authors" type="string" multiValued="true" stored="true"/>
-    <field name="authors_genders" type="string" multiValued="true" stored="true"/>
+    <field name="authors_full" type="string" stored="true"/>
+    <field name="authors_genders" type="string" multiValued="false" stored="true"/>
     <field name="authors_text" type="text_general" multiValued="true" indexed="true" stored="false"/>
     <field name="book_id" type="string" stored="true"/>
     <field name="category" type="string" default="unknown" stored="true"/>
@@ -940,15 +941,17 @@
     <field name="mudies_match" type="pint" stored="true"/>
     <field name="physical_descr" type="string" stored="true"/>
     <field name="publisher" type="string" multiValued="true" stored="true"/>
+    <field name="publisher_full" type="string" stored="true"/>
     <field name="publisher_text" type="string" multiValued="true" stored="true"/>
     <field name="segment" type="pint" stored="true"/>
     <field name="shelfmarks" type="string" multiValued="true" stored="true"/>
     <field name="subclassification" type="string" default="unknown" stored="true"/>
     <field name="text" type="text_general" multiValued="true" indexed="true" stored="false"/>
     <field name="title" type="string" stored="true"/>
+    <field name="title_full" type="string" stored="true"/>
     <field name="title_text" type="text_general" multiValued="false" indexed="true" stored="false"/>
     <field name="url_ark" type="string" stored="true"/>
-    <field name="url_images" type="string" stored="true"/>
+    <field name="url_flickr" type="string" stored="true"/>
     <field name="url_mudies" type="string" stored="true"/>
     <field name="url_pdf" type="string" stored="true"/>
     <field name="volume" type="pint" stored="true"/>
