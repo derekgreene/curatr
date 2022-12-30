@@ -1,6 +1,6 @@
 # Curatr
 
-Curatr is an online platform which provides access to the British Library Digital Collection, developed as part of the (VICTEUR Project)[https://projectvicteur.com]. This work is funded by the European Research Council (ERC).
+Curatr is an online platform which provides access to the British Library Digital Collection, developed as part of the [https://projectvicteur.com](VICTEUR Project). This work is funded by the European Research Council (ERC).
 
 ## Dependencies
 
