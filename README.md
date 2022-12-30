@@ -4,7 +4,7 @@ Curatr is an online platform which provides access to the British Library Digita
 
 ## Dependencies
 
-The following Python packages should be installed prior to installing Curatr, which are available via PIP:
+The following Python 3 packages should be installed prior to installing Curatr, which are available via PIP:
 
 - NumPy: https://numpy.org
 - Pandas: https://pandas.pydata.org
@@ -17,4 +17,4 @@ The following Python packages should be installed prior to installing Curatr, wh
 Additional dependencies:
 - MySQL: https://www.mysql.com (tested with 5.7.40)
 - Apache Solr: https://solr.apache.org (tested with 9.1.0)
-- Java JDK supported by Apache Solr (tested with OpenJDK 19.0.1) 
+- A Java JDK supported by Apache Solr (tested with OpenJDK 19.0.1) 
