@@ -238,15 +238,6 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in link_count(): %s" % str(e))
 			return 0
 
-	def recommendation_count(self):
-		try:
-			self.cursor.execute("SELECT COUNT(*) FROM Recommendations")
-			result = self.cursor.fetchone()
-			return result[0]
-		except Exception as e:
-			log.error("SQL error in recommendation_count(): %s" % str(e))
-			return 0
-
 	def volume_count(self):
 		try:
 			self.cursor.execute("SELECT COUNT(*) FROM Volumes")
@@ -472,6 +463,29 @@ class CuratrDB(GenericDB):
 			if len(word) > 0:
 				self.add_lexicon_ignore( lexicon_id, word )
 		return True
+
+	def recommendation_count(self):
+		try:
+			self.cursor.execute("SELECT COUNT(*) FROM Recommendations")
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in recommendation_count(): %s" % str(e))
+			return 0
+
+	def get_volume_recommendations(self, volume_id, max_recommendations=-1):
+		""" Return back similar volumes to the specified volume"""
+		recs = []
+		try:
+			sql = "SELECT rank_num, rec_volume_id FROM Recommendations WHERE volume_id=%s ORDER BY rank_num"
+			if max_recommendations > 0:
+				sql += " LIMIT %d" % max_recommendations
+			self.cursor.execute(sql, volume_id)
+			for row in self.cursor.fetchall():
+				recs.append(row[1])
+		except Exception as e:
+			log.error("SQL error in get_volume_recommendations(): %s" % str(e))
+		return recs
 
 	def add_lexicon_word(self, lexicon_id, word):
 		""" Add a word to an existing word lexicon """
