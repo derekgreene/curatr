@@ -92,8 +92,8 @@ class CoreCuratr(CoreBase):
 		solr_port = self.config["solr"].getint("port", 8983)
 		solr_url = 'http://%s:%d/solr' % (solr_hostname, solr_port)
 		# core names
-		self.solr_core_segments = self.config["solr"].get("segments", "bl_segments")
-		self.solr_core_volumes = self.config["solr"].get("volumes", "bl_volumes")
+		self.solr_core_segments = self.config["solr"].get("core_segments", "blsegments")
+		self.solr_core_volumes = self.config["solr"].get("core_volumes", "blvolumes")
 		# create connections to the Solr server
 		try:
 			log.info("Connecting to %s for volumes ..." % solr_url)			
@@ -106,6 +106,12 @@ class CoreCuratr(CoreBase):
 			log.error("Failed to initalize Solr: %s" % str(e))
 			return False
 		return True
+
+	def get_solr(self, kind = "volumes"):
+		""" Access the specified Solr core index """
+		if kind.lower().startswith("segment"):
+			return self._solr_segments
+		return self._solr_volumes
 
 	def volume_full_paths(self):
 		""" Return back a dictionary of volume ID to full path to the corresponding plain-text file """

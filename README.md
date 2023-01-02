@@ -11,8 +11,8 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - PyMySQL: https://pypi.org/project/PyMySQL
 - scikit-learn: https://scikit-learn.org/stable
 - SolrClient: https://github.com/moonlitesolutions/SolrClient
-- ftfy: https://pypi.org/project/ftfy
 - Gensim: https://radimrehurek.com/gensim
+- ftfy: https://pypi.org/project/ftfy
 
 Additional dependencies:
 - MySQL: https://www.mysql.com (tested with 5.7.40)
