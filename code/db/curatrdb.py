@@ -139,7 +139,7 @@ class CuratrDB(GenericDB):
 			return 0
 
 	def get_shelfmarks(self, book_id):
-		""" Return back list of shelmarks associated with the specified book. """
+		""" Return back list of shelfmarks associated with the specified book. """
 		shelfmarks = []
 		try:
 			sql = "SELECT shelfmark FROM BookShelfmarks WHERE book_id = %s"
@@ -228,15 +228,6 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in get_book_classifications(): %s" % str(e))
 			return None
-
-	def link_count(self):
-		try:
-			self.cursor.execute("SELECT COUNT(*) FROM BookLinks")
-			result = self.cursor.fetchone()
-			return result[0]
-		except Exception as e:
-			log.error("SQL error in link_count(): %s" % str(e))
-			return 0
 
 	def volume_count(self):
 		try:
@@ -383,6 +374,30 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in get_author_name_map(): %s" % str(e))
 		return name_map
+
+	def link_count(self):
+		""" Return total number of links stored in the database """
+		try:
+			self.cursor.execute("SELECT COUNT(*) FROM BookLinks")
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in link_count(): %s" % str(e))
+			return 0
+
+	def get_book_link_map(self):
+		""" Return back all links associated with all books. """
+		link_map = {}
+		try:
+			sql = "SELECT book_id,kind,url FROM BookLinks"
+			self.cursor.execute(sql)
+			for row in self.cursor.fetchall():
+				if not row[0] in link_map:
+					link_map[row[0]] = {}
+				link_map[row[0]][row[1]] = row[2]
+		except Exception as e:
+			log.error("SQL error in get_book_link_map(): %s" % str(e))
+		return link_map
 
 	def add_ngram_count(self, ngram, year, count):
 		""" Add the count for the specific ngram for a given year """
