@@ -187,7 +187,8 @@ class CuratrDB(GenericDB):
 		return locations
 
 	def get_book_published_locations_map(self):
-		""" Return back all published locations associatd with all books. """
+		""" Return back all published locations associatd with all books. These are
+		returned as tuples of the format (kind, location) """
 		location_map = {}
 		try:
 			sql = "SELECT book_id, kind, location FROM BookLocations"
@@ -374,6 +375,18 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in get_author_name_map(): %s" % str(e))
 		return name_map
+
+	def author_gender_map(self):
+		""" Return a dictionary mapping each author ID to their corresponding gender """
+		gender_map = {}
+		try:
+			sql = "SELECT gender, id FROM Authors"
+			self.cursor.execute(sql)
+			for row in self.cursor.fetchall():
+				gender_map[row[1]] = row[0]
+		except Exception as e:
+			log.error("SQL error in get_author_gender_map(): %s" % str(e))
+		return gender_map
 
 	def link_count(self):
 		""" Return total number of links stored in the database """
