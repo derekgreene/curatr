@@ -924,7 +924,7 @@
     <!-- Start Custom Fields for Curatr -->
     <field name="authors" type="string" multiValued="true" stored="true"/>
     <field name="authors_full" type="string" stored="true"/>
-    <field name="authors_genders" type="string" multiValued="false" stored="true"/>
+    <field name="authors_genders" type="string" multiValued="true" stored="true"/>
     <field name="authors_text" type="text_general" multiValued="true" indexed="true" stored="false"/>
     <field name="book_id" type="string" stored="true"/>
     <field name="category" type="string" default="unknown" stored="true"/>
@@ -932,9 +932,7 @@
     <field name="content" type="text_general" multiValued="false" indexed="false" stored="true"/>
     <field name="edition" type="string" stored="true"/>
     <field name="location_countries"  type="string" multiValued="true" stored="true"/>
-    <field name="location_countries_text" type="text_general" multiValued="false" indexed="true" stored="false"/>
     <field name="location_places"  type="string" multiValued="true" stored="true"/>
-    <field name="location_places_text" type="text_general" multiValued="false" indexed="true" stored="false"/>
     <field name="max_segment" type="pint" stored="true"/>
     <field name="max_volume" type="pint" stored="true"/>
     <field name="mudies_description" type="string" stored="true"/>   
@@ -961,8 +959,6 @@
     <!-- Start Copy Fields for Curatr -->
     <copyField source="authors" dest="authors_text"/>
     <copyField source="content" dest="text"/>
-    <copyField source="location_places" dest="location_places_text"/>
-    <copyField source="location_countries" dest="location_countries_text"/>
     <copyField source="title" dest="title_text"/>
     <copyField source="*" dest="_text_"/>
     <!-- End Copy Fields for Curatr -->
