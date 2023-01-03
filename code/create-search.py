@@ -33,13 +33,13 @@ def create_segment_documents(book, volume, content, segment_size):
 		doc = {"id" : "%s_%06d" % (volume["id"], (i+1)),
 			"authors" : book["authors"],
 			"authors" : book["authors_full"],
-			"authors_genders": "", # TODO
+			"authors_genders": book["author_genders"],
 			"book_id" : book["id"], 
 			"category" : book["category"],
 			"classification" : book["classification"],
 			"edition" : book["edition"],
-			"location_countries" : [], # TODO
-			"location_places" : [], # TODO
+			"location_countries" : book["location_countries"], 
+			"location_places" : book["location_places"],
 			"max_segment" : len(segments),
 			"max_volume" : book["volumes"],
 			"mudies_description": 0, # TODO
@@ -67,13 +67,13 @@ def create_volume_document(book, volume, content):
 	doc = {"id" : volume["id"],
 		"authors" : book["authors"],
 		"authors" : book["authors_full"],
-		"authors_genders": "", # TODO
+		"authors_genders": book["author_genders"],
 		"book_id" : book["id"], 
 		"category" : book["category"],
 		"classification" : book["classification"],
 		"edition" : book["edition"],
-		"location_countries" : [], # TODO
-		"location_places" : [], # TODO
+		"location_countries" : book["location_countries"], 
+		"location_places" : book["location_places"],
 		"max_segment" : 1,
 		"max_volume" : book["volumes"],
 		"mudies_description": 0, # TODO
@@ -101,9 +101,11 @@ def build_index(core, do_segment):
 	log.info("Retrieving book metadata from database ...")
 	books = db.get_books()
 	author_name_map = db.get_author_name_map()
+	author_gender_map = db.author_gender_map()
 	classification_map = db.get_book_classifications_map()
 	shelfmark_map = db.get_book_shelfmarks_map()
 	link_map = db.get_book_link_map()
+	locations_map = db.get_book_published_locations_map()
 
 	# create a connection to the solr server
 	if not core.init_solr():
@@ -130,11 +132,13 @@ def build_index(core, do_segment):
 		num_books += 1
 		log.info("Book %d/%d: (%s) %s ..." % (num_books, len(books), book["id"], book["title"][:50]))
 		# add extra book metadata
-		book["authors"] = []
+		book["authors"], book["author_genders"] = [], []
 		for author_id in db.get_book_author_ids(book["id"]):
 			book["authors"].append(author_name_map[author_id])
+			book["author_genders"].append(author_gender_map[author_id])
 		book["shelfmarks"] = shelfmark_map.get(book["id"], [])
 		book["category"], book["classification"], book["subclassification"] = classification_map.get(book["id"], (None, None, None))
+		# add extra link info
 		link_kinds = ["ark", "pdf", "flickr", "mudies"]
 		for kind in link_kinds:
 			book["url_%s" % kind] = None
@@ -142,6 +146,15 @@ def build_index(core, do_segment):
 			for kind in link_kinds:
 				if kind in link_map[book["id"]]:
 					book["url_%s" % kind] = link_map[book["id"]][kind]
+		# add extra published location info
+		book["location_countries"] = []
+		book["location_places"] = []
+		if book["id"] in locations_map:
+			for kind, loc in locations_map[book["id"]]:
+				if kind == "place":
+					book["location_places"].append(loc)	
+				elif kind == "country":
+					book["location_countries"].append(loc)	
 		# process volumes for this book
 		docs = []
 		num_book_volumes = book["volumes"]
@@ -169,9 +182,9 @@ def build_index(core, do_segment):
 		solr.commit()
 		log.info("Indexed %d document(s)" % len(docs))
 		num_indexed += len(docs)
-		# TODO: remove
-		if num_indexed >= 100:
-			break
+		# # TODO: remove
+		# if num_indexed >= 100:
+		# 	break
 
 	# finished
 	if do_segment:
