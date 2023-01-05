@@ -115,7 +115,7 @@ def build_index(core, do_segment):
 	if do_segment:
 		solr = core.get_solr("segments")
 		core_name = core.solr_core_segments
-		segment_size = core.config["solr"].getint( "segment_size", 2000)
+		segment_size = core.config["solr"].getint("segment_size", 2000)
 		log.info("Indexing full-texts based on segments of at most %d characters (core=%s)" % (segment_size, core_name))
 	else:
 		solr = core.get_solr("volumes")
@@ -130,6 +130,8 @@ def build_index(core, do_segment):
 	num_books, num_indexed = 0, 0
 	for book in books:
 		num_books += 1
+		if book["title"] is None:
+			book["title"] = "Untitled"
 		log.info("Book %d/%d: (%s) %s ..." % (num_books, len(books), book["id"], book["title"][:50]))
 		# add extra book metadata
 		book["authors"], book["author_genders"] = [], []
@@ -169,7 +171,7 @@ def build_index(core, do_segment):
 				log.debug("Full text is %d characters" % len(content) )
 				# do we need to segment the text into smaller parts?
 				if do_segment:
-					docs.extend(create_segment_documents(book, vol, content, core.segment_size))
+					docs.extend(create_segment_documents(book, vol, content, segment_size))
 				# otherwise index the full text as a single document
 				else:
 					docs.append(create_volume_document(book, vol, content))
