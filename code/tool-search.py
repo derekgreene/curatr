@@ -14,8 +14,7 @@ from core import CoreCuratr
 # --------------------------------------------------------------
 
 def main():
-		log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO, datefmt='%Y-%m-%d %H:%M')
-
+	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO, datefmt='%Y-%m-%d %H:%M')
 	parser = OptionParser(usage="usage: %prog [options] dir_core word1 word2...")
 	parser.add_option("-s","--segment", action="store_true", dest="segment", help="use segments instead of full volumes")
 	parser.add_option("-f","--field", action="store", type="string", dest="field", help="field to search (default is all)", default="all")
