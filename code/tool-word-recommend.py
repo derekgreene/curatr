@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 """
 Script to test Curatr word recommendations.
+
+Sample usage:
+``` python code/tool-word-recommend.py core ireland -n 10 ``` 
 """
 import sys
 from pathlib import Path
@@ -11,7 +14,7 @@ from core import CoreCuratr
 # --------------------------------------------------------------
 
 def main():
-	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO)
+	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO, datefmt='%Y-%m-%d %H:%M')
 	parser = OptionParser(usage="usage: %prog [options] dir_core word1 word2...")
 	parser.add_option("-n", action="store", type="int", dest="num_words", help="number of neighbors per word", default=5)
 	(options, args) = parser.parse_args()

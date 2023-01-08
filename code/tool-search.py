@@ -3,7 +3,7 @@
 Script to query a corpus of texts, which has previously been indexed by Solr.
 
 Sample usage:
-python code/tool-search.py core ireland
+``` python code/tool-search.py core ireland ```
 """
 import sys
 from pathlib import Path
@@ -14,7 +14,8 @@ from core import CoreCuratr
 # --------------------------------------------------------------
 
 def main():
-	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO)
+		log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO, datefmt='%Y-%m-%d %H:%M')
+
 	parser = OptionParser(usage="usage: %prog [options] dir_core word1 word2...")
 	parser.add_option("-s","--segment", action="store_true", dest="segment", help="use segments instead of full volumes")
 	parser.add_option("-f","--field", action="store", type="string", dest="field", help="field to search (default is all)", default="all")
