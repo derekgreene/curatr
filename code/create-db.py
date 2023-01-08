@@ -329,7 +329,7 @@ def add_caches(core):
 	log.info("Populating CachedPlaceCounts and CachedCountryCounts ...")
 	num = 0
 	country_counts, place_counts = Counter(), Counter()
-	locations_map = db.get_book_published_locations_map()
+	locations_map = db.get_published_locations_map()
 	for book_id in locations_map:
 		num += 1
 		if num % 5000 == 0:

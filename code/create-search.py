@@ -105,7 +105,7 @@ def build_index(core, do_segment):
 	classification_map = db.get_book_classifications_map()
 	shelfmark_map = db.get_book_shelfmarks_map()
 	link_map = db.get_book_link_map()
-	locations_map = db.get_book_published_locations_map()
+	locations_map = db.get_published_locations_map()
 
 	# create a connection to the solr server
 	if not core.init_solr():
