@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <title>Curatr - {% block title %}{% endblock %}</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <!-- Optional meta tags -->
+    <meta property="title" content="Curatr: Concept Search, Curation, and Export of Historical Texts"/>
+    <meta name="description" content="Curatr: Concept Search, Curation, and Export of Historical Texts - A collaboration between University College Dublin and the British Library">
+    <meta property="og:title" content="Curatr: Concept Search, Curation, and Export of Historical Texts"/>
+    <meta property="og:description" content="Curatr: Concept Search, Curation, and Export of Historical Texts - A collaboration between University College Dublin and the British Library"/>
+    <meta name="author" content="Derek Greene">
+    <meta name="robots" content="noindex">
+    <!-- Core JS Files   -->
+    <script src="{{staticprefix}}/assets/js/core/jquery.min.js" type="text/javascript"></script>
+    <script src="{{staticprefix}}/assets/js/core/popper.min.js" type="text/javascript"></script>
+    <script src="{{staticprefix}}/assets/js/core/bootstrap-material-design.min.js" type="text/javascript"></script>
+    <script src="{{staticprefix}}/assets/js/plugins/moment.min.js" type="text/javascript"></script>  
+    <!--  Fonts and icons -->
+    <link rel="shortcut icon" href="{{staticprefix}}/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <!-- <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="{{staticprefix}}/assets/css/material-kit.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="{{staticprefix}}/css/default.css" rel="stylesheet">   
+    <style>
+    .page-header 
+    {
+      /** Background image by Steven Cadman: https://www.flickr.com/photos/stevecadman/486263551 */
+      background-image: url('{{staticprefix}}/img/background.jpg');
+    }
+    </style>
+    {% endblock %}
+    {% block headcustom %}{% endblock %}    
+</head>
+
+<body>
+  {% block header %}
+  <!-- Begin Navbar -->
+  <nav class="navbar navbar-default navbar-expand-lg justify-content-center">
+    <div class="">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" id="nav-link-home" href="{{ url_for('handle_index') }}">Home</a></li>
+        {% if current_user.is_anonymous and require_login %}       
+          <li class="nav-item"><a class="nav-link" id="nav-link-about" href="{{ url_for('handle_about') }}">About</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" id="nav-link-search" href="{{ url_for('handle_search') }}">Search</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-classification" href="{{ url_for('handle_classification') }}">Index</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-catalogue" href="{{ url_for('handle_catalogue') }}">Catalogue</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-authors" href="{{ url_for('handle_authors') }}">Authors</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-ngrams" href="{{ url_for('handle_ngrams') }}">Ngrams</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-networks" href="{{ url_for('handle_networks') }}">Networks</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-lexicon" href="{{ url_for('handle_lexicon') }}">Lexicons</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-corpora" href="{{ url_for('handle_corpora') }}">Corpora</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-bookmarks" href="{{ url_for('handle_bookmarks') }}">Bookmarks</a></li>
+          <li class="nav-item"><a class="nav-link" id="nav-link-about" href="{{ url_for('handle_about') }}">About</a></li>
+          {% if require_login %} 
+            <li class="nav-item"><a class="nav-link" id="nav-link-logout" href="{{ url_for('handle_logout') }}">Logout</a></li>
+          {% endif %} 
+        {% endif %} 
+      </ul>
+    </div>
+  </nav>
+  <!-- End Navbar -->
+
+  <!-- Start Title -->
+  <div class="page-header header-filter" data-parallax="true">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 ml-auto mr-auto">
+          <div class="brand text-center">
+            <!-- Curatr Logo --> 
+            <img src="{{staticprefix}}/img/curatr.png" border="0" class="brandname">
+            <h3 class="text-center">Search, Curation, and Export of Historical Texts</h3>
+          </div>
+          {% block bigsearch %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Title -->
+  {% endblock %}
+
+    <!-- Start Cntent -->
+  <div class="main main-raised">
+  {% block content %}{% endblock %}
+  </div>
+
+  {% block footer %}
+  <footer class="footer footer-default">
+    <div class="container">
+      <div class="float-right footer-text">
+        Curatr by <a href="https://cca.ucd.ie/" target="_blank">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 License</a>.
+      </div>
+    </div>
+  </footer>    
+  {% endblock %}
+
+</body>
+
+</html>
+
+

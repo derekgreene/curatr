@@ -1,0 +1,34 @@
+{% extends "layout.html" %} 
+{% block title %}About{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-about { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+  <div class="section text-center">
+  	<h2>About Curatr</h2>
+    <p class="text-justify"><i>Curatr</i> is an online platform which provides access to the <a href="https://www.bl.uk/collection-guides/digitised-printed-books" target="_blank">British Library Digital Collection</a>, developed by the ERC-funded <a href="https://projectvicteur.com/" target="_blank">VICTEUR project</a> at the <a href='http://www.ucd.ie/englishdramafilm/' target='_blank'>UCD English, Drama and Film</a>, in collaboration with researchers at the <a href='http://www.insight-centre.org/' target='_blank'>SFI Insight Centre for Data Analytics</a>, as part of its Cultural Analytics research initiative. The platform hosts digitised versions of all English-language books from the British Library collection, corresponding to over thirty-five thousand unique titles, both fiction and non-fiction, from 1700 to 1899. When we take into account multi-volume works, this consists of over forty-six thousand unique volumes of text. The platform also incorporates the first digitised version of the topical classification index of books used by the British Library from 1823-1985.</p>
+
+    <p class="text-justify">The system includes a searchable index on the equivalent of over 12 million individual pages of text, which can be searched and sorted by author, title, year, and the actual full-text of the volumes themselves. This allows researchers to identify content relating to specific themes within little known or very long, unwieldy texts. This is further supported by additional functionality based on modern natural language processing techniques. This includes content-based recommendation methods and the visualisation of the relationships between concepts in the collection through the use of semantic networks.</p>
+
+    <p class="text-justify">Curatr also supports the creation and export of smaller sub-corpora, defined thematically, chronologically, and by classification. This addresses the common requirement for humanities scholars to engage in online document curation, without the need for extensive technical training. Since creating an appropriate lexicon of words for curation can often be a tedious and time-consuming process, we expedite this by using a custom word embedding model to identify other potentially relevant words which are semantically similar to the original "seed" words provided by the user. The resulting lexicon can be used to filter the entire collection to produce a much smaller set of texts for closer inspection.</p>
+
+    <p class="text-justify">There are inevitable variations in the legibility of earlier texts and those in non-standard formats. Therefore, a key use of Curatr is to assist researchers to identify original texts relevant to their work for consultation in situ in the library. The next phase of the project will seek to integrate Curatr with other relevant online cultural resources, such as records originating from popular lending libraries in the nineteenth-century.</p>
+
+    <hr>
+    <p class="text-justify">
+        This work is funded by the <a href="https://erc.europa.eu/">European Research Council (ERC)</a>, and is being undertaken by members of the <a href='http://www.ucd.ie/englishdramafilm/' target='_blank'>UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href='http://www.insight-centre.org/' target='_blank'>SFI Insight Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank">UCD School of Computer Science</a>. For more details, please contact us via <a href="mailto:ucdcuratr@gmail.com">e-mail</a> or follow us on <a href="https://twitter.com/Victeurproject" target="_blank">Twitter</a>.
+        Curatr by <a href="https://cca.ucd.ie/" target="_blank">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 Licence</a>. Background image created by <a href="https://www.flickr.com/photos/stevecadman/486263551" target="_blank">Steven Cadman</a>.
+    </p>
+    <p style="align: center; margin-top: 1.8em;">            
+        <a target="_blank" href="https://european-union.europa.eu"><img src="{{staticprefix}}/img/logo-eu.png" class="logo" style="width: 120px; margin-right: 50px;" alt="EU Flag"/></a>
+        <a target="_blank" href="http://erc.europa.eu"><img src="{{staticprefix}}/img/logo-erc.png" class="logo" style="width: 132px; margin-right: 35px;" alt="ERC Logo"/></a>
+        <a target="_blank" href="http://www.sfi.ie/"><img src="{{staticprefix}}/img/logo-sfi.png" class="logo" style="width: 136px; margin-right: 10px;" alt="SFI Logo"/></a>
+        <a target="_blank" href="http://www.ucd.ie/"><img src="{{staticprefix}}/img/logo-ucd.png" class="logo" style="width: 130px;" alt="UCD Logo"/></a>
+    </p>
+ </div>
+
+</div>
+
+{% endblock %} 

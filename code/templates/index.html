@@ -1,0 +1,17 @@
+{% extends "layout.html" %} 
+{% block title %}Home{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-home { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+    <div class="container">
+      <div class="section text-center">
+        {% if current_user.is_anonymous and require_login %}       
+            {% include 'block-login.html' %}
+        {% else %}
+            {% include 'block-welcome.html' %}
+        {% endif %} 
+      </div>
+	</div>
+{% endblock %} 
