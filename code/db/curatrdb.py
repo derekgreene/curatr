@@ -164,16 +164,20 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_book_shelfmarks_map(): %s" % str(e))
 		return shelfmark_map
 
-	def published_location_count(self):
+	def published_location_count(self, kind=None):
 		try:
-			self.cursor.execute("SELECT COUNT(*) FROM BookLocations")
+			if kind is None:
+				self.cursor.execute("SELECT COUNT(*) FROM BookLocations")
+			else:
+				sql = "SELECT COUNT(*) FROM BookLocations WHERE kind = %s"
+				self.cursor.execute(sql, kind)
 			result = self.cursor.fetchone()
 			return result[0]
 		except Exception as e:
 			log.error("SQL error in location_count(): %s" % str(e))
 			return 0
 
-	def get_book_published_locations(self, book_id):
+	def get_published_locations(self, book_id):
 		""" Get all published locations associated with the specified book. 
 		The result is a list of 0 or more tuples of the format (kind, location_name) """
 		locations = []
@@ -183,10 +187,10 @@ class CuratrDB(GenericDB):
 			for row in self.cursor.fetchall():
 				locations.append((row[0], row[1]))
 		except Exception as e:
-			log.error("SQL error in get_book_published_locations(): %s" % str(e))
+			log.error("SQL error in get_published_locations(): %s" % str(e))
 		return locations
 
-	def get_book_published_locations_map(self):
+	def get_published_locations_map(self):
 		""" Return back all published locations associatd with all books. These are
 		returned as tuples of the format (kind, location) """
 		location_map = {}
@@ -198,8 +202,48 @@ class CuratrDB(GenericDB):
 					location_map[row[0]] = []
 				location_map[row[0]].append((row[1], row[2]))
 		except Exception as e:
-			log.error("SQL error in get_book_published_locations_map(): %s" % str(e))
+			log.error("SQL error in get_published_locations_map(): %s" % str(e))
 		return location_map
+
+	def get_published_location_names(self, kind=None):
+		""" Return back all unique published location names """
+		locations = []
+		try:
+			if kind is None:
+				sql = "SELECT DISTINCT location FROM BookLocations ORDER BY location"
+				self.cursor.execute(sql)
+			else:
+				sql = "SELECT DISTINCT location FROM BookLocations WHERE kind = %s ORDER BY location"
+				self.cursor.execute(sql, kind)
+			for row in self.cursor.fetchall():
+				locations.append(row[0])
+		except Exception as e:
+			log.error( "SQL error in get_published_location_names(): %s" % str(e))
+		return locations		
+
+	def get_published_location_counts(self, kind=None, top = -1):
+		""" Return back counts for all book published locations """
+		location_counts = {}
+		try:
+			if kind is None:
+				if top == -1:
+					sql = "SELECT location, count(*) as c from BookLocations GROUP BY location ORDER BY c DESC"
+					self.cursor.execute(sql)
+				else:
+					sql = "SELECT location, count(*) as c from BookLocations GROUP BY location ORDER BY c DESC LIMIT %s"
+					self.cursor.execute(sql, top)
+			else:
+				if top == -1:
+					sql = "SELECT location, count(*) as c from BookLocations WHERE kind = %s GROUP BY location ORDER BY c DESC"
+					self.cursor.execute(sql, kind)
+				else:
+					sql = "SELECT location, count(*) as c from BookLocations WHERE kind = %s GROUP BY location ORDER BY c DESC LIMIT %s"
+					self.cursor.execute(sql, (kind, top))
+			for row in self.cursor.fetchall():
+				location_counts[row[0]] = row[1]
+		except Exception as e:
+			log.error( "SQL error in get_published_location_counts(): %s" % str(e))
+		return location_counts
 
 	def get_book_classifications_map(self):
 		classification_map = {}
@@ -230,7 +274,46 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_book_classifications(): %s" % str(e))
 			return None
 
+	def _classification_level_to_name(self, level):
+		level_map = {0:"overall", 1:"secondary", 2:"tertiary"}
+		if not level in level_map:
+			return None
+		return level_map[level]
+
+	def get_classification_names(self, level):
+		""" Return back all unique classification names at the specified level"""
+		class_names = []
+		try:
+			level_name = self._classification_level_to_name(level)
+			sql = "SELECT DISTINCT " + level_name + " FROM Classifications ORDER BY " + level_name
+			self.cursor.execute(sql)
+			for row in self.cursor.fetchall():
+				if not row[0] is None:
+					class_names.append(row[0])
+		except Exception as e:
+			log.error( "SQL error in get_classification_names(): %s" % str(e))
+		return class_names
+
+	def get_classification_counts(self, level, top=-1):
+		""" Return back the number of books in each category at the specified level """
+		class_counts = {}
+		try:
+			level_name = self._classification_level_to_name(level)
+			sql = "SELECT %s, count(book_id) AS c FROM Classifications GROUP BY %s" % (level_name,level_name)
+			if top == -1:
+				self.cursor.execute(sql)
+			else:
+				sql += " LIMIT %s"
+				self.cursor.execute(sql, top)
+			for row in self.cursor.fetchall():
+				if not row[0] is None:
+					class_counts[row[0]] = row[1]
+		except Exception as e:
+			log.error( "SQL error in get_top_classification_counts(): %s" % str(e))
+		return class_counts
+
 	def volume_count(self):
+		""" Return the total number of volumes in the database """
 		try:
 			self.cursor.execute("SELECT COUNT(*) FROM Volumes")
 			result = self.cursor.fetchone()

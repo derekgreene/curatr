@@ -113,6 +113,47 @@ class CoreCuratr(CoreBase):
 			return self._solr_segments
 		return self._solr_volumes
 
+	def cache_values( self ):
+		""" Caches relevant values from the Curatr MySQL database """
+		log.info("Caching database values ...")
+		db = self.get_db()
+
+		# basic statistics
+		self.cache["book_count"] = db.book_count()
+		self.cache["volume_count"] = db.volume_count()
+		self.cache["author_count"] = db.author_count()
+		year_range = db.get_book_year_range()
+		self.cache["year_min"] = year_range[0]
+		self.cache["year_max"] = year_range[1]
+		# book published place info
+		self.cache["place_names"] = db.get_published_location_names("place")
+		self.cache["place_counts"] = db.get_published_location_counts("place")
+		self.cache["top_place_counts"] = db.get_published_location_counts(top=150, kind="place")
+		self.cache["top_place_names"] = sorted([name for name in self.cache["top_place_counts"]])
+		# book published country info
+		self.cache["country_names"] = db.get_published_location_names("country")
+		self.cache["country_counts"] = db.get_published_location_counts("country")
+		self.cache["top_country_counts"] = db.get_published_location_counts(top=150, kind="country")
+		self.cache["top_country_names"] = sorted([name for name in self.cache["top_country_counts"]])
+		# author information
+		self.cache["author_catalogue"] = db.get_cached_author_details()
+		# classification information
+		self.cache["category_names"] = db.get_classification_names(level=0)
+		self.cache["class_names"] = db.get_classification_names(level=1)
+		self.cache["subclass_names"] = db.get_classification_names(level=2)
+		self.cache["category_counts"] = db.get_classification_counts(level=0, top=-1)
+		self.cache["class_counts"] = db.get_classification_counts(level=1, top=-1)
+		self.cache["top_subclass_counts"] = db.get_classification_counts(level=2, top=30)		
+		# TODO
+		try:
+			pass
+		except Exception as e:
+			log.error("Failed to cache values from database: %s" % str(e))
+			db.close()
+			return False
+		db.close()
+		return True
+
 	def volume_full_paths(self):
 		""" Return back a dictionary of volume ID to full path to the corresponding plain-text file """
 		db = self.get_db()

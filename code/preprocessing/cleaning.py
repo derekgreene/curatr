@@ -6,6 +6,8 @@ import logging as log
 import re
 import ftfy
 
+# --------------------------------------------------------------
+
 re_brackets = re.compile("(\[.*\])")
 
 title_remove_suffixes = ["selected and arranged by", "collected and arranged with notes by", "collected and arranged by",
@@ -218,3 +220,33 @@ def format_author_sortname(author):
 	if len(s) > 10 and s[-1] in "., -_?":
 		s = s[0:len(s)-1]
 	return s.strip()
+
+# --------------------------------------------------------------
+
+def tidy_snippet(snippet):
+	""" Tidy a text snippet for display in search results """
+	if snippet is None:
+		return ""
+	# trim the start of the snippet
+	c = snippet[0]
+	while not (c.isalnum() or c == "<"):
+		if len(snippet) < 2:
+			break
+		snippet = snippet[1:]
+		c = snippet[0]
+	# TODO: better fix for inaccurate tags.
+	snippet = snippet.replace("<i ", " ")
+	snippet = snippet.replace("<b ", " ")
+	if not snippet[-1] == ".":
+		snippet += "&hellip;"
+	return snippet
+
+def tidy_extract(extract):
+	""" Tidy a document extract for display in search results """
+	if extract is None:
+		return ""
+	extract_ignores = "^/\\$£~*@«»"
+	# remove unwanted characters
+	for c in extract_ignores:
+		extract = extract.replace(c,"")
+	return tidy_snippet( extract.strip() )
