@@ -69,4 +69,3 @@ def generate_password(length=8):
 	# randomise the order
 	random.shuffle(selected)
 	return ''.join(selected)
-
