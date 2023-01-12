@@ -223,6 +223,32 @@ def format_author_sortname(author):
 
 # --------------------------------------------------------------
 
+def tidy_title( title ):
+	""" Tidy a text title for display in search results """
+	if title is None:
+		return "Untitled"
+	title = title.replace("[", " ").replace("]", " ").replace(" ?", " ").replace("? ", " ")
+	title = re.sub( "\s+", " ", title ).strip()
+	if len(title) < 2:
+		return "Untitled"
+	return title	
+
+def tidy_authors(author_list):
+	""" Tidy an author list for display in search results """
+	if author_list is None or len(author_list) == 0 or ( len(author_list) == 1 and author_list[0].lower() == "unknown" ):
+		return "Author Unknown"
+	# change to firstname, last name
+	reversed_authors = []
+	for author in author_list:
+		# TODO: remove ftfy
+		author = ftfy.fix_text( author )
+		parts = author.split(",", 1)
+		if len(parts) == 1:
+			reversed_authors.append( parts[0] )
+		else:
+			reversed_authors.append( "%s %s" % ( parts[1].strip(), parts[0].strip() ) )
+	return ", ".join( reversed_authors )
+
 def tidy_snippet(snippet):
 	""" Tidy a text snippet for display in search results """
 	if snippet is None:
@@ -250,3 +276,14 @@ def tidy_extract(extract):
 	for c in extract_ignores:
 		extract = extract.replace(c,"")
 	return tidy_snippet( extract.strip() )
+
+def tidy_location(location):
+	""" Tidy a document extract for display in the Curatr interface """
+	if location is None:
+		return "Unknown"
+	if len(location) == 0 or location.lower() == "unknown":
+		return "Unknown"
+	location = location.replace("-"," ").replace("?"," ")
+	location = re.sub( "\s+", " ", location ).strip()
+	# NB: make title case
+	return location.title()
