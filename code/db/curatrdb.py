@@ -2,6 +2,7 @@ import time
 import logging as log
 from db.util import GenericDB
 from db.booksql import sql_statements
+from user import User, dict_to_user
 
 # --------------------------------------------------------------
 
@@ -890,3 +891,198 @@ class CuratrDB(GenericDB):
 	def add_cached_country_count(self, location, count):
 		sql = "INSERT INTO CachedCountryCounts (location, count) VALUES(%s,%s)"
 		self.cursor.execute(sql, (location, count))	
+
+	def add_user(self, email, hashed_passwd):
+		""" Add a new user to the database. """
+		try:
+			# get the next user id
+			user_id = self._get_next_id( "Users" )
+			# add the user
+			sql = "INSERT INTO Users (email, hash) VALUES(%s,%s)"
+			self.cursor.execute(sql, (email, hashed_passwd) )
+		except Exception as e:
+			log.error( "SQL error in add_user(): %s" % str(e) )
+			return -1
+		return user_id
+
+	def has_user_email(self, email):
+		""" Check if a user with the specified email address exists. """
+		try:
+			sql = "SELECT * FROM Users WHERE email=%s" 
+			self.cursor.execute(sql, email)
+			if self.cursor.fetchone():
+				return True
+			return False
+		except Exception as e:
+			log.error( "SQL error in has_user_email(): %s" % str(e) )
+			return False
+
+	def get_all_users(self):
+		""" Return list of dictionaries of all user details. """
+		try:
+			users = []
+			for d in self._bulk_sql_to_dict( "SELECT * FROM Users" ):
+				users.append(dict_to_user(d))
+			return users
+		except Exception as e:
+			log.error( "SQL error in get_users(): %s" % str(e) )
+			return []
+
+	def user_count(self):
+		""" Return the number of users registered on the system. """
+		try:
+			self.cursor.execute("SELECT COUNT(id) FROM Users")
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in user_count(): %s" % str(e))
+			return 0
+
+	def get_user_by_id(self, user_id):
+		""" Return details for the user with the specified ID. """
+		try:
+			return dict_to_user(self._sql_to_dict("SELECT * FROM Users WHERE id=%s", user_id))
+		except Exception as e:
+			log.error( "SQL error in get_user_by_id(): %s" % str(e) )
+			return None
+
+	def get_user_by_email(self, email):
+		""" Return details for the user with the specified email address. """
+		try:
+			return dict_to_user(self._sql_to_dict("SELECT * FROM Users WHERE email=%s", email))
+		except Exception as e:
+			log.error( "SQL error in get_user_by_email(): %s" % str(e) )
+			return None
+
+	def update_user_password(self, user_id, hashed_passwd):
+		""" Update password for the user with the specified ID. """
+		try:
+			sql = "UPDATE Users SET hash=%s WHERE id=%s"
+			self.cursor.execute(sql, (hashed_passwd, user_id))
+		except Exception as e:
+			log.error( "SQL error in update_user_password(): %s" % str(e) )
+			return False
+		return True
+
+	def record_login(self, user_id):
+		""" Update a user's last login to the current date/time and increment their login count """
+		# update the date
+		try:
+			sql = "UPDATE Users SET last_login=NOW() WHERE id=%s"
+			self.cursor.execute(sql, user_id)
+		except Exception as e:
+			log.error( "SQL error in update_user_last_login(): %s" % str(e) )
+			return False
+		# update the login count
+		try:
+			sql = "UPDATE Users SET num_logins=num_logins+1 WHERE id=%s"
+			self.cursor.execute(sql, user_id)
+		except Exception as e:
+			log.error( "SQL error in update_user_last_login(): %s" % str(e) )
+			return False
+		return True
+
+	def delete_user(self, user_id):
+		""" Delete the user with the specified ID. """
+		try:
+			sql = "DELETE FROM Users WHERE id = %s"
+			self.cursor.execute(sql, user_id)
+		except Exception as e:
+			log.error( "SQL error in delete_user_by_id(): %s" % str(e) )
+			return False
+		return True
+
+	def add_bookmark(self, user_id, volume_id, segment_id=None):
+		""" Add a new bookmark for the specified user and volume/segment """
+		try:
+			sql = "INSERT INTO Bookmarks (user_id, volume_id, segment_id) VALUES(%s,%s,%s)"
+			self.cursor.execute(sql, (user_id, volume_id, segment_id))		
+		except Exception as e:
+			log.error( "SQL error in add_bookmark(): %s" % str(e) )
+			return False
+		return True
+
+	def delete_bookmark(self, user_id, volume_id, segment_id=None):
+		""" Delete an existing bookmark for the specified user and volume/segment """
+		try:
+			if segment_id is None:
+				sql = "DELETE FROM Bookmarks WHERE user_id=%s AND volume_id=%s AND segment_id IS NULL"
+				self.cursor.execute(sql, (user_id, volume_id) )		
+			else:
+				sql = "DELETE FROM Bookmarks WHERE user_id=%s AND volume_id=%s AND segment_id=%s"
+				self.cursor.execute(sql, (user_id, volume_id, segment_id) )		
+		except Exception as e:
+			log.error( "SQL error in delete_bookmark(): %s" % str(e) )
+			return False
+		return True
+
+	def delete_bookmark_by_bookmark_id(self, bookmark_id, user_id):
+		""" Delete an existing bookmark based on its ID """
+		try:
+			sql = "DELETE FROM Bookmarks WHERE id=%s AND user_id=%s"
+			self.cursor.execute(sql, (bookmark_id, user_id) )		
+		except Exception as e:
+			log.error( "SQL error in delete_bookmark_by_bookmark_id(): %s" % str(e) )
+			return False
+		return True
+
+	def has_volume_bookmark(self, user_id, volume_id):
+		""" Check if a volume has been bookmarked by a given user. """
+		try:
+			sql = "SELECT * from Bookmarks WHERE user_id=%s AND volume_id=%s AND segment_id IS NULL" 
+			# note: segment ID is NULL for a volume
+			self.cursor.execute(sql, (user_id, volume_id))
+			if self.cursor.fetchone():
+				return True
+			return False
+		except Exception as e:
+			log.error("SQL error in has_volume_bookmark(): %s" % str(e))
+			return False
+
+	def has_segment_bookmark(self, user_id, volume_id, segment_id):
+		""" Check if a segment has been bookmarked by a given user. """
+		try:
+			sql = "SELECT * from Bookmarks WHERE user_id=%s AND volume_id=%s AND segment_id=%s" 
+			self.cursor.execute(sql, (user_id, volume_id, segment_id))
+			if self.cursor.fetchone():
+				return True
+			return False
+		except Exception as e:
+			log.error("SQL error in has_segment_bookmark(): %s" % str(e))
+			return False
+
+	def volume_bookmark_count(self, user_id):
+		try:
+			sql = "select COUNT(ID) FROM Bookmarks WHERE USER_ID=%s AND ISNULL(segment_id)"
+			self.cursor.execute(sql, user_id)
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in volume_bookmark_count(): %s" % str(e))
+			return 0
+		
+	def segment_bookmark_count(self, user_id):
+		try:
+			sql = "select COUNT(ID) FROM Bookmarks WHERE USER_ID=%s AND segment_id IS NOT NULL"
+			self.cursor.execute(sql, user_id)
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in volume_bookmark_count(): %s" % str(e))
+			return 0
+
+	def get_volume_bookmarks(self, user_id):
+		try:
+			sql = "SELECT * FROM Bookmarks WHERE user_id=%s AND ISNULL(segment_id) ORDER BY created_at DESC" 
+			return self._bulk_sql_to_dict(sql, user_id)
+		except Exception as e:
+			log.error("SQL error in get_volume_bookmarks(): %s" % str(e))
+			return []
+
+	def get_segment_bookmarks(self, user_id):
+		try:
+			sql = "SELECT * FROM Bookmarks WHERE user_id=%s AND segment_id IS NOT NULL ORDER BY created_at DESC" 
+			return self._bulk_sql_to_dict(sql, user_id)
+		except Exception as e:
+			log.error("SQL error in get_segment_bookmarks(): %s" % str(e))
+			return []			
