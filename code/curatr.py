@@ -9,7 +9,7 @@ Sample usage, specifying the core configuration directory:
 Then access the search interface at:
 http://127.0.0.1:5000
 """
-import sys
+import sys, io
 from pathlib import Path
 import logging as log
 from optparse import OptionParser
@@ -17,9 +17,19 @@ from datetime import datetime
 # Flask imports
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask import request, Response, render_template, Markup
-from flask import redirect, url_for
+from flask import redirect, url_for, abort, send_file
 # project imports
 from server import CuratrServer, CuratrContext
+from web.search import parse_search_request, populate_search_results
+from web.format import format_field_options, format_type_options
+from web.format import format_classification_options, format_subclassification_options, format_location_options
+from web.format import format_classification_links, format_subclassification_links
+from web.features import populate_author_page, populate_bookmark_page, populate_similar_page
+from web.ngrams import populate_ngrams_page, export_ngrams
+from web.networks import populate_networks_page, export_network
+from web.lexicon import populate_lexicon_create, populate_lexicon_delete, format_lexicon_list, populate_lexicon_edit
+from web.export import handle_export_download, handle_export_build, format_subcorpus_list
+from web.util import safe_int
 
 # --------------------------------------------------------------
 # Application Setup
@@ -111,13 +121,320 @@ def handle_index():
 	log.info("Index: current_user.is_anonymous: %s" % current_user.is_anonymous )
 	return render_template("index.html", **context )
 
-
 @app.route("/about")
 def handle_about():
 	""" Render the Curatr about page """
 	context = app.get_context(request)
 	return render_template("about.html", **context )
 
+# --------------------------------------------------------------
+# Endpoints: Search
+# --------------------------------------------------------------
+
+@app.route("/search")
+@login_required
+def handle_search():
+	# Get the basic search specification
+	spec = parse_search_request(request)
+	# is this just a request for an empty search pages?
+	query_string = spec["query"]
+	action = request.args.get("action", default = "").strip()
+	if len(query_string) == 0:
+		# any action?
+		if len(action) == 0:
+			context = handle_empty_search( spec )
+			return render_template("search.html", **context )
+		query_string = "*"
+	# Dealing with volumes or segments?
+	current_solr = app.core.get_solr( spec["type"] )
+	db = app.core.get_db()
+	# populate the values in template
+	context = app.get_navigation_context( request, spec )
+	context = populate_search_results( context, db, current_solr, spec )
+	# finished with the database
+	db.close()
+	return render_template("search-results.html", **context )
+
+def handle_empty_search(spec):
+	context = app.get_context(request)
+	context["num_volumes"] =  "{:,}".format( app.core.cache["volume_count"] )
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
+	# use default parameters
+	context["field_options"] = Markup(format_field_options())
+	context["type_options"] = Markup(format_type_options())
+	context["class_options"] = Markup(format_classification_options(context))
+	context["subclass_options"] = Markup(format_subclassification_options(context))
+	context["location_options"] = Markup(format_location_options( context))
+	# TODO: fix
+	#context["mudies_options"] = Markup(format_mudies_options())
+	return context
+
+# --------------------------------------------------------------
+# Endpoints: Authors
+# --------------------------------------------------------------
+
+@app.route("/authors")
+@login_required
+def handle_authors():
+	context = app.get_context(request)
+	context["author_count"] =  "{:,}".format( app.core.cache["author_count"] )
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
+	return render_template("author-list.html", **context )
+
+@app.route("/author")
+@login_required
+def handle_author():
+	""" End point for delivering recommended content """
+	sauthor_id = request.args.get("author_id", default = "").strip().lower()
+	if len(sauthor_id) == 0:
+		abort(404, description="No author ID specified")
+	author_id = safe_int(sauthor_id, 0)
+	if author_id < 1:
+		abort(404, description="Invalid author ID specified")
+	# get the relevant author info
+	db = app.core.get_db()
+	author = db.get_cached_author( author_id )
+	if author is None:
+		error_msg = "No such author ID: %s" % author_id
+		abort(404, description=error_msg)
+	# populate the parameters to fill the template
+	context = app.get_context(request)
+	context = populate_author_page( context, db, author )
+	# finished with the database
+	db.close()
+	return render_template("author.html", **context )
+	
+# --------------------------------------------------------------
+# Endpoints: Classification Index & Catalogue
+# --------------------------------------------------------------
+
+@app.route("/classification")
+@login_required
+def handle_classification():
+	context = app.get_context(request)
+	context["classification"] = Markup(format_classification_links(context))
+	context["subclassification"] = Markup(format_subclassification_links(context))
+	context["num_subclasses"] = len( app.core.cache["subclass_names"])
+	context["num_top_subsubclassifications"] = len( app.core.cache["top_subclass_counts"])
+	return render_template("classification.html", **context)
+
+@app.route("/catalogue")
+@login_required
+def handle_catalogue():
+	context = app.get_context(request)
+	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
+	return render_template("catalogue.html", **context)
+
+# --------------------------------------------------------------
+# Endpoints: Ngrams
+# --------------------------------------------------------------
+
+@app.route("/ngrams")
+@login_required
+def handle_ngrams():
+	""" Endpoint for the ngram viewer page. """
+	context = app.get_context(request)	
+	context = populate_ngrams_page(context, app)
+	# render the template
+	return render_template("ngrams.html", **context)
+
+@app.route("/exportngrams")
+@login_required
+def handle_ngram_export():
+	""" Handle export a CSV representation of ngram counts. """
+	context = app.get_context(request)	
+	file = export_ngrams(context, app)
+	if file is None:
+		abort(404, description="No inputs specified for ngram export")
+	return file	
+
+# --------------------------------------------------------------
+# Endpoints: Networks
+# --------------------------------------------------------------
+
+@app.route("/networks")
+@login_required
+def handle_networks():
+	""" Endpoint for the semantic network visualization page. """
+	context = app.get_context(request)	
+	context = populate_networks_page(context)
+	return render_template("networks.html", **context)
+
+@app.route("/exportnetworks")
+@login_required
+def handle_network_export():
+	""" Handle export a GEXF representation of a semantic network. """
+	context = app.get_context(request)	
+	file = export_network(context)
+	if file is None:
+		abort(404, description="No inputs specified for network export")
+	return file
+
+# --------------------------------------------------------------
+# Endpoints: Lexicons
+# --------------------------------------------------------------
+
+@app.route("/lexicon")
+@login_required
+def handle_lexicon():
+	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
+	context = app.get_context(request)
+	db = app.core.get_db()
+	# What type of action?
+	action = request.args.get("action", default = "").strip().lower()
+	# Create a new lexicon?
+	if action == "create":
+		context = populate_lexicon_create(context, db)
+	# Delete an existing lexicon?
+	elif action == "delete" and lexicon_id > 0:
+		context = populate_lexicon_delete(context, db, lexicon_id)
+	# Default action - display list of lexicons
+	context["lexlist"] = Markup(format_lexicon_list(context, db))
+	context["type_options"] = Markup(format_type_options())
+	context["class_options"] = Markup(format_classification_options(context))
+	# finished with database
+	db.close()
+	return render_template("lexicon.html", **context)
+
+@app.route("/lexiconedit")
+@login_required
+def handle_lexicon_edit():
+	""" Handle editing an individual word lexicon. """
+	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
+	# any ID specified?
+	if lexicon_id < 1:
+		abort(404, description="No valid lexicon ID specified")
+	context = app.get_context(request)
+	db = app.core.get_db()
+	# handle the edit / populate parameters
+	context = populate_lexicon_edit(context, db, lexicon_id)
+	# finished with database
+	db.close()	
+	return render_template("edit-lexicon.html", **context)
+
+@app.route("/exportlexicon")
+@login_required
+def handle_lexicon_export():
+	""" Handle export a plain text representation of an individual word lexicon. """
+	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
+	# any ID specified?
+	if lexicon_id < 1:
+		abort(404, description="No valid lexicon ID specified")
+	context = app.get_context(request)
+	# connect to the database and get the required lexcion
+	db = app.core.get_db()
+	lexicon = db.get_lexicon(lexicon_id)
+	# not a valid lexicon?
+	if lexicon is None:
+		abort(403, "Cannot find specified lexicon in the database (lexicon_id=%s)" % lexicon_id)
+	# not owned by the current user?
+	if lexicon["user_id"] != context.user_id:
+		abort(403, "You do not own this lexicon (lexicon_id=%s)" % lexicon_id)
+	# get the words for this lexicon
+	log.info("Running export for lexicon lexicon_id=%s" % lexicon_id) 
+	words = db.get_lexicon_words(lexicon_id)
+	if words is None or len(words) == 0:
+		s_words = ""
+	else:
+		s_words = "\n".join(sorted(words))
+	# finished with database
+	db.close()	
+	# suggested filename
+	filename = "%s.txt" % lexicon.get("name", "untitled").lower().replace(".", "").replace(" ", "_")
+	log.info("Exporting lexicon to plain/text to %s" % filename) 
+	# send the response
+	out = io.StringIO()
+	out.write(s_words)
+	out.write("\n")
+    # Creating the byteIO object from the StringIO Object
+	mem = io.BytesIO()
+	mem.write(out.getvalue().encode('utf-8'))
+	mem.seek(0)
+	out.close()	
+	return send_file(mem, mimetype='text/plain', as_attachment=True, attachment_filename=filename)
+
+# --------------------------------------------------------------
+# Endpoints: Sub-corpora
+# --------------------------------------------------------------
+
+@app.route("/corpora")
+@login_required
+def handle_corpora():
+	db = app.core.get_db()
+	spec = parse_search_request(request)
+	# has the user submitted an action?
+	action = request.args.get("action", default = "").strip().lower()
+	if action == "download":
+		subcorpus_id = request.args.get("subcorpus_id", default = "").strip().lower()
+		if len(subcorpus_id) == 0:
+			log.warning("Warning: No subcorpus ID specified for download")
+		else:
+			resp = handle_export_download(app.core, subcorpus_id)
+			if resp is None:
+				abort(404, description="Unable to download corpus ZIP file")
+			return resp
+	# populate the template context
+	context = app.get_context(request)
+	if action == "export":
+		context = handle_export_build(context, app.core, spec)
+	context["subcorpuslist"] = Markup(format_subcorpus_list(context, db))
+	# finished with the db
+	db.close()
+	return render_template("corpora.html", **context)
+
+# --------------------------------------------------------------
+# Endpoints: Bookmarks
+# --------------------------------------------------------------
+
+@app.route("/bookmarks")
+@login_required
+def handle_bookmarks():
+	""" End point for showing a user's bookmarks """
+	db = app.core.get_db()
+	# has the user submitted an action?
+	action = request.args.get("action", default = "").strip().lower()
+	if action == "delete":
+		bookmark_id = request.args.get("bookmark_id", default = "").strip().lower()
+		if len(bookmark_id) == 0:
+			log.warning("Warning: No bookmark ID specified for deletion")
+		else:
+			if not db.delete_bookmark_by_bookmark_id(bookmark_id, current_user.id):
+				log.error("Error: Failed to delete bookmark '%s' for user '%s'" % (bookmark_id, current_user.id))
+	# populate the template context
+	context = app.get_context(request)
+	context = populate_bookmark_page(context, db, current_user.id)
+	# finished with the db
+	db.close()
+	return render_template("bookmarks.html", **context)
+
+# --------------------------------------------------------------
+# Endpoints: Volume Recommendations
+# --------------------------------------------------------------
+
+@app.route("/similar")
+@login_required
+def handle_similar():
+	""" End point for delivering recommended content """
+	volume_id = request.args.get("volume_id", default = "").strip().lower()
+	if len(volume_id) == 0:
+		abort(404, description="No volume ID specified")
+	db = app.core.get_db()
+	# get the relevant book info
+	volume = db.get_volume_metadata(volume_id)
+	if volume is None:
+		db.close()
+		error_msg = "No such volume ID: %s" % volume_id
+		abort(404, description=error_msg)
+	# populate the template parameters
+	context = app.get_context(request)
+	context = populate_similar_page(context, db, volume)
+	# finished with DB
+	db.close()
+	return render_template("similar.html", **context)		
 
 # --------------------------------------------------------------
 # Error Handling
