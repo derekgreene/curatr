@@ -22,6 +22,8 @@ from flask import redirect, url_for
 from server import CuratrServer, CuratrContext
 
 # --------------------------------------------------------------
+# Application Setup
+# --------------------------------------------------------------
 
 print("Creating Curatr server...")
 app = CuratrServer(__name__)
@@ -31,6 +33,10 @@ login_manager = LoginManager()
 # login_manager.session_protection = None
 print("Initializing login manger...")
 login_manager.init_app(app)
+
+# --------------------------------------------------------------
+# Login Handling
+# --------------------------------------------------------------
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -47,40 +53,16 @@ def load_user(user_id):
 	db.close()
 	return user
 
-# --------------------------------------------------------------
-# Endpoints: Home & About
-
-@app.route("/")
-@app.route('/index')
-def handle_index():
-	""" Render the main Curatr home page """
-	context = app.get_context(request)
-	context["num_books"] =  "{:,}".format( app.core.cache["book_count"] )
-	context["year_min"] = app.core.cache["year_min"]
-	context["year_max"] = app.core.cache["year_max"]
-	log.info("Index: current_user.is_anonymous: %s" % current_user.is_anonymous )
-	return render_template("index.html", **context )
-
-
-@app.route("/about")
-def handle_about():
-	""" Render the Curatr about page """
-	context = app.get_context(request)
-	return render_template("about.html", **context )
-	
-
-# --------------------------------------------------------------
-# Endpoints: Login and Login
-
 @app.route('/logout')
 @login_required
 def handle_logout():
+	""" End point for handling users logging out """
 	logout_user()
 	return redirect(url_for('handle_index'))
 
 @app.route("/login", methods=['POST','GET'])
 def handle_login():
-	""" End point for handling user logins. """
+	""" End point for handling user logins """
 	if request.method == 'GET':
 		return redirect(url_for('handle_index'))
 	# get form values
@@ -114,6 +96,60 @@ def handle_login():
 	return redirect(url_for('handle_index'))
 	#return redirect(url_for('handle_index')+"?action=invalid")
 
+# --------------------------------------------------------------
+# Endpoints: Home & About
+# --------------------------------------------------------------
+
+@app.route("/")
+@app.route('/index')
+def handle_index():
+	""" Render the main Curatr home page """
+	context = app.get_context(request)
+	context["num_books"] =  "{:,}".format( app.core.cache["book_count"] )
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
+	log.info("Index: current_user.is_anonymous: %s" % current_user.is_anonymous )
+	return render_template("index.html", **context )
+
+
+@app.route("/about")
+def handle_about():
+	""" Render the Curatr about page """
+	context = app.get_context(request)
+	return render_template("about.html", **context )
+
+
+# --------------------------------------------------------------
+# Error Handling
+# --------------------------------------------------------------
+
+@app.errorhandler(404)
+def page_not_found(e):
+	""" Handle HTTP 404 errors """
+	context = app.get_context()
+	# note that we set the status explicitly
+	return render_template('error-404.html', **context), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+	""" Handle HTTP 500 errors """
+	context = app.get_context()
+	context["message"] = e.description
+	if context["message"] is None:
+		context["message"] = "Unknown error on server"
+	# note that we set the status explicitly
+	return render_template('error-500.html', **context), 500    
+
+@app.errorhandler(403)
+def page_forbidden(e):
+	""" Handle HTTP 403 errors """
+	context = app.get_context()
+	context["message"] = e.description
+	if context["message"] is None:
+		context["message"] = "Resource does not belong to current user"
+	# note that we set the status explicitly
+	return render_template('error-403.html', **context), 403   
+	
 # --------------------------------------------------------------
 
 def configure_server(dir_core, dir_log = None):
