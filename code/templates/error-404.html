@@ -1,0 +1,21 @@
+{% extends "layout.html" %} 
+{% block title %}Page Not Found{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-about { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+  <div class="section text-center">
+  	<h2>Page Not Found</h2>
+	<p>Sorry, we cannot find the page you were looking for. </p>
+    <p>Please&nbsp;<a href="{{ url_for('handle_index') }}">Click here</a> to return to the <i>Curatr</i>&nbsp;home page.</p>
+    <br>
+    <p>
+        For questions about <i>Curatr</i>, please contact us via <a href="mailto:ucdcuratr@gmail.com">e-mail</a> or <a href="https://twitter.com/Victeurproject" target="_blank">Twitter</a>
+    </p>    
+ </div>
+
+</div>
+
+{% endblock %} 
