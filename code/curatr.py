@@ -9,7 +9,7 @@ Sample usage, specifying the core configuration directory:
 Then access the search interface at:
 http://127.0.0.1:5000
 """
-import sys, io
+import sys, io, json
 from pathlib import Path
 import logging as log
 from optparse import OptionParser
@@ -29,6 +29,7 @@ from web.ngrams import populate_ngrams_page, export_ngrams
 from web.networks import populate_networks_page, export_network
 from web.lexicon import populate_lexicon_create, populate_lexicon_delete, format_lexicon_list, populate_lexicon_edit
 from web.export import handle_export_download, handle_export_build, format_subcorpus_list
+from web.api import author_list, ngram_counts
 from web.util import safe_int
 
 # --------------------------------------------------------------
@@ -217,7 +218,7 @@ def handle_classification():
 	context["classification"] = Markup(format_classification_links(context))
 	context["subclassification"] = Markup(format_subclassification_links(context))
 	context["num_subclasses"] = len( app.core.cache["subclass_names"])
-	context["num_top_subsubclassifications"] = len( app.core.cache["top_subclass_counts"])
+	context["num_top_subsubclassifications"] = len(app.core.cache["top_subclass_counts"])
 	return render_template("classification.html", **context)
 
 @app.route("/catalogue")
@@ -435,6 +436,30 @@ def handle_similar():
 	# finished with DB
 	db.close()
 	return render_template("similar.html", **context)		
+
+# --------------------------------------------------------------
+# Endpoints: API
+# --------------------------------------------------------------
+
+@app.route("/api/authors")
+def handle_api_authors():	
+	""" Return API data relating to complete list of authors """
+	data = author_list(app.core)
+	# return the author catalogue as JSON
+	return Response(json.dumps(data), mimetype="application/json")
+
+@app.route("/api/ngrams")
+def handle_counts():
+	db = app.core.get_db()
+	try:
+		values = ngram_counts(app.core, db)
+	except Exception as e:
+		db.close()
+		abort(404, description=str(e))
+	db.close()
+	# return the counts as JSON
+	return Response(json.dumps(values), mimetype="application/json")
+
 
 # --------------------------------------------------------------
 # Error Handling
