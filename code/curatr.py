@@ -20,7 +20,7 @@ from flask import request, Response, render_template, Markup
 from flask import redirect, url_for, abort, send_file
 # project imports
 from server import CuratrServer, CuratrContext
-from web.search import parse_search_request, populate_search_results
+from web.search import parse_search_request, populate_search_results, populate_segment, populate_volume
 from web.format import format_field_options, format_type_options
 from web.format import format_classification_options, format_subclassification_options, format_location_options
 from web.format import format_classification_links, format_subclassification_links
@@ -170,6 +170,91 @@ def handle_empty_search(spec):
 	# TODO: fix
 	#context["mudies_options"] = Markup(format_mudies_options())
 	return context
+
+@app.route("/segment")
+@login_required
+def handle_segment():
+	""" End point to display the text for a single segment """
+	current_solr = app.core.get_solr("segments")
+	# Get the basic search specification
+	segment_id = request.args.get("id", default = "").strip().lower()
+	if len(segment_id) == 0:
+		abort(404, description="No segment ID specified")
+	volume_id = segment_id.rsplit("_",1)[0]
+	# query the document from Solr
+	doc = current_solr.query_document(segment_id)
+	if doc is None:
+		error_msg = "No segment match found for: %s" % segment_id
+		abort(404, description=error_msg)
+	# populate the template context
+	db = app.core.get_db()
+	spec = parse_search_request(request)
+	context = app.get_navigation_context(request, spec)
+	context = populate_segment(context, db, doc, spec, segment_id)
+	# do we need to perform a bookmark action here?
+	action = request.args.get("action", default = "").strip().lower()
+	if action == "addbookmark":
+		# ensure we don't have this bookmark already
+		if db.has_segment_bookmark(current_user.id, volume_id, segment_id):
+			log.warning("Warning: Bookmark already exists for user_id=%s segment_id=%s" % (current_user.id, segment_id))
+		else:
+			if not db.add_bookmark(current_user.id, volume_id, segment_id):
+				log.error("Error: Failed to add bookmark for user_id=%s segment_id=%s" % (current_user.id, segment_id))
+	elif action == "deletebookmark":
+		if not db.delete_bookmark(current_user.id, volume_id, segment_id):
+			log.error("Error: Failed to delete bookmark for user_id=%s segment_id=%s" % (current_user.id, segment_id))
+	# bookmark info
+	context["is_bookmarked"] = db.has_segment_bookmark(current_user.id, volume_id, segment_id)
+	if context["is_bookmarked"]:
+		context["url_bookmark"] = "%s/segment?id=%s&action=deletebookmark" % (context.prefix, segment_id)
+	else:
+		context["url_bookmark"] = "%s/segment?id=%s&action=addbookmark" % (context.prefix, segment_id)
+	# finished with db
+	db.close()
+	# render the template
+	return render_template("segment.html", **context)
+
+@app.route("/volume")
+@login_required
+def handle_volume():
+	""" End point to display the text for a single volume """
+	current_solr = app.core.get_solr("volumes")
+	# Get the basic search specification
+	volume_id = request.args.get("id", default = "").strip().lower()
+	if len(volume_id) == 0:
+		abort(404, description="No volume ID specified")
+	# query the document from Solr
+	doc = current_solr.query_document(volume_id)
+	if doc is None:
+		error_msg = "No volume match found for: %s" % volume_id
+		abort(404, description=error_msg)
+	# populate the template context
+	db = app.core.get_db()
+	spec = parse_search_request(request)
+	context = app.get_navigation_context(request, spec)
+	context = populate_volume(context, db, doc, spec, volume_id)
+	# do we need to perform a bookmark action here?
+	action = request.args.get("action", default = "").strip().lower()
+	if action == "addbookmark":
+		# ensure we don't have this bookmark already
+		if db.has_volume_bookmark(current_user.id, volume_id):
+			log.warning("Warning: Bookmark already exists for user_id=%s volume_id=%s" % (current_user.id, volume_id))
+		else:
+			if not db.add_bookmark(current_user.id, volume_id):
+				log.error("Error: Failed to add bookmark for user_id=%s volume_id=%s" % (current_user.id, volume_id))
+	elif action == "deletebookmark":
+		if not db.delete_bookmark(current_user.id, volume_id):
+			log.error("Error: Failed to delete bookmark for user_id=%s volume_id=%s" % (current_user.id, volume_id))
+	# add bookmark info
+	context["is_bookmarked"] = db.has_volume_bookmark(current_user.id, volume_id)
+	if context["is_bookmarked"]:
+		context["url_bookmark"] = "%s/volume?id=%s&action=deletebookmark" % (context.prefix, volume_id)
+	else:
+		context["url_bookmark"] = "%s/volume?id=%s&action=addbookmark" % (context.prefix, volume_id)
+	# finished with db
+	db.close()
+	# render the template
+	return render_template("volume.html", **context)
 
 # --------------------------------------------------------------
 # Endpoints: Authors
