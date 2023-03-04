@@ -5,6 +5,10 @@ Digital Collection and associated raw data files, prior to setting up Curatr.
 
 Same usage:
 	python code/create-metadata.py core all
+
+
+Note: The core directory should contain the required raw metadata files for the British Library
+Digital Collection.
 """
 import logging as log
 import math, sys
