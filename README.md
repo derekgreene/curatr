@@ -18,3 +18,5 @@ Additional dependencies:
 - MySQL: https://www.mysql.com (tested with 5.7.40)
 - Apache Solr: https://solr.apache.org (tested with 9.1.0)
 - A Java JDK supported by Apache Solr (tested with OpenJDK 19.0.1) 
+
+This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951) and is based at University College Dublin.
