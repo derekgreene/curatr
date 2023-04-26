@@ -20,3 +20,4 @@ Additional dependencies:
 - A Java JDK supported by Apache Solr (tested with OpenJDK 19.0.1) 
 
 This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951) and is based at University College Dublin.
+
