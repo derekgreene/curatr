@@ -13,6 +13,7 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - SolrClient: https://github.com/moonlitesolutions/SolrClient
 - Gensim: https://radimrehurek.com/gensim
 - ftfy: https://pypi.org/project/ftfy
+- Passlib: https://pypi.org/project/passlib
 - Flask: https://flask.palletsprojects.com/en/2.3.x/
 - Flask-Login: https://flask-login.readthedocs.io/en/latest/
 - NetworkX: https://networkx.org/
