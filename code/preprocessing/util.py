@@ -6,6 +6,7 @@ from core import CoreBase
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from preprocessing.text import load_stopwords 
 
 # --------------------------------------------------------------
 
@@ -102,11 +103,5 @@ class CorePrep(CoreBase):
 
 	def get_stopwords(self):
 		""" Returns the default set of Curatr stopwords """
-		import pkgutil
-		data = pkgutil.get_data(__name__, "stopwords.txt")
-		stopwords = set()
-		for line in data.decode('utf-8').splitlines():
-			line = line.strip()
-			if len(line) > 0:
-				stopwords.add(line.lower())
-		return stopwords
+		return load_stopwords()
+	

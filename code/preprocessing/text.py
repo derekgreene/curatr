@@ -37,6 +37,17 @@ def build_bow(docgen, stopwords=[], min_df=10, apply_tfidf=True, apply_norm=True
 		terms[v[term]] = term
 	return (X,terms)
 
+def load_stopwords():
+	""" Returns the default set of Curatr stopwords """
+	import pkgutil
+	data = pkgutil.get_data(__name__, "stopwords.txt")
+	stopwords = set()
+	for line in data.decode('utf-8').splitlines():
+		line = line.strip()
+		if len(line) > 0:
+			stopwords.add(line.lower())
+	return stopwords
+
 # --------------------------------------------------------------
 
 class BookContentGenerator:

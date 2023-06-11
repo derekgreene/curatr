@@ -328,7 +328,7 @@ class CuratrDB(GenericDB):
 		try:
 			return self._bulk_sql_to_dict("SELECT * FROM Volumes")
 		except Exception as e:
-			log.error("SQL error: %s" % str(e))
+			log.error("SQL error in get_volumes(): %s" % str(e))
 			return []
 
 	def get_volume(self, volume_id):
@@ -336,7 +336,7 @@ class CuratrDB(GenericDB):
 		try:
 			return self._sql_to_dict("SELECT * FROM Volumes WHERE id=%s", volume_id)
 		except Exception as e:
-			log.error("SQL error: %s" % str(e))
+			log.error("SQL error in get_volume(): %s" % str(e))
 			return None
 
 	def get_book_volumes(self, book_id):
@@ -496,17 +496,17 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_book_link_map(): %s" % str(e))
 		return link_map
 
-	def add_ngram_count(self, ngram, year, count):
+	def add_ngram_count(self, ngram, year, count, collection):
 		""" Add the count for the specific ngram for a given year """
-		sql = "INSERT INTO Ngrams (ngram, year, count) VALUES(%s,%s,%s)"
-		self.cursor.execute(sql, (ngram, year, count) )	
+		sql = "INSERT INTO Ngrams (ngram, year, count, collection) VALUES(%s,%s,%s,%s)"
+		self.cursor.execute(sql, (ngram, year, count, collection))	
 
 	def get_ngram_count(self, ngram, year_start, year_end):
 		""" Return the counts for the specified ngram within the given year range"""
 		count_map = {}
 		try:
 			sql = "SELECT year,count FROM Ngrams WHERE year >= %s AND year <= %s AND ngram=%s"		
-			self.cursor.execute(sql, (year_start, year_end, ngram) )
+			self.cursor.execute(sql, (year_start, year_end, ngram))
 			for row in self.cursor.fetchall():
 				count_map[row[0]] = row[1]
 		except Exception as e:

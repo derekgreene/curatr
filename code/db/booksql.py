@@ -95,7 +95,8 @@ sql_statements["TableNgrams"] = """
 CREATE TABLE Ngrams (
 	ngram VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
 	year SMALLINT NOT NULL,
-	count INT NOT NULL
+	count INT NOT NULL,
+	collection VARCHAR(20) DEFAULT 'all'
 );
 """
 
