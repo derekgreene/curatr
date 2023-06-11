@@ -29,6 +29,17 @@ To create the required tables, run the script:
 
 ```python code/create-db.py core all```
 
+## Ngram Setup
+
+For ngram frequency counts, we need to run the following to process the collection and update the database. Note that this will take some time.
+
+```python code/create-ngrams.py core```
+
+```python code/create-ngrams.py core -c fiction```
+
+```python code/create-ngrams.py core -c nonfiction```
+
+
 ## Search Setup
 
 Firstly, install Solr 9 from [https://solr.apache.org](here) which requires Java (e.g. [https://jdk.java.net/](OpenJDK)). Once Solr is installed and running, create two core directories in the solr directory, one for indexing volumes and one for indexing segments. The `solr` directory in the Curatr Github repository provides schema files for these cores:
