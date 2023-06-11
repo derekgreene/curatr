@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 This script implements the functionality required to generate word embeddings from the 
-full-text British Library
+full-text British Library. We use Gensim to create the embeddings.
 
 Default usage:
 	python code/create-embedding.py core
@@ -34,7 +34,7 @@ def main():
 	if len(args) < 1:
 		parser.error("Must specify core directory")
 
-	# set up the Curatr preprocessing  core
+	# set up the Curatr preprocessing core
 	dir_core = Path(args[0])
 	if not dir_core.exists():
 		log.error("Invalid core directory: %s" % dir_core.absolute())
