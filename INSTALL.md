@@ -23,9 +23,7 @@ For word recommendations and semantic networks, run the commands below to create
 
 ## Database Setup
 
-Ensure that the file *core/config.ini* contains the corret database settings, including *hostname*, *port*, *user* and *pass*. Next create a new empty database named *curatr* should be created. 
-
-To create the required tables, run the script:
+Ensure that the file *core/config.ini* contains the correct local MySQL database settings, including *hostname*, *port*, *user* and *pass*. Next create a new empty database named *curatr* should be created in your MySQL database. Once this is complete, to create the required tables, run the script:
 
 ```python code/create-db.py core all```
 
