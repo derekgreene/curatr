@@ -46,7 +46,7 @@ def load_stopwords():
 		line = line.strip()
 		if len(line) > 0:
 			stopwords.add(line.lower())
-	return stopwords
+	return list(stopwords)
 
 # --------------------------------------------------------------
 
