@@ -23,9 +23,15 @@ For word recommendations and semantic networks, run the commands below to create
 
 ## Database Setup
 
-Ensure that the file *core/config.ini* contains the correct local MySQL database settings, including *hostname*, *port*, *user* and *pass*. Next create a new empty database named *curatr* should be created in your MySQL database. Once this is complete, to create the required tables, run the script:
+Ensure that the file *core/config.ini* contains the correct local MySQL database settings, including *hostname*, *port*, *user* and *pass*. Next create a new empty database named *curatr* should be created in your MySQL database. Once this is complete, to create the required tables, run the script below. Note that this will take some time.
 
 ```python code/create-db.py core all```
+
+# Recommendation Setup
+
+To create recommendations, we run the following process. Again this will take some time.
+
+```python code/create-recs.py core```
 
 ## Ngram Setup
 
@@ -37,6 +43,11 @@ For ngram frequency counts, we need to run the following to process the collecti
 
 ```python code/create-ngrams.py core -c nonfiction```
 
+## Database Indexing
+
+To improve performance, we then create a number of indexes on the MySQL database tables:
+
+```python code/create-db.py core index```
 
 ## Search Setup
 

@@ -1,7 +1,7 @@
 import time
 import logging as log
 from db.util import GenericDB
-from db.booksql import sql_statements
+from db.booksql import sql_statements, sql_indexing_statements
 from user import User, dict_to_user
 
 # --------------------------------------------------------------
@@ -48,6 +48,16 @@ class CuratrDB(GenericDB):
 		tables = self._get_existing_tables()
 		log.info("Current tables: %s" % tables)
 
+	def index_tables(self):
+		""" Index all certain tables in the database to improve performance. """
+		try:
+			for x in sql_indexing_statements:
+				log.info("Building database index '%s' ..." % x)
+				self.cursor.execute(sql_indexing_statements[x])
+		except Exception as e:
+			log.error("SQL error in index_tables(): %s" % str(e))
+			return 0
+		
 	def add_book(self, book_id, book, author_ids):
 		columns = self._get_table_columns("Books")
 		dbrow = {"id" : book_id} 
@@ -496,27 +506,27 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_book_link_map(): %s" % str(e))
 		return link_map
 
-	def add_ngram_count(self, ngram, year, count, collection):
+	def add_ngram_count(self, ngram, year, count, collection_id):
 		""" Add the count for the specific ngram for a given year """
 		sql = "INSERT INTO Ngrams (ngram, year, count, collection) VALUES(%s,%s,%s,%s)"
-		self.cursor.execute(sql, (ngram, year, count, collection))	
+		self.cursor.execute(sql, (ngram, year, count, collection_id))	
 
-	def get_ngram_count(self, ngram, year_start, year_end):
+	def get_ngram_count(self, ngram, year_start, year_end, collection_id):
 		""" Return the counts for the specified ngram within the given year range"""
 		count_map = {}
 		try:
-			sql = "SELECT year,count FROM Ngrams WHERE year >= %s AND year <= %s AND ngram=%s"		
-			self.cursor.execute(sql, (year_start, year_end, ngram))
+			sql = "SELECT year,count FROM Ngrams WHERE year >= %s AND year <= %s AND ngram=%s AND collection=%s"		
+			self.cursor.execute(sql, (year_start, year_end, ngram, collection_id))
 			for row in self.cursor.fetchall():
 				count_map[row[0]] = row[1]
 		except Exception as e:
 			log.error("SQL error in get_ngram_count(): %s" % str(e))
 		return count_map			
 
-	def total_ngram_count(self):
+	def total_ngram_count(self, collection_id):
 		""" Return total number of ngrams stored in the database """
 		try:
-			self.cursor.execute("SELECT COUNT(*) FROM Ngrams")
+			self.cursor.execute("SELECT COUNT(*) FROM Ngrams WHERE collection=%s", collection_id)
 			result = self.cursor.fetchone()
 			return result[0]
 		except Exception as e:
@@ -1085,4 +1095,6 @@ class CuratrDB(GenericDB):
 			return self._bulk_sql_to_dict(sql, user_id)
 		except Exception as e:
 			log.error("SQL error in get_segment_bookmarks(): %s" % str(e))
-			return []			
+			return []
+		
+		
