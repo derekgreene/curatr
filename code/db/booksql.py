@@ -235,3 +235,16 @@ CREATE TABLE CachedClassificationCounts (
 	count INT NOT NULL
 );
 """
+
+# --------------------------------------------------------------
+# TABLE INDEXING
+# --------------------------------------------------------------
+
+sql_indexing_statements = {}
+sql_indexing_statements["ngrams1"] = "CREATE INDEX ngrams_ngram ON Ngrams(ngram);"
+sql_indexing_statements["ngrams2"] = "CREATE INDEX ngrams_ngram_year ON Ngrams(ngram,year,collection);"
+sql_indexing_statements["volumes1"] = "CREATE INDEX volumes_book on Volumes(book_id);"
+sql_indexing_statements["volumes2"] = "CREATE INDEX cached_volume_years_year ON CachedVolumeYears(year);"
+sql_indexing_statements["books1"] = "CREATE INDEX cached_book_years_year ON CachedBookYears(year);"
+sql_indexing_statements["books2"] = "CREATE INDEX bookauthors_book_author on BookAuthors(book_id,author_id);"
+sql_indexing_statements["recommendations"] = "CREATE INDEX recommendations_volume_rec on Recommendations(volume_id,rec_volume_id);"
