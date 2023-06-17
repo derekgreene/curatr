@@ -20,9 +20,9 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - NLTK: https://www.nltk.org/
 
 Additional dependencies:
-- MySQL: https://www.mysql.com (tested with 5.7.40)
-- Apache Solr: https://solr.apache.org (tested with 9.1.0)
-- A Java JDK supported by Apache Solr (tested with OpenJDK 19.0.1) 
+- MySQL: https://www.mysql.com (tested with 5.7.40 and 8.0.33)
+- Apache Solr: https://solr.apache.org (tested with 8.11.2)
+- A Java JDK supported by Apache Solr (tested with OpenJDK 17.0.7 and 19.0.1) 
 
-This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951) and is based at University College Dublin.
+This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951) and is based at University College Dublin. The work is also supported with the support of Science Foundation Ireland [12/RC/2289_P2] and [20/SP/8955] at Insight the SFI Research Centre for Data Analytics at University College Dublin.
 
