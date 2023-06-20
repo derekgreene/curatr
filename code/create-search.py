@@ -32,7 +32,7 @@ def create_segment_documents(book, volume, content, segment_size):
 	for i, segment in enumerate(segments):
 		doc = {"id" : "%s_%06d" % (volume["id"], (i+1)),
 			"authors" : book["authors"],
-			"authors" : book["authors_full"],
+			"authors_full" : book["authors_full"],
 			"authors_genders": book["author_genders"],
 			"book_id" : book["id"], 
 			"category" : book["category"],
@@ -66,7 +66,7 @@ def create_volume_document(book, volume, content):
 	log.info("Indexing %s, volume %d" % ( book["id"], volume["num"]))
 	doc = {"id" : volume["id"],
 		"authors" : book["authors"],
-		"authors" : book["authors_full"],
+		"authors_full" : book["authors_full"],
 		"authors_genders": book["author_genders"],
 		"book_id" : book["id"], 
 		"category" : book["category"],
