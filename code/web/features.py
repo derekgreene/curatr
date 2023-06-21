@@ -7,7 +7,10 @@ from web.util import parse_arg_int
 from web.format import format_volume_list
 from preprocessing.cleaning import tidy_authors
 
+# --------------------------------------------------------------
+
 def populate_author_page(context, db, author, author_page_size=10):
+	""" Populate information for the Curatr page which displays all books for a given author """
 	author_id = author["author_id"]
 	# Get the relevant recommendations
 	volume_ids = db.get_author_volume_ids(author_id)
@@ -138,7 +141,6 @@ def populate_similar_page(context, db, volume, recommendation_page_size = 10):
 	context["summary"] = Markup(summary)
 	context["pagination"] = Markup(pagination_html)	
 	return context
-
 
 def populate_bookmark_page(context, db, user_id):
 	""" Populate the context for a user's bookmark page """

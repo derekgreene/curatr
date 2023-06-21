@@ -358,6 +358,29 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_book_volumes(): %s" % str(e))
 			return []
 
+	def get_volume_metadata(self, volume_id):
+		""" Return complete details for the volume with the specified ID, including
+		information related to the associated book """
+		vol = self.get_volume(volume_id)
+		if vol is None:
+			return None
+		doc = self.get_book(vol["book_id"])
+		if doc is None:
+			return None
+		# add/update volume-related fields
+		doc["book_id"] = doc["id"]
+		doc["id"] = vol["id"]
+		doc["volume"] = vol["num"]
+		doc["path"] = vol["path"]
+		# add other detailed book metadata
+		doc["authors"] = self.get_book_author_names(doc["book_id"])
+		book_classifications = self.get_book_classifications(doc["book_id"])
+		doc["category"] = book_classifications.get("overall", "Unknown")
+		doc["classification"] = book_classifications.get("secondary", "Unknown")
+		doc["subclassification"] = book_classifications.get("tertiary", "Unknown")
+		doc["published_locations"] = self.get_published_locations(doc["book_id"])
+		return doc
+
 	def get_volumes_by_year(self, year):
 		""" Return the details of all volumes associated with books published in the specified year """
 		try:
