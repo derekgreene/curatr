@@ -21,8 +21,8 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["volume"] = volume
 	context["max_volume"] = doc["max_volume"]
 	context["title"] = tidy_title(doc.get("title", None))
-	context["location"] = tidy_location(doc.get("location_places", None))
-	context["shelf"] = tidy_shelfmarks(doc.get("shelfmarks", None))  
+	# context["location"] = tidy_location(doc.get("location_places", None))
+	context["shelfmarks"] = tidy_shelfmarks(doc.get("shelfmarks", None))  
 	context["edition"] = tidy_edition(doc.get("edition", None))
 	context["description"] = tidy_description(doc.get("physical_descr", None))
 	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
@@ -101,8 +101,8 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["segment"] = segment
 	context["max_segment"] = max_segment
 	context["title"] = tidy_title(doc.get("title", None))
-	context["location"] = tidy_location(doc.get("location_places", None))
-	context["shelf"] = tidy_shelfmarks(doc.get("shelfmarks", None)) 
+	# context["location"] = tidy_location(doc.get("location_places", None))
+	context["shelfmarks"] = tidy_shelfmarks(doc.get("shelfmarks", None)) 
 	context["edition"] = tidy_edition(doc.get("edition", None))
 	context["description"] = tidy_description(doc.get("physical_descr", None))
 	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
