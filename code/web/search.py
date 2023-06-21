@@ -5,7 +5,7 @@ import urllib.parse, re
 import logging as log
 from flask import Markup, abort
 # project imports
-from preprocessing.cleaning import tidy_title, tidy_authors, tidy_location, tidy_snippet
+from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_location_places
 from web.util import parse_arg_int, parse_arg_bool
 from web.format import field_name_map, field_plural_map
 
@@ -93,12 +93,14 @@ def format_search_results(context, db, spec, res, snippets, is_segments = False,
 				if max_volume > 1:
 					html += "&nbsp;&nbsp;&ndash;&nbsp;&nbsp;Volume %d" % (volume)
 			html += "</a>\n"
+			# do we have author information?
 			if "authors" in doc:
 				sauthors = tidy_authors(doc["authors"])
 			else:
 				sauthors = "Unknown author"
-			if "location" in doc:
-				html += "<div>%s &ndash; %s &ndash; %s</div>\n" % (sauthors, year, tidy_location(doc["location"]))
+			# do we have place information?
+			if "location_places" in doc:
+				html += "<div>%s &ndash; %s &ndash; %s</div>\n" % (sauthors, year, tidy_location_places(doc["location_places"]))
 			else:
 				html += "<div>%s &ndash; %s</div>\n" % (sauthors, year)
 		# just add the primary metadata
