@@ -233,21 +233,24 @@ def tidy_title( title ):
 		return "Untitled"
 	return title	
 
-def tidy_authors(author_list):
-	""" Tidy an author list for display in search results """
-	if author_list is None or len(author_list) == 0 or ( len(author_list) == 1 and author_list[0].lower() == "unknown" ):
-		return "Author Unknown"
+def tidy_author_list(author_list):
+	""" Tidy an author list, reversing the order of lastname and firstname """
+	if author_list is None or len(author_list) == 0 or (len(author_list) == 1 and author_list[0].lower() == "unknown"):
+		return ["Author Unknown"]
 	# change to firstname, last name
 	reversed_authors = []
 	for author in author_list:
-		# TODO: remove ftfy
-		author = ftfy.fix_text( author )
+		author = ftfy.fix_text(author)
 		parts = author.split(",", 1)
 		if len(parts) == 1:
-			reversed_authors.append( parts[0] )
+			reversed_authors.append(parts[0])
 		else:
-			reversed_authors.append( "%s %s" % ( parts[1].strip(), parts[0].strip() ) )
-	return ", ".join( reversed_authors )
+			reversed_authors.append("%s %s" % (parts[1].strip(), parts[0].strip()))
+	return reversed_authors		
+
+def tidy_authors(author_list):
+	""" Tidy an author list, turning it into a string for display in search results """
+	return ", ".join(tidy_author_list(author_list))
 
 def tidy_content(text):
 	""" Tidy the body text for display for close reading """
@@ -323,4 +326,9 @@ def tidy_publisher(publisher):
 		return "Unknown"
 	publisher = ftfy.fix_text(publisher)
 	publisher = publisher.replace("-"," ").replace("?"," ")
-	return re.sub("\s+", " ", publisher).strip()
+	publisher = re.sub("\s+", " ", publisher).strip()
+	# remove trailing full-stop
+	if publisher.endswith("."):
+		publisher = publisher[0:len(publisher)-1]
+	return publisher
+
