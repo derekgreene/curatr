@@ -1,0 +1,84 @@
+{% extends "layout.html" %} 
+{% block title %}Search{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-search { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+	<div class="section text-center" style="padding-bottom: 14px;">
+		<h2>Collection Search</h2>
+		<p class="text-justify">The <i>Curatr</i> platform currently indexes content and metadata for {{ num_volumes }} volumes and 12,334,075 short text segments from 35,918 different English-language books dating from {{ year_min }} to {{ year_max }}. You can use the form below to search the entire collection or a specific subset of the collection.</p>
+	</div>
+	<form id="search" method="get" action="{{prefix}}/search">
+		<input type="hidden" id="action" name="action" value="search">
+		<input type="hidden" id="suggest" name="suggest" value="True">
+		<div class="form-block">		
+			<div class="form-group">
+				<label for="qwords">Search Keywords</label>
+	            <input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+			</div>
+		</div>
+
+		<div class="form-row form-block">
+			<div class="col">			
+				<label for="field">Search Field</label>
+	            <select class="form-control dropdown" id="field" name="field">
+	                {{ field_options }}
+	            </select>
+			</div>
+			<div class="col form-col-right">				
+				<label for="type">Document Type</label>
+	            <select class="form-control dropdown" id="type" name="type">
+	                {{ type_options }}
+	            </select>
+			</div>
+		</div>
+
+		<div class="form-row form-block">
+			<div class="col">			
+				<label for="class">Classification</label>
+		        <select class="form-control dropdown" id="class" name="class">
+		            {{ class_options }}
+		        </select>
+			</div>
+			<div class="col form-col-right">				
+				<label for="subclass">Sub-classification</label>
+		        <select class="form-control dropdown" id="subclass" name="subclass">
+		            {{ subclass_options }}
+		        </select>
+			</div>
+		</div>		
+
+		<div class="form-row form-block">
+			<div class="col">			
+				<label for="year_start">Start Year</label>
+				<input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="">
+			</div>
+			<div class="col form-col-right">				
+				<label for="year_end">End Year</label>
+				<input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" size="10" value="" >				
+			</div>
+		</div>
+
+		<div class="form-row form-block" style="width: 50%;">
+			<div class="col">
+				<label for="location">Publication Location</label>
+		        <select class="form-control dropdown" id="location" name="location">
+		            {{ location_options }}
+		        </select>
+			</div>
+<!-- 		<div class="col form-col-right">
+				<label for="type">Filter by Mudie's Library</label>
+	            <select class="form-control dropdown" id="mudies_match" name="mudies_match">
+		            {{ mudies_options }}
+	            </select>				
+			</div>
+ -->	</div>
+		<button type="submit" class="btn btn-primary">Search</button>
+	</form>    
+	<br/> 
+</div>
+
+{% endblock %} 
+
