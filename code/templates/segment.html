@@ -1,0 +1,38 @@
+{% extends "layout.html" %} 
+{% block title %}Segment {{ id }} - Curatr Search{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-search { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+	<div class="container">
+		<div class="section text-left">
+			<table class="table table-striped table-meta">
+				<tr><td class="meta" width="18%">Book Title:</td><td class="meta">{{title}}</td></tr>
+				<tr><td class="meta">Segment:</td><td class="meta">Volume {{volume}} of {{max_volume}}, Segment {{segment}} of {{max_segment}}</td></tr>
+				<tr><td class="meta">Author(s):</td><td class="meta">{{authors}}</td></tr>
+				<tr><td class="meta">Published:</td><td class="meta">{{year}} &ndash; {{location}} {{publisher}}</td></tr>
+				<tr><td class="meta">Edition:</td><td class="meta">{{edition}}</td></tr>
+				<tr><td class="meta">Classification:</td><td class="meta">{{classification}}</td></tr>
+				<tr><td class="meta">Physical Description:</td><td class="meta">{{description}}</td></tr>
+				<tr><td class="meta">Shelfmark(s):</td><td class="meta">{{shelfmarks}}</td></tr>
+				<!-- <tr><td class="meta">Mudie's Library Author:</td><td class="meta">{{mudies}}</td></tr> -->
+				<tr><td class="meta">Related Links:</td><td class="meta"><a href="{{url_volume}}">Volume Full Text</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href="{{url_bl_record}}" target="_blank">British Library Catalogue</a>{{other_urls}}&nbsp;&nbsp;&mdash;&nbsp;&nbsp;
+				{% if is_bookmarked %}
+				<a href="{{url_bookmark}}">Remove Bookmark</a>
+				{% else %}
+				<a href="{{url_bookmark}}">Add Bookmark</a>
+				{% endif %}
+				</td></tr>
+			</table>
+			<div class="segment-text text-justify">
+			{{text}}
+			</div>
+			<nav aria-label="Pagination">
+			    <ul class="pagination justify-content-center text-xs-center">
+			        {{ pagination }}
+			    </ul>
+			</nav>	
+		</div>
+	</div>
+{% endblock %}
