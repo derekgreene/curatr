@@ -81,13 +81,13 @@ def format_subclassification_options(context, selected = "all"):
 			html += "<option value='%s'>%s</option>\n" % (name, label)
 	return html
 
-def format_location_options(context, selected = "all"):
-	location_names = context.core.cache["top_location_names"]
+def format_place_options(context, selected = "all"):
+	place_names = context.core.cache["top_place_names"]
 	# add the all option
-	location_names = [ "all" ] + location_names
+	place_names = [ "all" ] + place_names
 	# generate the HTML
 	html = ""
-	for name in location_names:
+	for name in place_names:
 		label = name.replace("?","'")
 		if name == "all":
 			label = "All Locations"

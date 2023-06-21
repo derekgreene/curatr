@@ -249,6 +249,12 @@ def tidy_authors(author_list):
 			reversed_authors.append( "%s %s" % ( parts[1].strip(), parts[0].strip() ) )
 	return ", ".join( reversed_authors )
 
+def tidy_content(text):
+	""" Tidy the body text for display for close reading """
+	if text is None:
+		return ""
+	return text.strip()
+
 def tidy_snippet(snippet):
 	""" Tidy a text snippet for display in search results """
 	if snippet is None:
@@ -287,3 +293,36 @@ def tidy_location(location):
 	location = re.sub( "\s+", " ", location ).strip()
 	# NB: make title case
 	return location.title()
+
+def tidy_shelfmarks(shelf_list):
+	""" Tidy a string containing one or more BL shelfmark codes """
+	if shelf_list is None or len(shelf_list) == 0:
+		return "Unavailable"
+	tidy_shelf_list = []
+	for x in shelf_list:
+		tidy_shelf_list.append(ftfy.fix_text(x).strip())
+	return ", ".join(tidy_shelf_list)
+
+def tidy_edition(edition):
+	""" Tidy book edition string """
+	if edition is None or len(edition) == 0 or edition.lower() == "unknown":
+		return "Unknown"
+	edition = ftfy.fix_text(edition)
+	edition = edition.replace("-"," ").replace("?"," ")
+	return re.sub("\s+", " ", edition).strip()
+
+def tidy_description(descr):
+	""" Tidy book physical description string """
+	if descr is None or len(descr) == 0 or descr.lower() == "unknown":
+		return "Unknown"
+	descr = ftfy.fix_text(descr)
+	descr = descr.replace("-"," ").replace("?"," ")
+	return re.sub("\s+", " ", descr).strip()
+	
+def tidy_publisher(publisher):
+	""" Tidy a string containing publisher information """
+	if publisher is None or len(publisher) == 0 or publisher.lower() == "unknown":
+		return "Unknown"
+	publisher = ftfy.fix_text(publisher)
+	publisher = publisher.replace("-"," ").replace("?"," ")
+	return re.sub("\s+", " ", publisher).strip()

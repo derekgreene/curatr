@@ -20,9 +20,10 @@ from flask import request, Response, render_template, Markup
 from flask import redirect, url_for, abort, send_file
 # project imports
 from server import CuratrServer, CuratrContext
-from web.search import parse_search_request, populate_search_results, populate_segment, populate_volume
+from web.search import parse_search_request, populate_search_results
+from web.view import populate_segment, populate_volume
 from web.format import format_field_options, format_type_options
-from web.format import format_classification_options, format_subclassification_options, format_location_options
+from web.format import format_classification_options, format_subclassification_options, format_place_options
 from web.format import format_classification_links, format_subclassification_links
 from web.features import populate_author_page, populate_bookmark_page, populate_similar_page
 from web.ngrams import populate_ngrams_page, export_ngrams
@@ -116,17 +117,17 @@ def handle_login():
 def handle_index():
 	""" Render the main Curatr home page """
 	context = app.get_context(request)
-	context["num_books"] =  "{:,}".format( app.core.cache["book_count"] )
+	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
-	log.info("Index: current_user.is_anonymous: %s" % current_user.is_anonymous )
-	return render_template("index.html", **context )
+	log.info("Index: current_user.is_anonymous: %s" % current_user.is_anonymous)
+	return render_template("index.html", **context)
 
 @app.route("/about")
 def handle_about():
 	""" Render the Curatr about page """
 	context = app.get_context(request)
-	return render_template("about.html", **context )
+	return render_template("about.html", **context)
 
 # --------------------------------------------------------------
 # Endpoints: Search
@@ -166,7 +167,7 @@ def handle_empty_search(spec):
 	context["type_options"] = Markup(format_type_options())
 	context["class_options"] = Markup(format_classification_options(context))
 	context["subclass_options"] = Markup(format_subclassification_options(context))
-	context["location_options"] = Markup(format_location_options( context))
+	context["location_options"] = Markup(format_place_options( context))
 	# TODO: fix
 	#context["mudies_options"] = Markup(format_mudies_options())
 	return context
@@ -545,7 +546,6 @@ def handle_counts():
 	# return the counts as JSON
 	return Response(json.dumps(values), mimetype="application/json")
 
-
 # --------------------------------------------------------------
 # Error Handling
 # --------------------------------------------------------------
@@ -579,7 +579,7 @@ def page_forbidden(e):
 	
 # --------------------------------------------------------------
 
-def configure_server(dir_core, dir_log = None):
+def configure_server(dir_core, dir_log=None):
 	""" Configure server directories, logging output, and initialize the web server. """
 	# get core configuration and read the metadata
 	if not (dir_core.exists() and dir_core.is_dir()):
@@ -602,8 +602,8 @@ def configure_server(dir_core, dir_log = None):
 
 	# Initialize and start the web server
 	log.info("Initializing server ...")
-	if not app.init_server( dir_core ):
-		sys.exit( 1 )
+	if not app.init_server(dir_core):
+		sys.exit(1)
 
 def main():
 	parser = OptionParser(usage="usage: %prog [options] dir_core")
