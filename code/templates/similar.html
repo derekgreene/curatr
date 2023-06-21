@@ -1,0 +1,26 @@
+{% extends "layout.html" %} 
+{% block title %}Volume {{ id }} - Similar Volumes{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-search { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+    <div class="container">
+      <div class="section text-center">
+        <h2>Similar Volumes</h2>
+		<p class="left-justify">{{ summary }}</p>
+		<hr style="margin-top: 12px; margin-bottom: 16px;">
+
+		<div class="results-container">
+		    {{ results }}
+		</div>
+
+		<nav aria-label="Pagination">
+		    <ul class="pagination justify-content-center text-xs-center">
+		        {{ pagination }}
+		    </ul>
+		</nav>
+
+      </div>
+    </div>
+{% endblock %} 
