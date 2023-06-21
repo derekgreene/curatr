@@ -12,7 +12,7 @@ from preprocessing.cleaning import tidy_shelfmarks, tidy_publisher, tidy_edition
 def populate_volume(context, db, doc, spec, volume_id):
 	query_string = spec["query"]
 	quoted_query_string = urllib.parse.quote_plus(query_string)
-	volume = max( doc["volume"], 1 )
+	volume = max(doc["volume"], 1)
 	# Get extra details
 	book_id = doc["book_id"]
 	author_ids = db.get_book_author_ids(book_id)
@@ -21,7 +21,6 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["volume"] = volume
 	context["max_volume"] = doc["max_volume"]
 	context["title"] = tidy_title(doc.get("title", None))
-	# context["location"] = tidy_location(doc.get("location_places", None))
 	context["shelfmarks"] = tidy_shelfmarks(doc.get("shelfmarks", None))  
 	context["edition"] = tidy_edition(doc.get("edition", None))
 	context["description"] = tidy_description(doc.get("physical_descr", None))
@@ -101,7 +100,6 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["segment"] = segment
 	context["max_segment"] = max_segment
 	context["title"] = tidy_title(doc.get("title", None))
-	# context["location"] = tidy_location(doc.get("location_places", None))
 	context["shelfmarks"] = tidy_shelfmarks(doc.get("shelfmarks", None)) 
 	context["edition"] = tidy_edition(doc.get("edition", None))
 	context["description"] = tidy_description(doc.get("physical_descr", None))
