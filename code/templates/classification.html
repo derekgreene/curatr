@@ -1,0 +1,29 @@
+{% extends "layout.html" %} 
+{% block title %}Classification Index{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-classification { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+    <div class="container">
+      <div class="section text-center">
+        <h2>Classification Index</h2>
+
+        <p class="text-justify">From 1823 to 1985 the British Library used a topical index of pressmarks indicating the physical arrangement of books on shelves in the library. This classification index is arranged in several levels of granularity, from the top level main classification (e.g. "Fiction", "Geography", "Medicine") to more fine-grained topics (e.g. "Geography" &rarr; "Ireland and Scotland"). Using a combination of OCR text recognition and manual annotation, we have digitised the higher levels of the index. The volumes from the books in these categories can be browsed by clicking on the links below.</p>
+        <div class="text-left">
+            <p>Top level classification of English language books:</p>
+            <ul class="classification">
+                {{ classification }}
+            </ul>
+        </div>
+        <div class="text-left">
+            <p>The more fine-grained second level of classifications of books has also been digitised. Among the {{ num_subclasses }} categories at this level, the following are the {{ num_top_subsubclassifications }} most common:</p>
+            <ul class="classification">
+                {{ subclassification }}
+            </ul>
+        </div>
+      </div>
+
+    </div>
+
+{% endblock %} 
