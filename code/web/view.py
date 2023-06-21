@@ -4,7 +4,8 @@ Various functions for implementing Curatr's volume and segment close reading fun
 import urllib.parse, re
 import logging as log
 from flask import Markup, escape
-from preprocessing.cleaning import tidy_title, tidy_authors, tidy_location, tidy_snippet
+from preprocessing.cleaning import tidy_title, tidy_authors, tidy_location, tidy_snippet, tidy_content
+from preprocessing.cleaning import tidy_shelfmarks, tidy_publisher, tidy_edition, tidy_description
 
 # --------------------------------------------------------------
 
@@ -20,15 +21,11 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["volume"] = volume
 	context["max_volume"] = doc["max_volume"]
 	context["title"] = tidy_title(doc.get("title", None))
-	context["location"] = tidy_location(doc.get("location", None))
-	context["shelf"] = tidy_shelf(doc.get("shelf",None)) 
+	context["location"] = tidy_location(doc.get("location_places", None))
+	context["shelf"] = tidy_shelfmarks(doc.get("shelfmarks", None))  
 	context["edition"] = tidy_edition(doc.get("edition", None))
-	context["description"] = tidy_description( doc.get("physical_descr", None))
-	context["publisher"] = doc.get("publisher",None)
-	if context["publisher"] is None or context["publisher"].lower() == "unknown" or len(context["publisher"]) < 2:
-		context["publisher"] = ""
-	else:
-		context["publisher"] = "(%s)" % context["publisher"].strip()
+	context["description"] = tidy_description(doc.get("physical_descr", None))
+	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
 	# if safe_int( doc.get( "mudies_match" ) ) == 0:
 	# 	context["mudies"] = "No matching author"
 	# else:
@@ -61,8 +58,8 @@ def populate_volume(context, db, doc, spec, volume_id):
 			author_html += "<a href='%s'>%s</a>" % (url_author, author["sort_name"])
 		context["authors"] = Markup( author_html )
 	# Add the main segment content
-	content = tidy_content( doc["content"] )
-	html_text = str( escape( content ) )
+	content = tidy_content(doc["content"])
+	html_text = str(escape(content))
 	if len(html_text) == 0:
 		html_text = "Volume text is empty."
 	else:
@@ -104,15 +101,11 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["segment"] = segment
 	context["max_segment"] = max_segment
 	context["title"] = tidy_title(doc.get("title", None))
-	context["location"] = tidy_location( doc.get("location", None))
-	context["shelf"] = tidy_shelf( doc.get("shelf",None)) 
-	context["edition"] = tidy_edition( doc.get("edition", None))
-	context["description"] = tidy_description( doc.get("physical_descr", None))
-	context["publisher"] = doc.get("publisher", None)
-	if context["publisher"] is None or context["publisher"].lower() == "unknown" or len(context["publisher"]) < 2:
-		context["publisher"] = ""
-	else:
-		context["publisher"] = "(%s)" % context["publisher"].strip()
+	context["location"] = tidy_location(doc.get("location_places", None))
+	context["shelf"] = tidy_shelfmarks(doc.get("shelfmarks", None)) 
+	context["edition"] = tidy_edition(doc.get("edition", None))
+	context["description"] = tidy_description(doc.get("physical_descr", None))
+	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
 	# if safe_int( doc.get( "mudies_match" ) ) == 0:
 	# 	context["mudies"] = "No matching author"
 	# else:
@@ -124,8 +117,8 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["year"] = Markup(html_year)
 	# Add classifications, if any
 	if "classification" in doc:
-		if (doc["classification"] != "Uncategorised") and ( "subclassification" in doc ):
-			context["classification"] = Markup("%s &mdash; %s" %( doc["classification"], doc["subclassification"] ) )
+		if (doc["classification"] != "Uncategorised") and ("subclassification" in doc):
+			context["classification"] = Markup("%s &mdash; %s" %(doc["classification"], doc["subclassification"]))
 		else:
 			context["classification"] = doc["classification"]
 	else:
