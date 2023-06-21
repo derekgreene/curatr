@@ -1,0 +1,29 @@
+{% extends "layout.html" %} 
+{% block title %}{{ query }} - Search Results{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-search { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+    <div class="container">
+      <div class="section text-center">
+        <h2>Search Results<a href="{{ export_url }}"><img src="{{staticprefix}}/img/export.png" class="export" alt="export"/></a></h2>
+		<p class="left-justify">{{ summary }}. {{ search_repeat }}.</p>
+		{% if search_suggestions %}
+		<p class="left-justify" style="padding-right: 30px; padding-bottom: 10px;">Also try: {{ suggestions }} </p>
+		{% endif %}
+		<hr style="margin-top: 12px; margin-bottom: 16px;">
+
+		<div class="results-container">
+		    {{ results }}
+		</div>
+
+		<nav aria-label="Pagination">
+		    <ul class="pagination justify-content-center text-xs-center">
+		        {{ pagination }}
+		    </ul>
+		</nav>
+
+      </div>
+    </div>
+{% endblock %} 
