@@ -281,18 +281,16 @@ def tidy_extract(extract):
 	# remove unwanted characters
 	for c in extract_ignores:
 		extract = extract.replace(c,"")
-	return tidy_snippet( extract.strip() )
+	return tidy_snippet(extract.strip())
 
-def tidy_location(location):
-	""" Tidy a document extract for display in the Curatr interface """
-	if location is None:
+def tidy_location_places(places):
+	""" Tidy a location place information for display in the Curatr interface """
+	if places is None or len(places) == 0:
 		return "Unknown"
-	if len(location) == 0 or location.lower() == "unknown":
-		return "Unknown"
-	location = location.replace("-"," ").replace("?"," ")
-	location = re.sub( "\s+", " ", location ).strip()
-	# NB: make title case
-	return location.title()
+	tidy_place_list = []
+	for x in places:
+		tidy_place_list.append(ftfy.fix_text(x).strip().title())
+	return "; ".join(tidy_place_list)
 
 def tidy_shelfmarks(shelf_list):
 	""" Tidy a string containing one or more BL shelfmark codes """

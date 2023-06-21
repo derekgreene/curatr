@@ -4,7 +4,7 @@ Various functions for implementing Curatr's volume and segment close reading fun
 import urllib.parse, re
 import logging as log
 from flask import Markup, escape
-from preprocessing.cleaning import tidy_title, tidy_authors, tidy_location, tidy_snippet, tidy_content
+from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_content, tidy_location_places
 from preprocessing.cleaning import tidy_shelfmarks, tidy_publisher, tidy_edition, tidy_description
 
 # --------------------------------------------------------------
@@ -37,7 +37,7 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["year"] = Markup(html_year)
 	# Add classifications, if any
 	if "classification" in doc:
-		if (doc["classification"] != "Uncategorised") and ( "subclassification" in doc ):
+		if (doc["classification"] != "Uncategorised") and ("subclassification" in doc):
 			context["classification"] = Markup("%s &mdash; %s" %( doc["classification"], doc["subclassification"]))
 		else:
 			context["classification"] = doc["classification"]
