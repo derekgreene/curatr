@@ -13,7 +13,7 @@ def author_list(core):
 	""" End point for author catalogue JSON """
 	return {"data" : core.cache["author_catalogue"]}
 
-def ngram_counts(core, db):
+def ngram_counts(core, db, collection_id="all"):
 	""" Endpoint to handle ngram counts, which are returned as JSON. """	
 	""" Return API data relating to n-gram counts """
 	query = request.args.get("q", default = "").lower()
@@ -35,7 +35,7 @@ def ngram_counts(core, db):
 	if normalize:
 		total_year_counts = db.get_cached_volume_years(year_start, year_end)
 	# retrieve the list of counts
-	query_counts = db.get_ngram_count(query, year_start, year_end)
+	query_counts = db.get_ngram_count(query, year_start, year_end, collection_id)
 	# convert it to a list of pairs
 	values = []
 	for year in range(year_start, year_end+1):
@@ -44,11 +44,11 @@ def ngram_counts(core, db):
 			if normalize:
 				if year in total_year_counts:
 					percentage = round((100.0*query_counts[year])/total_year_counts[year], 3)
-					values.append([ year, percentage ])
+					values.append([year, percentage])
 				else:
-					values.append([ year, 0 ])
+					values.append([year, 0])
 			else:
-				values.append([ year, query_counts[year] ])
+				values.append([year, query_counts[year]])
 		else:
-			values.append([ year, 0 ])
+			values.append([year, 0])
 	return values
