@@ -9,7 +9,7 @@ Sample usage, specifying the core configuration directory:
 Then access the search interface at:
 http://127.0.0.1:5000
 """
-import sys, io, json
+import sys, io, json, re
 from pathlib import Path
 import logging as log
 from optparse import OptionParser
@@ -19,7 +19,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from flask import request, Response, render_template, Markup
 from flask import redirect, url_for, abort, send_file
 # project imports
-from server import CuratrServer, CuratrContext
+from server import CuratrServer
 from web.search import parse_search_request, populate_search_results
 from web.view import populate_segment, populate_volume
 from web.format import format_field_options, format_type_options
@@ -30,8 +30,11 @@ from web.ngrams import populate_ngrams_page, export_ngrams
 from web.networks import populate_networks_page, export_network
 from web.lexicon import populate_lexicon_create, populate_lexicon_delete, format_lexicon_list, populate_lexicon_edit
 from web.export import handle_export_download, handle_export_build, format_subcorpus_list
+from web.admin import format_user_list
+from web.export import populate_export
 from web.api import author_list, ngram_counts
 from web.util import safe_int
+from user import validate_email, generate_password, password_to_hash
 
 # --------------------------------------------------------------
 # Application Setup
@@ -288,7 +291,7 @@ def handle_author():
 		abort(404, description=error_msg)
 	# populate the parameters to fill the template
 	context = app.get_context(request)
-	context = populate_author_page( context, db, author )
+	context = populate_author_page(context, db, author)
 	# finished with the database
 	db.close()
 	return render_template("author.html", **context )
@@ -406,7 +409,7 @@ def handle_lexicon_edit():
 @app.route("/exportlexicon")
 @login_required
 def handle_lexicon_export():
-	""" Handle export a plain text representation of an individual word lexicon. """
+	""" Handle exporting a plain text representation of an individual word lexicon. """
 	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
 	# any ID specified?
 	if lexicon_id < 1:
@@ -473,6 +476,18 @@ def handle_corpora():
 	db.close()
 	return render_template("corpora.html", **context)
 
+@app.route("/export")
+@login_required
+def handle_export():
+	context = app.get_context(request)
+	spec = parse_search_request(request)
+	# populate the template context
+	db = app.core.get_db()
+	params = populate_export(context, db, spec)
+	# finished with db
+	db.close()
+	return render_template("export.html", **context)
+
 # --------------------------------------------------------------
 # Endpoints: Bookmarks
 # --------------------------------------------------------------
@@ -522,6 +537,122 @@ def handle_similar():
 	# finished with DB
 	db.close()
 	return render_template("similar.html", **context)		
+
+# --------------------------------------------------------------
+# Endpoints: Administration
+# --------------------------------------------------------------
+
+@app.route("/admin")
+@login_required
+def handle_admin():
+	""" Endpoint for the system administration page. """
+	# confirm administration is allow
+	if current_user.is_anonymous:
+		log.info("Admin: anonymous access attempt")
+		abort(403, description="Access not available to anonymous users")
+	if not current_user.admin:
+		log.info("Admin: non-admin access attempt for user_id=%s" % current_user.id)
+		abort(403, description="Access not available to non-admin users")
+	else:
+		log.info("Admin: admin access for user_id=%s" % current_user.id)
+	db = app.core.get_db()
+	context = app.get_context(request)	
+	context["start_time"] = app.start_time.strftime('%d/%m/%Y-%H:%M')
+	current_solr = app.core.get_solr("segment")
+	if current_solr.ping():
+		context["solr_status"] = "Connection ok to Solr server at %s" % current_solr.host
+	else:
+		context["solr_status"] = "Cannot contact Solr server at %s" % current_solr.host
+	context["num_users"] = db.user_count()
+	context["userlist"] = Markup(format_user_list(context, db))
+	db.close()
+	return render_template("admin.html", **context)
+
+@app.route("/useredit")
+@login_required
+def handle_user_edit():
+	""" Endpoint for the user editing administration page. """
+	# confirm administration is allow
+	if current_user.is_anonymous:
+		log.info("Admin: anonymous user edit access attempt")
+		abort(403, description="Access not available to anonymous users")
+	if not current_user.admin:
+		log.info("Admin: non-admin user edit access attempt for user_id=%s" % current_user.id)
+		abort(403, description="Access not available to non-admin users")	
+	# make sure there is a valid user ID specified for editing
+	target_user_id = request.args.get("user_id", default = "").strip().lower()
+	if len(target_user_id) == 0:
+		abort(404, description="No user ID specified")
+	db = app.core.get_db()
+	context = app.get_context(request)	
+	# try to get details for the request user
+	target_user = db.get_user_by_id(target_user_id)
+	# check the action
+	action = request.args.get("action", default = "").strip().lower()
+	# TODO: fix
+	if action == "pwd":
+		# TODO: validate, change password
+		context["message"] = "Password successfully update for user %s" % target_user.email
+	# TODO: fix
+	elif action == "delete":
+		# TODO: validate, delete, change content
+		context["message"] = "Deletion confirmed for user %s" % target_user.email
+	# finished with the database
+	db.close()
+	if target_user is None:
+		abort(404, description="Cannot edit user. No user exists with ID %s" % target_user_id)	
+	context["user_id"] = target_user_id
+	context["user_email"] = target_user.email
+	return render_template("user-edit.html", **context)
+
+@app.route("/usercreate")
+@login_required
+def handle_user_create():
+	""" Endpoint for the user creation administration page. """
+	db = app.core.get_db()
+	context = app.get_context(request)	
+	messages = []
+	# parse the list of specified addresses
+	raw_emails= request.args.get("emails", default = "").strip().lower()
+	candidate_emails = []
+	for email in re.split("[,; \t]+", raw_emails):
+		email = email.strip()
+		if len(email) > 0:
+			candidate_emails.append(email)
+	# no emails specified?
+	context["num_created"] = 0
+	if len(candidate_emails) == 0:
+		messages.append("No email addresses specified. Please specify a list of one or email addresses, separated by commas.")
+	else:
+		valid_emails = 	[]
+		for email in candidate_emails:
+			# valid email address?
+			if db.has_user_email(email):
+				messages.append("Cannot create user <b>%s</b>. A user with this email address already exists." % email)
+			# does a user with
+			elif not validate_email(email):
+				messages.append("Cannot create user <b>%s</b>. Invalid email address.'" % email)
+			else:
+				# generate a suggested password
+				passwd = generate_password()
+				# hash the password
+				hashed_passwd = password_to_hash(passwd)
+				# actually add the user
+				user_id = db.add_user(email, hashed_passwd)
+				if user_id == -1:
+					log.error("Error: Failed to add new user '%s' to the database" % email)
+					messages.append("Cannot create user <b>%s</b>. We are currently unable to add this user to the database.'" % email)
+				else:
+					log.info("Created new system user '%s' (user_id=%d)" % (email, user_id))
+					messages.append("Created user <b>%s</b> with password <b>%s</b> (user ID=%d)" % (email, passwd, user_id))
+					context["num_created"] += 1
+	# finished with the database
+	db.close()
+	# format the details to display
+	context["user_creation"] = ""
+	for line in messages:
+		context["user_creation"] += Markup("<p>" + line + "</p>") + "\n"
+	return render_template("user-create.html", **context)
 
 # --------------------------------------------------------------
 # Endpoints: API
