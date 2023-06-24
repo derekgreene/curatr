@@ -1,0 +1,129 @@
+{% extends "layout.html" %} 
+{% block title %}Semantic Networks{% endblock %} 
+
+{% block headcustom %}    
+<style>#nav-link-networks { color: #FF6600 !important; }</style>
+<script type="text/javascript" src="{{staticprefix}}/assets/js/vis-network.min.js"></script>
+<link type="text/css" href="{{staticprefix}}/css/vis-network.min.css" rel="stylesheet"/>
+<style>
+#mynetwork
+{
+	height: 550px; 
+	min-width: 310px; 
+	width: 100%; 
+	margin: 0;
+	margin-bottom: 10px;
+	border: 1px solid #ccc; 
+	padding-top: 5px; 
+	padding-left: 9.5px; 
+	padding-right: 9.5px; 
+	padding-bottom: 11px; 
+	background-color: #ECF0F1;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="section text-center">
+            <h2>Semantic Network Visualisation</h2>
+
+            <p class="text-justify">To understand the relationships between different words and concepts in the British Library Digital Collection, we can create and visualise <i>semantic networks</i>. In this type of network, each <i>node</i> (or circle) represents a word and each <i>edge</i> (or link) between two nodes indicates a semantic association between the corresponding words. </p>
+        	<p class="text-justify">To create a semantic network, enter one or more comma-separated keywords below, and click "Visualise". The original seed keywords will be shown as blue nodes, and the other associated words will be shown as yellow nodes. <b>Double-click</b> on a node on the network to show the corresponding set of search results. </p>
+        </div>
+        <form id="search" method="get" action="{{prefix}}/networks">
+            <div class="form-row form-block"> 
+                <div class="col">           
+                    <label for="qwords">Enter one or more keywords (comma separated)</label>
+                    <input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+                </div>
+            </div>          
+			<div class="form-row form-block">
+				<div class="col">			
+					<label for="neighbors">Number of related words per keyword</label>
+		            <select class="form-control dropdown" id="neighbors" name="neighbors" style="width: 25%;">
+		            {{ neighbor_options }}
+		            </select>				
+				</div>
+			</div>            
+			<div class="form-row form-block">
+				<div class="col">			
+					<label for="embedding">Collection</label>
+		            <select class="form-control dropdown" id="embedding" name="embedding" style="width: 25%;">
+		            {{ embedding_options }}
+		            </select>				
+				</div>
+			</div>            
+            <button type="submit" class="btn btn-primary">Visualise</button>
+        </form>
+        <br/>
+        <div id="mynetwork"></div>
+	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Graph Exchange XML Format (GEXF) file</a> for the network above</p>
+        <br/>
+        <br/>
+    </div>
+
+  
+<script type="text/javascript">
+
+  var nodes = new vis.DataSet([
+{{ nodedata }}
+  ]);
+
+  var edges = new vis.DataSet([
+{{ edgedata }}
+  ]);
+
+  var container = document.getElementById('mynetwork');
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {
+	nodes : {
+    	shape: 'dot',
+    },
+	edges: {
+		color: '#222'
+  	},
+  physics: {
+	enabled: true,
+	solver: 'barnesHut',
+	barnesHut: {
+		gravitationalConstant: -2000,
+		centralGravity: 0.20,
+		springLength: 95,
+		springConstant: 0.021,
+		damping: 0.09,
+		avoidOverlap: 0.15
+    },
+    stabilization: {
+  		enabled: true,
+  		iterations: 1200,
+  		updateInterval: 250,
+		  onlyDynamicEdges: false,
+		  fit: true
+		},
+		maxVelocity: 50,
+		minVelocity: 1     
+  	},
+    layout: {
+    randomSeed: 2000,
+    improvedLayout: true
+    }    
+  };
+  var network = new vis.Network(container, data, options);
+ 
+  network.on( 'doubleClick', function(properties) 
+  	{
+        var q = properties.nodes[0];
+        var url = '{{prefix}}/search?action=search&qwords=' + q + '&field=all&type=volume&suggest=True';
+        if (url)
+            window.open(url);
+
+    });
+
+</script>
+
+{% endblock %} 
