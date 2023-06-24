@@ -75,12 +75,15 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
 	context["url_similar"] = "%s/similar?volume_id=%s" % (context.prefix, volume_id) 	
 	# Any other links?
-	context["other_urls"] = ""
+	context["other_urls1"], context["other_urls2"] = "", ""
+	if doc.get("url_ark", None) != None:
+		context["other_urls1"] += "<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
 	if doc.get("url_pdf", None) != None:
-		context["other_urls"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
+		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
 	if doc.get("url_images", None) != None:
-		context["other_urls"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
-	context["other_urls"] = Markup(context["other_urls"])
+		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
+	context["other_urls1"] = Markup(context["other_urls1"])
+	context["other_urls2"] = Markup(context["other_urls2"])
 	return context
 
 def populate_segment(context, db, doc, spec, segment_id):
@@ -159,12 +162,15 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["url_volume"] = "%s/volume?id=%s_%02d&%s" % ( context.prefix, id_parts[0], volume, url_spec ) 	
 	context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
 	# Any other links?
-	context["other_urls"] = ""
+	context["other_urls1"], context["other_urls2"] = "", ""
+	if doc.get("url_ark", None) != None:
+		context["other_urls1"] += "&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
 	if doc.get("url_pdf", None) != None:
-		context["other_urls"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
+		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
 	if doc.get("url_images", None) != None:
-		context["other_urls"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
-	context["other_urls"] = Markup(context["other_urls"])
+		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
+	context["other_urls1"] = Markup(context["other_urls1"])
+	context["other_urls2"] = Markup(context["other_urls2"])
 	# Add the Next/Previous/Full-text links
 	pagination_html = ""
 	# first segment?
