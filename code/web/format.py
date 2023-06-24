@@ -2,8 +2,9 @@
 Generall formatting fuctions for display Curatr web content
 """
 import urllib.parse
+import logging as log
 # project imports
-from preprocessing.cleaning import tidy_extract
+from preprocessing.cleaning import tidy_extract, tidy_authors, tidy_location_places
 
 # --------------------------------------------------------------
 
@@ -132,7 +133,7 @@ def format_mudies_options(selected = False):
 		html += "<option value='false' selected>No</option>\n" 
 	return html	
 	
-def format_volume_list(context, db, selected_volumes, verbose = True, max_title_length = 200):
+def format_volume_list(context, db, selected_volumes, verbose=True, max_title_length=200):
 	html = ""
 	result_url_prefix = "%s/volume" % (context.prefix)
 	# Generate HTML	for each result
@@ -155,12 +156,16 @@ def format_volume_list(context, db, selected_volumes, verbose = True, max_title_
 			if max_volume > 1:
 				html += "&nbsp;&nbsp;&ndash;&nbsp;&nbsp;Volume %d" % (volume)
 			html += "</a>\n"
-			if "authors" in doc:
-				sauthors = doc["authors"]
-			else:
-				sauthors = "Unknown author"
-			if "location" in doc:
-				html += "<div>%s &ndash; %s &ndash; %s</div>\n" % (sauthors, year, doc["location"])
+			# format authors
+			sauthors = tidy_authors(doc.get("authors", None))
+			# format locations
+			if "published_locations" in doc:
+				locations = []
+				# need to extract just the places not the countries
+				for pair in doc["published_locations"]:
+					if pair[0] == "place":
+						locations.append(pair[1])
+				html += "<div>%s &ndash; %s &ndash; %s</div>\n" % (sauthors, year, tidy_location_places(locations))
 			else:
 				html += "<div>%s &ndash; %s</div>\n" % (sauthors, year)
 		# just add the primary metadata

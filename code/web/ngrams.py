@@ -21,7 +21,7 @@ def format_ngram_normalize_options(normalize=False):
 
 # --------------------------------------------------------------
 
-def populate_ngrams_page(context, app):
+def populate_ngrams_page(context, app, collection_id="all"):
 	# handle year parameters
 	ngram_default_year_min = app.core.config["ngrams"].getint("default_year_min", 0)
 	ngram_default_year_max = app.core.config["ngrams"].getint("default_year_max", 0)
@@ -62,7 +62,7 @@ def populate_ngrams_page(context, app):
 	context["export_url"] = Markup("%s/exportngrams?year_start=%s&year_end=%s&normalize=%s&qwords=%s" % (context.prefix, year_start, year_end, normalize, quoted_query_string))
 	return context
 
-def export_ngrams(context, app):
+def export_ngrams(context, app, collection_id="all"):
 	""" Export ngram counts in CSV format """
 	# handle year parameters
 	ngram_default_year_min = app.core.config["ngrams"].getint("default_year_min", 0)
@@ -87,7 +87,7 @@ def export_ngrams(context, app):
 	db = app.core.get_db()
 	all_query_counts = {}
 	for query in queries:
-		all_query_counts[query] = db.get_ngram_count(query, year_start, year_end)
+		all_query_counts[query] = db.get_ngram_count(query, year_start, year_end, collection_id)
 	if normalize:
 		total_year_counts = db.get_cached_volume_years(year_start, year_end)
 	# finish with the database	
