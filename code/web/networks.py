@@ -11,6 +11,8 @@ from web.util import parse_keyword_query, parse_arg_int
 
 """ list of available neighborhood sizes for construction semantic networks """
 neighborhood_sizes = [1, 3, 5, 10, 12, 15, 20]
+""" default number of neighbors for smenatic networks """
+default_num_k = 5
 
 # --------------------------------------------------------------
 
@@ -41,8 +43,11 @@ def create_network(core, embed_id, queries, k, expand = True):
 def populate_networks_page(context):
 	""" populate the parameters for the template for the semantic networks page """
 	# populate the template parameters
-	default_k = context.core.config["networks"].getint("default_k", 5)
-	k = max(1, parse_arg_int(context.request, "neighbors", default_k))
+	try:
+		default_k = context.core.config["networks"].getint("default_k", default_num_k)
+		k = max(1, parse_arg_int(context.request, "neighbors", default_k))
+	except:
+		k = default_num_k
 	embed_id = context.request.args.get("embedding", default=context.core.default_embedding_id)
 	seed_font_size = context.core.config["networks"].getint("seed_font_size", 30)
 	neighbor_font_size = context.core.config["networks"].getint("neighbor_font_size", 23)
