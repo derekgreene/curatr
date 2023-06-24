@@ -1,0 +1,203 @@
+{% extends "layout.html" %} 
+{% block title %}Ngram Viewer{% endblock %} 
+
+{% block headcustom %}    
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<style>#nav-link-ngrams { color: #FF6600 !important; }</style>
+<style>
+#plot
+{
+	min-width: 310px; 
+	height: 550px; 
+	margin: 0;
+	margin-bottom: 10px;
+	border: 1px solid #ccc; 
+	padding-top: 5px; 
+	padding-left: 9.5px; 
+	padding-right: 9.5px; 
+	padding-bottom: 11px; 
+	background-color: #ECF0F1;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="section text-center">
+            <h2>Collection Ngram Viewer</h2>
+
+            <p class="text-justify">To search the frequency of all unique words in English language volumes from the British Library Digital Collection texts, enter one or more comma-separated keywords below, and click "Search". The plot can be used to show either the number of volumes containing the query word(s) in each year, or the relative percentage of volumes per year containing the word(s). <b>Click</b> on a point on the plot to show the corresponding set of search results for that year. Click and drag the rectangle in the plot area to zoom in on a specific time range.</p>
+        </div>
+        <form id="search" method="get" action="{{prefix}}/ngrams">
+            <div class="form-row form-block"> 
+                <div class="col">           
+                    <label for="qwords">Enter one or more keywords (comma separated)</label>
+                    <input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+                </div>
+            </div>
+            <div class="form-row form-block">
+                <div class="col">           
+                    <label for="year_start">Start Year</label>
+                    <input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="{{ yearstart }}">
+                </div>
+                <div class="col form-col-right">                
+                    <label for="year_end">End Year</label>
+                    <input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" size="10" value="{{ yearend }}" >   
+                </div>
+            </div>            
+			<div class="form-row form-block">
+				<div class="col">			
+					<label for="year_start">Plot Type</label>
+		            <select class="form-control dropdown" id="normalize" name="normalize" style="width: 40%;">
+		            {{ normalize_options }}
+		            </select>				
+				</div>
+			</div>            
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <br/>
+        <div id="plot"></div>
+	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Comma-Separated Values (CSV) file</a> containing the ngram counts for the plot above</p>
+	    <br/> 
+    </div>
+
+<script type="text/javascript">
+$(document).ready(function() 
+{
+	Highcharts.theme = {
+	    colors: ["#f1c40f", "#2ecc71", "#9b59b6", "#e74c3c", "#34495e", "#3498db", "#1abc9c", "#f39c12", "#d35400"],
+	    chart: {
+			backgroundColor: "#ECF0F1"
+	    },
+	    title: {
+	        style: {
+	            font: 'bold 16px "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif',
+	            color: 'black'
+	        }
+	    },
+	    legend: {
+	        itemStyle: {
+	            font: 'bold 16px "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif',
+	            color: 'black'
+	        },
+	        itemHoverStyle:{
+	            color: 'gray'
+	        }   
+	    }
+	};
+	Highcharts.setOptions(Highcharts.theme);
+
+    var seriesOptions = [],
+        yAxisOptions = [],
+        seriesCounter = 0,
+        queries = {{ querylist }},
+        colors = Highcharts.getOptions().colors;
+
+	function createChart()
+	{
+	    chart = new Highcharts.Chart(
+	    {
+	        chart:
+	        {
+	            renderTo: 'plot',
+	            zoomType: 'x',
+	            style:
+	            {
+	                fontSize: '15px'
+	            }
+	        },
+	        title:
+	        {
+	            text: null
+	        },
+	        yAxis:
+	        {
+	            title:
+	            {
+	                text: '{{ yaxis }}',
+	                style:
+	                {
+	                    fontSize: '17px'
+	                }
+	            },
+	            allowDecimals: {{ allowdecimals }},
+	            labels:
+	            {
+	                style:
+	                {
+	                    fontSize: '14px'
+	                }
+	            }
+	        },
+	        xAxis:
+	        {
+	            title:
+	            {
+	                text: 'Year',
+	                style:
+	                {
+	                    fontSize: '17px'
+	                }
+	            },
+	            allowDecimals: false,
+	            labels:
+	            {
+	                style:
+	                {
+	                    fontSize: '14px'
+	                }
+	            }
+	        },
+	        legend:
+	        {
+	            margin: 25,
+	            align: 'center',
+	            verticalAlign: 'top',
+	            borderWidth: 0,
+	            itemStyle:
+	            {
+	                fontSize: '18px'
+	            }
+	        },
+	        series: seriesOptions
+	    });
+	}
+
+	$.each(queries, function(i, name)
+	{
+	    url = "{{ jsonurlprefix }}" + name;
+	    $.getJSON(url, function(data)
+	    {
+	        seriesOptions[i] = {
+	            name: name,
+	            data: data,
+	            point:
+	            {
+	                events:
+	                {
+	                    click: function()
+	                    {
+	                        var y = this.x;
+	                        var url = '{{prefix}}/search?action=search&qwords=' + name + '&field=all&type=volume&suggest=True&year_start=' + y + '&year_end=' + y;
+	                        if (url)
+	                            window.open(url);
+	                    }
+	                }
+	            }
+	        };
+	        seriesCounter++;
+	        if (seriesCounter == queries.length)
+	        {
+	            createChart();
+	        }
+	    });
+	});
+
+} );
+</script>    
+
+
+{% endblock %} 
