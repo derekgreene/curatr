@@ -1,3 +1,6 @@
+"""
+Classes and functions for representing and handling users in the Curatr platform.
+"""
 import re, random, secrets, string
 from passlib.hash import sha256_crypt
 from flask_login import UserMixin
@@ -61,7 +64,7 @@ def validate_email(email):
 	return re.search(pattern, email)
 
 def generate_password(length=8):
-	""" Suggest a password of the specified length """
+	""" Suggest a random password of the specified length """
 	# add some letters
 	selected = [secrets.choice(string.ascii_letters) for i in range(length-2)]
 	# add some digits
