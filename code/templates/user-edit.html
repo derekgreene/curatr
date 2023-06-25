@@ -1,0 +1,54 @@
+{% extends "layout.html" %} 
+{% block title %}Administration - Edit User{% endblock %} 
+{% block headcustom %}    
+<style>
+  h6 { padding-top: 1em; }
+  .form-block { margin-bottom: 16px; }
+</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+  <div class="section" style="padding-bottom: 14px;">
+    <div class="text-center">
+      <h2>System Administration &mdash; Edit User</h2>
+    </div>
+    <h5>User: {{ user_email }}</h5>
+    <div class="message">{{ message }}</div>
+    <h6>Change User Password</h6>
+    <form id="pwd" method="get" action="{{prefix}}/useredit" style="margin-left: 10px; margin-right: 10px;">
+      <input type="hidden" id="action" name="action" value="pwd">
+      <input type="hidden" id="user_email" name="user_email" value="{{ user_email }}">
+      <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">
+      <div class="form-block">    
+        <div class="form-group">
+          <label for="name">New Password</label>
+          <input name="pwd" type="password" autocomplete="new-password" class="form-control" placeholder="Password" style="width: 100%;" passwordrules="minlength: 8;">
+        </div>
+        <div class="form-group">
+          <label for="name">Confirm Password</label>
+          <input name="confirm" type="password" class="form-control"  placeholder="Password" style="width: 100%;">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Change Password</button>
+    </form>  
+    <h6>Delete User</h6>
+    <form id="delete" method="get" action="{{prefix}}/useredit" style="margin-left: 10px; margin-right: 10px;">
+      <input type="hidden" id="action" name="action" value="delete">
+      <input type="hidden" id="user_email" name="user_email" value="{{ user_email }}">
+      <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">
+      <div class="form-block" style="margin-left: 1em;">
+        <div class="form-group">  
+          <input class="form-check-input" type="checkbox" id="delete_confirm" name="delete_confirm" value="1">
+          <label class="form-check-label" for="delete_confirm">Confirm user should be removed from the system</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Delete User</button>
+    </form> 
+    <p style="margin-top: 20px;">Return to <a href="{{prefix}}/admin">System Administration</a>
+ </div>
+
+</div>
+
+{% endblock %} 
+

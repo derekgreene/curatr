@@ -1,0 +1,79 @@
+{% extends "layout.html" %} 
+{% block title %}Word Lexicons{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-lexicon { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+	<div class="section" style="padding-bottom: 14px;">
+	    <!------------------------------------------------------>
+		<h2 style="text-align: center;">Word Lexicons &mdash; {{ current_user.email }}</h2>
+		<!-- <h2 style="text-align: center;">Word Lexicons</h2> -->
+		<p class="text-justify"><i>Word lexicons</i>, which consist of curated lists of keywords related to a given topic, allow scholars to
+		further search the British Library collection, and to define sub-corpora related to that topic. A lexicon can be expanded based on
+		automatically recommended keywords, which frequently appear in the same context as existing words in the lexicon.</p>
+
+		<div class="message">{{ message }}</div>
+		<h5 style="margin-top: 26px; margin-bottom: 18px;">Existing Word Lexicons</h5>
+	    <table id="lexicons" class="table table-striped" style="width:100%; font-size:95%;">
+	        <thead>
+	            <tr>
+	                <th width="13%" class="text-left">Lexicon Name&nbsp;</th>
+	                <th width="23%" class="text-left">Description&nbsp;</th>
+	                <th width="35%" class="text-left">Keywords</th>
+	                <th width="8%" class="text-center">Edit&nbsp;</th>
+	                <th width="8%" class="text-center">Delete&nbsp;</th>
+	                <th width="8%" class="text-center">Search&nbsp;</th>
+	                <th width="8%" class="text-center">Visualise&nbsp;</th>
+	            </tr>
+	        </thead>
+			{{ lexlist }}
+	    </table>
+	    <!------------------------------------------------------>
+		<h5 style="margin-top: 26px; margin-bottom: 18px; border-top: 1px solid #e5e5e5; padding-top: 16px;">Create New Lexicon:</h5>
+		<p class="text-justify" style="margin-top: 18px; margin-bottom: 18px;">You can alternatively create a new lexicon by completing the form below, including
+		one or more initial "seed" keywords:</p>
+		<form id="search" method="get" action="{{prefix}}/lexicon" style="margin-left: 10px; margin-right: 10px;">
+			<input type="hidden" id="action" name="action" value="create">
+
+			<div class="form-block">		
+				<div class="form-group">
+					<label for="name">Lexicon Name</label>
+		            <input name="name" type="search" class="form-control mr-sm-2" placeholder="Enter lexicon name" aria-label="Search" size="20" style="width: 50%;">
+				</div>
+			</div>
+
+			<div class="form-block">		
+				<div class="form-group">
+					<label for="description">Lexicon Description</label>
+		            <input name="description" type="search" class="form-control mr-sm-2" placeholder="Enter lexicon description" aria-label="Search" size="40" style="width: 90%;">
+				</div>
+			</div>
+
+			<div class="form-block">		
+				<div class="form-group">
+					<label for="class">Classification</label>
+			        <select class="form-control dropdown" id="class" name="class" style="width: 50%;">>
+			            {{ class_options }}
+			        </select>
+				</div>
+			</div>
+
+			<div class="form-block">		
+				<div class="form-group">
+					<label for="words">Initial Lexicon Keywords</label>
+		            <input name="words" type="search" class="form-control mr-sm-2" placeholder="Enter one or more lexicon keywords" aria-label="Search" size="40" style="width: 90%;">
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Create</button>
+		</form>		
+	    <!------------------------------------------------------>
+	</div>
+</div>
+
+
+
+</script>
+	 
+{% endblock %} 

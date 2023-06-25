@@ -1,0 +1,18 @@
+{% extends "layout.html" %} 
+{% block title %}Administration - Create Users{% endblock %} 
+
+{% block content %}
+<div class="container">
+  <div class="section" style="padding-bottom: 14px;">
+    <div class="text-center">
+      <h2>System Administration &mdash; Create Users</h2>
+    </div>
+    <h5>Created {{ num_created }} new system user(s).</h5>
+    <p>{{ user_creation }}</p>
+    <p style="margin-top: 20px;">Return to <a href="{{prefix}}/admin">System Administration</a>
+ </div>
+
+</div>
+
+{% endblock %} 
+

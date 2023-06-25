@@ -1,0 +1,37 @@
+{% extends "layout.html" %} 
+{% block title %}Word Lexicon - {{ lexicon_name }}{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-lexicon { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+	<div class="section" style="padding-bottom: 14px;">
+		<h2>Word Lexicons:</h2>
+		<p class="text-justify">Word lexicons, which consist of curated lists of keywords related to a given topic, allow scholars to
+		further search the British Library Digital Collection, and to define sub-corpora related to that topic. A lexicon can be expanded based on
+		automatically recommended keywords, which frequently appear in the same context as existing words in the lexicon.</p>
+
+		<div class="message">{{ message }}</div>
+		<h5 style="margin-top: 21px; margin-bottom: 18px;">Edit Word Lexicon - '{{ lexicon_name }}':</h5>
+		<p>{{ lexicon_summary }}</p>
+		<table id="keywords" class="table-words">
+			{{ lexicon_words }}
+		</table>
+		<p>The following additional words were recommended based on word similarities in the corpus: </p>
+	    <table id="recommendations" class="table table-striped table-recommendations" style="width:100%; font-size:95%;">
+	        <thead>
+	            <tr>
+	                <th width="15%" class="text-left">Recommended Word&nbsp;</th>
+	                <th width="50%" class="text-left">Explanation&nbsp;</th>
+	                <th width="8%" class="text-center">Accept&nbsp;</th>
+	                <th width="8%" class="text-center">Reject&nbsp;</th>
+	            </tr>
+	        </thead>
+		{{ recommendations }}
+	    </table>
+	    <p>Download <a href="{{ export_url }}">a plain text file</a> containing the words from this lexicon.</p>
+	    <br> 
+	</div>
+</div>
+{% endblock %} 

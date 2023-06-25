@@ -1,0 +1,35 @@
+{% extends "layout.html" %} 
+{% block title %}Sub-Corpora{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-corpora { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+	<div class="section" style="padding-bottom: 14px;">
+ 	    <h2 style="text-align: center;">Sub-Corpora &mdash; {{ current_user.email }}</h2>	    
+		<!-- <h2 style="text-align: center;">Sub-Corpora</h2> -->
+	    <p class="text-justify">The <i>Curatr</i> platform provides access to the <i>British Library Digital Collection</i>, a large set of digitised texts, both fiction and non-fiction, largely from the 19th century. We work with the plain text version of the collection, transformed using Optical Character Recognition (OCR) techniques. In total there are 49,509 unique texts across multiple languages. On this platform we focus on a subset of 35,918 English language texts dating from 1700 to 1899, for which key associated metadata is available. A subset of these are multi-volume texts, yielding a total of 46,438 English volumes.</p>
+	    
+	    <div class="message">{{ message }}</div>
+		<h5 style="margin-top: 21px; margin-bottom: 18px;">Existing Sub-Corpora</h5>
+	    <p class="text-justify">
+    	Smaller, topic-specific sub-corpora of the British Library Digital Collection can be exported using the <a href="{{prefix}}/search">Curatr search functionality</a>. Currently, the following curated sub-corpora are available for you to download for further analysis and close reading:
+    	</p>
+	
+	    <table id="subcorpora" class="table table-striped table-corpora" style="width:100%; font-size:95%;">
+	        <thead>
+	            <tr>
+	                <th width="15%" class="text-left">Sub-Corpus Name&nbsp;</th>
+	                <th width="15%" class="text-center"># Documents&nbsp;</th>
+	                <th width="15%" class="text-left">Format</th>
+	                <th width="45%" class="text-left">Sub-Corpus Summary&nbsp;</th>
+	                <th width="8%" class="text-center">Download&nbsp;</th>
+	            </tr>
+	        </thead>
+			{{ subcorpuslist }}
+    	</table>
+	</div>
+</div>
+
+{% endblock %} 
