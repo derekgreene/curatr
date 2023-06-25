@@ -1,0 +1,56 @@
+{% extends "layout.html" %} 
+{% block title %}Bookmarks{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-bookmarks { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+	<div class="section" style="padding-bottom: 14px;">
+ 	    <h2 style="text-align: center;">Bookmarks &mdash; {{ current_user.email }}</h2>	    
+		<!-- <h2 style="text-align: center;">Bookmarks</h2> -->
+	    <p>
+		{% if numvolumebookmarks + numsegmentbookmarks == 0 %}
+		Currently you have no bookmarks saved. 
+		{% endif %}
+	    To create a bookmark, click the 'Add Bookmark' link on the page for a particular volume or segment. 
+	    The bookmark will then appear in the <a href="#volbookmarks">volume bookmark list</a> or <a href="#segbookmarks">segment bookmark list</a> below for access later.</p>
+
+		<h5 style="margin-top: 21px; margin-bottom: 18px;"><a id="volbookmarks">Volume Bookmarks</a></h5>
+	    <table id="subcorpora" class="table table-striped table-corpora" style="width:100%; font-size:95%;">
+	        <thead>
+	            <tr>
+	                <th width="15%" class="text-left">Created&nbsp;</th>
+	                <th width="69%" class="text-left">Title&nbsp;</th>
+<!-- 	                <th width="8%" class="text-center">Download&nbsp;</th>
+ -->	                <th width="8%" class="text-center">Delete&nbsp;</th>
+	            </tr>
+	        </thead>
+	        {% if numvolumebookmarks == 0 %}
+	      		<tr><td colspan="3">No volume bookmarks saved</td></tr>
+	      	{% else %}
+				{{ volumebookmarks }}
+			{% endif %}
+    	</table>
+
+		<h5 style="margin-top: 21px; margin-bottom: 18px;"><a id="segbookmarks">Segment Bookmarks</a></h5>
+	    <table id="subcorpora" class="table table-striped table-corpora" style="width:100%; font-size:95%;">
+	        <thead>
+	            <tr>
+	                <th width="15%" class="text-left">Created&nbsp;</th>
+	                <th width="69%" class="text-left">Title&nbsp;</th>
+<!-- 	                <th width="8%" class="text-center">Download&nbsp;</th>
+ -->	                <th width="8%" class="text-center">Delete&nbsp;</th>
+	            </tr>
+	        </thead>
+	        {% if numsegmentbookmarks == 0 %}
+	        	<tr><td colspan="3">No segment bookmarks saved</td></tr>
+	        {% else %}
+				{{ segmentbookmarks }}
+			{% endif %}
+    	</table>
+    	<br/>		
+	</div>
+</div>
+
+{% endblock %} 
