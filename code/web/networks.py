@@ -118,7 +118,7 @@ def export_network(context):
 	mem.write(out.getvalue().encode('utf-8'))
 	mem.seek(0)
 	out.close()	
-	return send_file(mem, mimetype='text/xml', as_attachment=True, attachment_filename=filename)
+	return send_file(mem, mimetype='text/xml', as_attachment=True, download_name=filename)
 
 def create_gexf(out, seed_nodes, other_nodes, edges):
 	""" Write out the specified graph in GEXF 1.3 format """
