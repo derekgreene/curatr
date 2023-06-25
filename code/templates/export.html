@@ -1,0 +1,54 @@
+{% extends "layout.html" %} 
+{% block title %}Sub-Corpus Export{% endblock %} 
+{% block headcustom %}    
+<style>#nav-link-corpora { color: #FF6600 !important; }</style>
+{% endblock %} 
+
+{% block content %}
+<div class="container">
+	<div class="section" style="padding-bottom: 14px;">
+	    <h2 style="text-align: center;">Sub-Corpus Export</h2>
+	    <p class="text-justify">The volumes or segments that match a particular search specification or lexicon can be used to create and export a smaller sub-corpus of the British Library Digital Collection, which relates to a particular theme, topic, or era.</p>
+		<h4 style="margin-top: 1.3em;">Summary of Selected Sub-Corpus:</h4>
+		<p>
+			<ul>
+				{{ summary }}
+			</ul>
+		</p>
+
+		<h4 style="margin-top: 1.3em;">Export Settings:</h4>
+<!-- 		<p class="text-justify">Specify the settings for the sub-corpus export format:</p>
+ -->
+		<form id="export" method="get" action="{{prefix}}/corpora" style="margin-left: 10px; margin-right: 20px;">
+			<input type="hidden" id="action" name="action" value="export">
+			{{ search_spec }}
+			<div class="form-block">		
+				<div class="form-group" style="width: 50%;">					
+					<label for="export_name">Sub-Corpus Name</label>
+		            <input name="export_name" type="search" class="form-control mr-sm-2" placeholder="Enter sub-corpus name" aria-label="Search" size="20" style="width: 50%;" value="{{ default_name }}">
+				</div>
+			</div>
+			<div class="form-block">		
+				<div class="form-group" style="width: 50%;">					
+					<label for="export_format">Export Format</label>
+		            <select class="form-control dropdown" id="export_format" name="export_format">
+		                {{ format_options }}
+		            </select>
+		        </div>
+			</div>
+
+			<div class="form-block">
+				<div class="form-group" style="width: 50%;">					
+					<label for="export_num">Number of Results to Export</label>
+		            <select class="form-control dropdown" id="export_num" name="export_num">
+		                {{ num_options }}
+		            </select>
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-primary">Export</button>
+		</form>			
+  </div>
+</div>
+
+{% endblock %} 

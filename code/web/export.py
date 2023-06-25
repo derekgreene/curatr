@@ -16,6 +16,7 @@ export_format_map = {"text" : "Full Text", "metadata" : "Metadata Only"}
 # --------------------------------------------------------------
 
 def populate_export(context, db, spec):
+	""" Populate the export page """
 	request = context.request
 	is_segments = spec.get("type", "volume") == "segment"
 	context["format_options"] = Markup(format_export_format_options())
@@ -109,11 +110,12 @@ def handle_export_build(context, core, spec):
 	thread.start()
 	# add a message
 	url_reload = "%s/corpora" % context.prefix
-	# context["message"] = Markup("Your sub-corpus is currently being exported and will be available for download from this page shortly. Click <a href='%s'>here to reload this page</a>." % url_reload)
 	context["message"] = Markup("Your sub-corpus is currently being exported and will be available for download from this page in a few minutes. <br>Please do not click 'Refresh' in your browser. Instead, click <a href='%s'>here to reload this page</a>." % url_reload)
 	return context
 
 def handle_export_download(core, subcorpus_id):
+	""" Send an export file for download """
+	# get the correct path for the file
 	zip_filepath = core.get_subcorpus_zipfile(subcorpus_id)
 	log.info("Export: Request to download corpus '%s' from '%s'" %  (subcorpus_id, zip_filepath))
 	if zip_filepath is None:
@@ -126,11 +128,12 @@ def handle_export_download(core, subcorpus_id):
 	abs_filepath = str(zip_filepath.absolute())
 	# send it as a ZIP file
 	log.info("Export: Sending sub-corpus ZIP file %s" % abs_filepath)
-	return send_file(abs_filepath, mimetype='application/zip', as_attachment=True, attachment_filename=zip_filepath.name)
+	return send_file(abs_filepath, mimetype='application/zip', as_attachment=True, 
+		  download_name=zip_filepath.name)
 
 # --------------------------------------------------------------
 
-def format_export_format_options(selected = "text"):
+def format_export_format_options(selected="text"):
 	html = ""
 	export_format_keys = list(export_format_map.keys())
 	export_format_keys.sort()
@@ -351,6 +354,7 @@ class Exporter:
 			fout.write(json.dumps(data, indent=4))
 
 	def write_zip(self, results, zip_path, meta_path, description_path, is_segments):
+		""" Actually create a ZIP file for export """
 		log.info("Creating sub-corpus zip file %s ..." % zip_path)
 		try:
 			zip = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)

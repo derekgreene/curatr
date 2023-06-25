@@ -213,11 +213,11 @@ class CoreCuratr(CoreBase):
 			log.warning(e)
 			return []
 
-	def recommend_words(self, words, ignores, topn=10):
+	def recommend_words(self, words, ignores, topn=10, embed_id=None):
 		""" Find top-N most similar words to a set of one or more input words,
 		using the default word embedding model """
 		# get the embedding model to use for recommendations
-		embedding = self.get_embedding()
+		embedding = self.get_embedding(embed_id)
 		recommendations = {}
 		# get the nearest neighbors in the model for each input word
 		for word in words:
@@ -240,10 +240,10 @@ class CoreCuratr(CoreBase):
 			recommendations[word] = nwords
 		return recommendations
 
-	def aggregate_recommend_words(self, words, ignores, topn=10, enforce_diversity=False):
+	def aggregate_recommend_words(self, words, ignores, topn=10, enforce_diversity=False, embed_id=None):
 		""" Combine words recommendations for an input set of multiple query words,
 		using the default word embedding model """
-		recommendations = self.recommend_words(words, ignores, topn*3)
+		recommendations = self.recommend_words(words, ignores, topn*3, embed_id)
 		scores = Counter()
 		for word in recommendations:
 			for i, neighbor in enumerate(recommendations[word]):
@@ -270,3 +270,15 @@ class CoreCuratr(CoreBase):
 				word_stems.add(word_stem)
 			merged.append(word)
 		return merged
+
+	def get_subcorpus_zipfile(self, subcorpus_id):
+		""" Create the path for a ZIP file for exporting a sub-corpus """
+		db = self.get_db()
+		filepath = None
+		try:
+			subcorpus = db.get_subcorpus(subcorpus_id)
+			filepath = self.dir_export / subcorpus["filename"]
+		except Exception as e:
+			log.error( "Failed to get subcorpus ZIP file: %s" % str(e) )
+		db.close()
+		return filepath
