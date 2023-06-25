@@ -445,7 +445,7 @@ def handle_lexicon_export():
 	mem.write(out.getvalue().encode('utf-8'))
 	mem.seek(0)
 	out.close()	
-	return send_file(mem, mimetype='text/plain', as_attachment=True, attachment_filename=filename)
+	return send_file(mem, mimetype='text/plain', as_attachment=True, download_name=filename)
 
 # --------------------------------------------------------------
 # Endpoints: Sub-corpora
