@@ -12,6 +12,7 @@ from preprocessing.cleaning import tidy_shelfmarks, tidy_publisher, tidy_edition
 def populate_volume(context, db, doc, spec, volume_id):
 	query_string = spec["query"]
 	quoted_query_string = urllib.parse.quote_plus(query_string)
+	id_parts = volume_id.split("_")
 	volume = max(doc["volume"], 1)
 	# Get extra details
 	book_id = doc["book_id"]
@@ -25,6 +26,8 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["edition"] = tidy_edition(doc.get("edition", None))
 	context["description"] = tidy_description(doc.get("physical_descr", None))
 	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
+	# TODO: get UIN from document?
+	context["uin"] = "BLL01" + id_parts[0]
 	# if safe_int( doc.get( "mudies_match" ) ) == 0:
 	# 	context["mudies"] = "No matching author"
 	# else:
@@ -66,7 +69,6 @@ def populate_volume(context, db, doc, spec, volume_id):
 		html_text = highlight_query(query_string, html_text)
 	context["text"] = Markup(html_text)
 	# Create the plain-text URL
-	id_parts = volume_id.split("_")
 	url_spec = "qwords=%s&field=%s&class=%s&subclass=%s" % (quoted_query_string, spec["field"], spec["class"], spec["subclass"])
 	if spec["year_start"] > 0:
 		url_spec += "&year_start=%d" % spec["year_start"]
@@ -93,6 +95,7 @@ def populate_segment(context, db, doc, spec, segment_id):
 	segment = max(int(doc["segment"]), 1)
 	max_segment = max(int(doc["max_segment"]), 1)
 	volume = max(doc["volume"], 1)
+	id_parts = segment_id.split("_")
 	# Get extra details
 	book_id = doc["book_id"]
 	author_ids = db.get_book_author_ids(book_id)
@@ -107,6 +110,8 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["edition"] = tidy_edition(doc.get("edition", None))
 	context["description"] = tidy_description(doc.get("physical_descr", None))
 	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
+	# TODO: get UIN from document?
+	context["uin"] = "BLL01" + id_parts[0]
 	# if safe_int( doc.get( "mudies_match" ) ) == 0:
 	# 	context["mudies"] = "No matching author"
 	# else:
@@ -152,7 +157,6 @@ def populate_segment(context, db, doc, spec, segment_id):
 			html_text += "&hellip;"
 	context["text"] = Markup(html_text)
 	# Create the full-text URL
-	id_parts = segment_id.split("_")
 	url_spec = "qwords=%s&field=%s&class=%s&subclass=%s&location=%s" % (quoted_query_string, spec["field"], spec["class"], spec["subclass"], spec["location"])
 	if spec["year_start"] > 0:
 		url_spec += "&year_start=%d" % spec["year_start"]
