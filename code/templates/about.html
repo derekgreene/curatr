@@ -1,14 +1,24 @@
 {% extends "layout.html" %} 
 {% block title %}About{% endblock %} 
 {% block headcustom %}    
-<style>#nav-link-about { color: #FF6600 !important; }</style>
+<style>
+  #nav-link-about 
+  { 
+    color: #FF6600 !important; 
+  }
+  h5.division
+  {
+    margin-top: 16px; margin-bottom: 8px; text-align: left;
+  }
+</style>
 {% endblock %} 
 
 {% block content %}
 <div class="container">
   <div class="section text-center">
   	<h2>About Curatr</h2>
-    <p class="text-justify"><i>Curatr</i> is an online platform which provides access to the <a href="https://www.bl.uk/collection-guides/digitised-printed-books" target="_blank">British Library Digital Collection</a>, developed by the ERC-funded <a href="https://projectvicteur.com/" target="_blank">VICTEUR project</a> at the <a href='http://www.ucd.ie/englishdramafilm/' target='_blank'>UCD English, Drama and Film</a>, in collaboration with researchers at the <a href='http://www.insight-centre.org/' target='_blank'>SFI Insight Centre for Data Analytics</a>, as part of its Cultural Analytics research initiative. The platform hosts digitised versions of all English-language books from the British Library collection, corresponding to over thirty-five thousand unique titles, both fiction and non-fiction, from 1700 to 1899. When we take into account multi-volume works, this consists of over forty-six thousand unique volumes of text. The platform also incorporates the first digitised version of the topical classification index of books used by the British Library from 1823-1985.</p>
+    <h5 class="division">Project Overview</h5>
+    <p class="text-justify"><i>Curatr</i> is an online platform which provides access to the <a href="https://www.bl.uk/collection-guides/digitised-printed-books" target="_blank">British Library Digital Collection</a>, developed by the ERC-funded <a href="https://projectvicteur.com/" target="_blank">VICTEUR project</a> at the <a href='http://www.ucd.ie/englishdramafilm/' target='_blank'>UCD English, Drama and Film</a>, in collaboration with researchers at the <a href='http://www.insight-centre.org/' target='_blank'>SFI Insight Centre for Data Analytics</a>, as part of its Cultural Analytics Research Initiative. The platform hosts digitised versions of all English-language books from the British Library collection, corresponding to over thirty-five thousand unique titles, both fiction and non-fiction, from 1700 to 1899. When we take into account multi-volume works, this consists of over forty-six thousand unique volumes of text. The platform also incorporates the first digitised version of the topical classification index of books used by the British Library from 1823-1985.</p>
 
     <p class="text-justify">The system includes a searchable index on the equivalent of over 12 million individual pages of text, which can be searched and sorted by author, title, year, and the actual full-text of the volumes themselves. This allows researchers to identify content relating to specific themes within little known or very long, unwieldy texts. This is further supported by additional functionality based on modern natural language processing techniques. This includes content-based recommendation methods and the visualisation of the relationships between concepts in the collection through the use of semantic networks.</p>
 
@@ -16,11 +26,21 @@
 
     <p class="text-justify">There are inevitable variations in the legibility of earlier texts and those in non-standard formats. Therefore, a key use of Curatr is to assist researchers to identify original texts relevant to their work for consultation in situ in the library. The next phase of the project will seek to integrate Curatr with other relevant online cultural resources, such as records originating from popular lending libraries in the nineteenth-century.</p>
 
-    <p class="text-justify">See <a href="https://projectvicteur.com/2023/01/10/curatr-videos/" target="_blank">here for videos</a> on the use and functionality of Curatr.</p>
+    <h5 class="division">Tutorials</h5>
+    <p class="text-justify">See <a href="https://projectvicteur.com/2023/01/10/curatr-videos/" target="_blank">here for a series of short instructional videos</a> from VICTEUR project researchers on the use and functionality of Curatr.</p>
 
-    <hr>
+    <h5 class="division">Citing Curatr</h5>
     <p class="text-justify">
-        This project has received funding from the <a target="_blank" href="https://erc.europa.eu/">European Research Council (ERC)</a> under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the <a href='http://www.ucd.ie/englishdramafilm/' target='_blank'>UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href='http://www.insight-centre.org/' target='_blank'>SFI Insight Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank">UCD School of Computer Science</a>. For more details, please contact us via <a href="mailto:ucdcuratr@gmail.com">e-mail</a> or follow us on <a href="https://twitter.com/Victeurproject" target="_blank">Twitter</a>.
+      If you use Curatr in an academic publication, we would appreciate citations to the following paper:
+      <p class="text-left" style="margin-left: 20px;">S. Leavy, G. Meaney, K. Wade, and D. Greene, "Curatr: A Platform for Semantic Analysis and Curation of Historical Literary Texts," in <i>Proceedings of the 13th International Conference on Metadata and Semantics Research (MTSR 2019)</i>, 2019.&nbsp;<a title="Download Paper PDF" href="{{staticprefix}}/paper/leavy19curatr.pdf" target="_blank">[PDF]</a>&nbsp;<a title="Download BibTeX reference" href="{{staticprefix}}/paper/leavy19curatr.bib" target="_blank">[BibTeX]</a>&nbsp;<a title="Download RIS reference" href="{{staticprefix}}/paper/leavy19curatr.ris" target="_blank">[RIS]</a></p>
+    </p>
+    <p class="text-justify">
+      If you wish to cite a specific version of a text identified on the Curatr platform, we recommend the following citation format:
+      <p class="text-left" style="margin-left: 20px;">Dickens, C. (1892) <i>The Old Curiosity Shop</i>. Available at: curatr.ucd.ie, UIN: BLL01002043707 (Accessed: 28 June 2023).</p>
+    </p>
+    <h5 class="division">Acknowledgements</h5>
+    <p class="text-justify">
+        This work is part of the <a href="https://projectvicteur.com/" target="_blank">VICTEUR project</a>, which has received funding from the <a target="_blank" href="https://erc.europa.eu/">European Research Council (ERC)</a> under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the <a href="http://www.ucd.ie/englishdramafilm/" target="_blank">UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href="http://www.insight-centre.org/" target="_blank">SFI Insight Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank">UCD School of Computer Science</a>. For more details, please contact us via <a href="mailto:ucdcuratr@gmail.com">e-mail</a> or follow us on <a href="https://twitter.com/Victeurproject" target="_blank">Twitter</a>.
         Curatr by <a href="https://cca.ucd.ie/" target="_blank">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 Licence</a>. Background image created by <a href="https://www.flickr.com/photos/stevecadman/486263551" target="_blank">Steven Cadman</a>.
     </p>
     <p style="align: center; margin-top: 1.8em;">            
