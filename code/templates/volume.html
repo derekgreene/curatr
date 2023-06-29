@@ -1,34 +1,82 @@
 {% extends "layout.html" %} 
 {% block title %}Volume {{ id }} - Curatr Search{% endblock %} 
-{% block headcustom %}    
+{% block headcustom %} 
+<!-- Include Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<!-- Custom Styles -->
 <style>
-	#nav-link-search { color: #FF6600 !important; }
+	#nav-link-search 
+	{ 
+		color: #FF6600 !important; 
+	}	
 </style>
 {% endblock %} 
 
 {% block content %}
 	<div class="container">
 		<div class="section text-left">
-			<table class="table table-striped table-meta">
-				<tr><td class="meta" width="18%">Book Title:</td><td class="meta">{{title}}</td></tr>
-				<tr><td class="meta">Volume:</td><td class="meta">Volume {{volume}} of {{max_volume}}</td></tr>
-				<tr><td class="meta">Author(s):</td><td class="meta">{{authors}}</td></tr>
-				<tr><td class="meta">Published:</td><td class="meta">{{year}} &ndash; {{publisher}}</td></tr>
-				<tr><td class="meta">Edition:</td><td class="meta">{{edition}}</td></tr>
-				<tr><td class="meta">Classification:</td><td class="meta">{{classification}}</td></tr>
-				<tr><td class="meta">Physical Description:</td><td class="meta">{{description}}</td></tr>
-				<tr><td class="meta">Book Shelfmark(s):</td><td class="meta">{{shelfmarks}}</td></tr>
-				<tr><td class="meta">Book Catalogue UIN:</td><td class="meta">{{uin}}&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href="{{url_bl_record}}" target="_blank">British Library Catalogue Entry</a></td></tr>
-				<!-- <tr><td class="meta">Mudie's Library Author:</td><td class="meta">{{mudies}}</td></tr> -->
-				<tr><td class="meta">Related Links:</td><td class="meta">
-					{{other_urls1}}
-					<a href="{{url_similar}}">Find Similar Volumes</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;
-				{% if is_bookmarked %}
-				<a href="{{url_bookmark}}">Remove Bookmark</a>
-				{% else %}
-				<a href="{{url_bookmark}}">Add Bookmark</a>
-				{% endif %}
-				</td></tr>
+			<table width="100%">
+				<tr>
+		          <!-- Start Actions -->
+		          <td width="70px">
+		            <div class="container">
+		              <div class="row">
+		                <div class="act columns">
+		                  <a class="act" href="{{url_ark}}" target="_blank"><i class="act bi bi-book"></i></a>
+		                  <a class="act" href="{{url_ark}}" target="_blank"><p class="act">Digitised Book</p></a>
+		                </div>
+		              </div>
+		              <div class="row">
+		                <div class="act columns">
+						{% if is_bookmarked %}
+		                  <a class="act" href="{{url_bookmark}}"><i class="act bi bi-bookmark-check"></i></a>
+		                  <a class="act" href="{{url_bookmark}}"><p class="act">Remove Bookmark</p></a>
+						{% else %}
+		                  <a class="act" href="{{url_bookmark}}"><i class="act bi bi-bookmark"></i></a>
+		                  <a class="act" href="{{url_bookmark}}"><p class="act">Add Bookmark</p></a>
+						{% endif %}
+		                </div>
+		              </div>
+		              <div class="row">
+		                <div class="act columns">
+		                  <a class="act" href="{{url_download}}" target="_blank"><i class="act bi bi-save"></i></a>
+		                  <a class="act" href="{{url_download}}" target="_blank"><p class="act">Download Volume</p></a>
+		                </div>
+		              </div>
+		              <div class="row">
+		                <div class="act columns">
+		                  <a class="act" href="{{url_similar}}"><i class="act bi bi-search"></i></a>
+		                  <a class="act" href="{{url_similar}}"><p class="act">Find Similar</p></a>
+		                </div>
+		              </div>
+		            </div>            
+		          </td>
+		          <!-- End Actions -->
+		          <!-- Start Metadata -->
+		          <td>
+					<table class="table table-striped table-meta">
+						<tr><td class="meta" width="21%">Book Title:</td><td class="meta">{{title}}</td></tr>
+						<tr><td class="meta">Volume:</td><td class="meta">Volume {{volume}} of {{max_volume}}</td></tr>
+						<tr><td class="meta">Author(s):</td><td class="meta">{{authors}}</td></tr>
+						<tr><td class="meta">Published:</td><td class="meta">{{year}} &ndash; {{publisher}}</td></tr>
+						<tr><td class="meta">Edition:</td><td class="meta">{{edition}}</td></tr>
+						<tr><td class="meta">Physical Description:</td><td class="meta">{{description}}</td></tr>
+						<tr><td class="meta">Book Classification:</td><td class="meta">{{classification}}</td></tr>
+						<tr><td class="meta">Library Shelfmark(s):</td><td class="meta">{{shelfmarks}}</td></tr>
+						<tr><td class="meta">Library Catalogue Entry:</td><td class="meta"><a href="{{url_bl_record}}" target="_blank">UIN: {{uin}}</a></td></tr>
+						<!-- <tr><td class="meta">Mudie's Library Author:</td><td class="meta">{{mudies}}</td></tr> -->
+		<!-- 				<tr><td class="meta">Related Links:</td><td class="meta">
+							{{other_urls1}}
+							<a href="{{url_similar}}">Find Similar Volumes</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;
+						{% if is_bookmarked %}
+						<a href="{{url_bookmark}}">Remove Bookmark</a>
+						{% else %}
+						<a href="{{url_bookmark}}">Add Bookmark</a>
+						{% endif %}
+						</td></tr> -->		
+					</table>
+		          </td>
+				</tr>
 			</table>
 			<div class="segment-text text-justify">
 			{{text}}

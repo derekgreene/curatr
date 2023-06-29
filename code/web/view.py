@@ -28,12 +28,6 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
 	# TODO: get UIN from document?
 	context["uin"] = "BLL01" + id_parts[0]
-	# if safe_int( doc.get( "mudies_match" ) ) == 0:
-	# 	context["mudies"] = "No matching author"
-	# else:
-	# 	context["mudies"] = tidy_content( doc.get("mudies_author",None))
-	# 	if len(context["mudies"]) == 0:
-	# 		context["mudies"] = "No matching author"		
 	url_year = "%s/search?action=search&year_start=%s&year_end=%s" % (context.prefix, doc["year"], doc["year"])
 	html_year = "<a href='%s'>%s</a>" % (url_year, doc["year"])
 	context["year"] = Markup(html_year)
@@ -75,17 +69,22 @@ def populate_volume(context, db, doc, spec, volume_id):
 	if spec["year_end"] < 2000:
 		url_spec += "&year_end=%d" % spec["year_end"]
 	context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
-	context["url_similar"] = "%s/similar?volume_id=%s" % (context.prefix, volume_id) 	
-	# Any other links?
-	context["other_urls1"], context["other_urls2"] = "", ""
+	context["url_similar"] = "%s/similar?volume_id=%s" % (context.prefix, volume_id)
+	# do we have an Ark link?
 	if doc.get("url_ark", None) != None:
-		context["other_urls1"] += "<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
-	if doc.get("url_pdf", None) != None:
-		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
-	if doc.get("url_images", None) != None:
-		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
-	context["other_urls1"] = Markup(context["other_urls1"])
-	context["other_urls2"] = Markup(context["other_urls2"])
+		context["url_ark"] = doc.get("url_ark")
+	# text download link
+	context["url_download"] = "%s/volume/%s" % (context.apiprefix, volume_id)
+	# # Any other links?
+	# context["other_urls1"], context["other_urls2"] = "", ""
+	# if doc.get("url_ark", None) != None:
+	# 	context["other_urls1"] += "<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
+	# if doc.get("url_pdf", None) != None:
+	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
+	# if doc.get("url_images", None) != None:
+	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
+	# context["other_urls1"] = Markup(context["other_urls1"])
+	# context["other_urls2"] = Markup(context["other_urls2"])
 	return context
 
 def populate_segment(context, db, doc, spec, segment_id):
@@ -112,12 +111,6 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["publisher"] = tidy_publisher(doc.get("publisher_full", None))
 	# TODO: get UIN from document?
 	context["uin"] = "BLL01" + id_parts[0]
-	# if safe_int( doc.get( "mudies_match" ) ) == 0:
-	# 	context["mudies"] = "No matching author"
-	# else:
-	# 	context["mudies"] = tidy_content( doc.get("mudies_author",None))
-	# 	if len(context["mudies"]) == 0:
-	# 		context["mudies"] = "No matching author"
 	url_year = "%s/search?action=search&year_start=%s&year_end=%s&type=segment" % (context.prefix, doc["year"], doc["year"])
 	html_year = "<a href='%s'>%s</a>" % (url_year, doc["year"])
 	context["year"] = Markup(html_year)
@@ -163,18 +156,23 @@ def populate_segment(context, db, doc, spec, segment_id):
 	if spec["year_end"] < 2000:
 		url_spec += "&year_end=%d" % spec["year_end"]
 	# Create extra URLs
-	context["url_volume"] = "%s/volume?id=%s_%02d&%s" % ( context.prefix, id_parts[0], volume, url_spec ) 	
+	context["url_volume"] = "%s/volume?id=%s_%02d&%s" % (context.prefix, id_parts[0], volume, url_spec) 	
 	context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
-	# Any other links?
-	context["other_urls1"], context["other_urls2"] = "", ""
+	# do we have an Ark link?
 	if doc.get("url_ark", None) != None:
-		context["other_urls1"] += "&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
-	if doc.get("url_pdf", None) != None:
-		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
-	if doc.get("url_images", None) != None:
-		context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
-	context["other_urls1"] = Markup(context["other_urls1"])
-	context["other_urls2"] = Markup(context["other_urls2"])
+		context["url_ark"] = doc.get("url_ark")
+	# text download link
+	context["url_download"] = "%s/segment/%s" % (context.apiprefix, segment_id)
+	# Any other links?
+	# context["other_urls1"], context["other_urls2"] = "", ""
+	# if doc.get("url_ark", None) != None:
+	# 	context["other_urls1"] += "&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
+	# if doc.get("url_pdf", None) != None:
+	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
+	# if doc.get("url_images", None) != None:
+	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
+	# context["other_urls1"] = Markup(context["other_urls1"])
+	# context["other_urls2"] = Markup(context["other_urls2"])
 	# Add the Next/Previous/Full-text links
 	pagination_html = ""
 	# first segment?
