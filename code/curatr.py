@@ -448,7 +448,7 @@ def handle_lexicon_export():
 	return send_file(mem, mimetype='text/plain', as_attachment=True, download_name=filename)
 
 # --------------------------------------------------------------
-# Endpoints: Sub-corpora
+# Endpoints: Sub-corpora & Data Export
 # --------------------------------------------------------------
 
 @app.route("/corpora")
@@ -676,6 +676,28 @@ def handle_counts():
 	db.close()
 	# return the counts as JSON
 	return Response(json.dumps(values), mimetype="application/json")
+
+@app.route("/api/volume/<volume_id>")
+def handle_volume_text(volume_id):
+	# which volume are we looking for?
+	current_solr = app.core.get_solr("volumes")
+	doc = current_solr.query_document(volume_id)
+	if doc is None:
+		error_msg = "No volume match found for: %s" % volume_id
+		abort(404, description=error_msg)
+	content = doc["content"] + "\n"
+	return Response(content, mimetype="text/plain")
+
+@app.route("/api/segment/<segment_id>")
+def handle_segment_text(segment_id):
+	# which segment are we looking for?
+	current_solr = app.core.get_solr("segments")
+	doc = current_solr.query_document(segment_id)
+	if doc is None:
+		error_msg = "No segment match found for: %s" % segment_id
+		abort(404, description=error_msg)
+	content = doc["content"] + "\n"
+	return Response(content, mimetype="text/plain")
 
 # --------------------------------------------------------------
 # Error Handling

@@ -93,7 +93,7 @@ img.logo
     height: 310px;
 }
 
-/** Nagivation bar */
+/** Navigation bar */
 
 .navbar-brand
 {
@@ -258,6 +258,7 @@ a.pagination-next
     margin: 0;
 }
 
+/** Volume and Segment Viewer */
 
 table.table-meta
 {
@@ -271,6 +272,49 @@ td.meta
 	line-height: 1.25;
 }
 
+a.act
+{
+    color: cornflowerblue;
+    font-weight: bold;
+}
+
+a.act:hover 
+{
+    color: cornflowerblue;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+a.act:visited 
+{ 
+    color: cornflowerblue
+    font-weight: bold;
+}
+
+div.act
+{
+  margin: 6px;
+  margin-left: 0px;
+  padding: 6px;
+  padding-left: 2px;
+  padding-right: 16px;
+  text-align: center !important; 
+}
+
+i.act
+{
+  font-size: 1.6rem; 
+  color: cornflowerblue;
+  vertical-align: middle;
+}
+p.act
+{
+  padding-top: 6px;
+  text-align: center !important;
+  font-size: 80%;
+}
+
+
 /** Segment Viewer */
 
 div.segment-text
@@ -283,7 +327,7 @@ div.segment-text
   margin-top: 0em;
   margin-bottom: 1.0em;
   padding: 0em;
-  padding-top: 0.6em;
+  padding-top: 0.7em;
   padding-bottom: 1.5em;
   width: 100%;
 }
