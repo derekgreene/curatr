@@ -103,7 +103,7 @@ def handle_export_build(context, core, spec):
 	current_solr = core.get_solr(search_context["type"])
 	log.info("Export: Search context %s" % str(search_context))
 	# Perform the export
-	exp = Exporter(core, current_solr, export_name, export_format, export_num, corpus_user_id, search_context)
+	exp = BulkExporter(core, current_solr, export_name, export_format, export_num, corpus_user_id, search_context)
 	# create a background thread for the exporter
 	thread = threading.Thread(target=exp.run, args=())
 	thread.daemon = True
@@ -226,7 +226,8 @@ def format_subcorpus_list(context, db):
 
 # --------------------------------------------------------------
 
-class Exporter:
+class BulkExporter:
+	""" Class for handling bulk export of a set of volumes or segments from Curatr """
 
 	def __init__(self, core, solr, export_name, export_format, export_num, user_id, search_params):
 		self.core = core
