@@ -16,7 +16,7 @@ from optparse import OptionParser
 from datetime import datetime
 # Flask imports
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from flask import request, Response, render_template, Markup
+from flask import request, Response, render_template, Markup, session
 from flask import redirect, url_for, abort, send_file
 # project imports
 from server import CuratrServer
@@ -96,7 +96,9 @@ def handle_login():
 			log.warning("Login: Failed login, bad password for user '%s'" % email )
 	# proceed with login?
 	if verified:
-		login_user(user, remember = True)
+		login_user(user, remember=True)
+		session.email = email
+		session.permanent = True
 		log.info( "Login: Login ok for user '%s'" % email )
 		# update the last login time
 		db.record_login(user.id)
