@@ -293,7 +293,7 @@ def handle_author():
 		abort(404, description="Invalid author ID specified")
 	# get the relevant author info
 	db = app.core.get_db()
-	author = db.get_cached_author( author_id )
+	author = db.get_cached_author(author_id)
 	if author is None:
 		error_msg = "No such author ID: %s" % author_id
 		abort(404, description=error_msg)
@@ -302,7 +302,7 @@ def handle_author():
 	context = populate_author_page(context, db, author)
 	# finished with the database
 	db.close()
-	return render_template("author.html", **context )
+	return render_template("author.html", **context)
 	
 # --------------------------------------------------------------
 # Endpoints: Classification Index & Catalogue
