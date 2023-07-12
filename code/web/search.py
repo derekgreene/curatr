@@ -368,7 +368,12 @@ def populate_search_results(context, db, current_solr, spec):
 	# create the export URL
 	parts = context.request.url.split("?",2)
 	if len(parts) > 1:
-		context["export_url"] = "%s/export?%s&total_results=%d" % (context.prefix, parts[1], num_total_results)
+		context["url_export"] = "%s/export?%s&total_results=%d" % (context.prefix, parts[1], num_total_results)
 	else:
-		log.warning("Warning: Cannot create export URL from %s" % context.request.url)
+		log.warning("Warning: Cannot create search export URL from %s" % context.request.url)
+	# create the search modification URL
+	if len(parts) > 1:
+		context["url_modify"] = "%s/search?action=modify&%s" % (context.prefix, parts[1])
+	else:
+		log.warning("Warning: Cannot create search modification URL from %s" % context.request.url)
 	return context

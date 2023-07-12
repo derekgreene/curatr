@@ -141,30 +141,36 @@ def handle_about():
 @app.route("/search")
 @login_required
 def handle_search():
-	# Get the basic search specification
+	""" Handle requests for the search page and search results page """
+	# get the basic search specification
 	spec = parse_search_request(request)
-	# is this just a request for an empty search pages?
 	query_string = spec["query"]
-	action = request.args.get("action", default = "").strip()
+	action = request.args.get("action", default = "").strip().lower()
+	# are we modifying an existing query?
+	if action == "modify":
+		context = app.get_navigation_context(request, spec)
+		return render_template("search.html", **context)
+	# is this an empty query? then show the search page
 	if len(query_string) == 0:
-		# any action?
 		if len(action) == 0:
-			context = handle_empty_search( spec )
-			return render_template("search.html", **context )
+			context = handle_empty_search(spec)
+			return render_template("search.html", **context)
+		# otherwise apply a wildcard search
 		query_string = "*"
 	# Dealing with volumes or segments?
-	current_solr = app.core.get_solr( spec["type"] )
+	current_solr = app.core.get_solr(spec["type"])
 	db = app.core.get_db()
 	# populate the values in template
-	context = app.get_navigation_context( request, spec )
-	context = populate_search_results( context, db, current_solr, spec )
+	context = app.get_navigation_context(request, spec)
+	context = populate_search_results(context, db, current_solr, spec)
 	# finished with the database
 	db.close()
-	return render_template("search-results.html", **context )
+	return render_template("search-results.html", **context)
 
 def handle_empty_search(spec):
+	""" Populate the context values for an empty search page """
 	context = app.get_context(request)
-	context["num_volumes"] =  "{:,}".format( app.core.cache["volume_count"] )
+	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
 	# use default parameters
