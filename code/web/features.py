@@ -26,9 +26,14 @@ def populate_author_page(context, db, author, author_page_size=10):
 	current_volume_ids = volume_ids[start:end]		
 	# Populate parameters
 	context["author_id"] = author_id
+	context["author_name"] = author["author_name"]
 	context["results"] = Markup(format_volume_list(context, db, current_volume_ids))
-	# Create the pagination
 	page_url_prefix = "%s/author?author_id=%s" % (context.prefix, author_id)
+	# create the summary
+	if num_total_results == 1:
+		summary = "<strong>1</strong> matching volume was found for the author <span class='highlight'><b>%s</b></span>" % (author["author_name"])
+	else:
+		summary = "<strong>%d</strong> matching volumes were found for the author <span class='highlight'><b>%s</b></span>" % (num_total_results, author["author_name"])
 	# do we need pagination?
 	pagination_html = ""
 	if num_total_results > author_page_size:
@@ -41,7 +46,6 @@ def populate_author_page(context, db, author, author_page_size=10):
 			min_page_index = current_page - 5
 		max_page_index = min(min_page_index + 9, max_pages)
 		# first page of results?
-		summary = "Page <b>%d</b> of <b>%d</b> volumes by the author <b>%s</b>" % (current_page, num_total_results, author["author_name"])
 		if current_page == 1:
 			pagination_html += "<li class='page-item disabled'><a href='#' class='page-link'>Previous</a></li>\n"
 		else:
@@ -65,11 +69,6 @@ def populate_author_page(context, db, author, author_page_size=10):
 			page_start = (page_index-1) * author_page_size
 			page_url_string = "%s&start=%d" % (page_url_prefix, page_start)
 			pagination_html += "<li class='page-item'><a href='%s' class='page-link'>Next</a></li>\n" % page_url_string
-	else:
-		if num_total_results == 1:
-			summary = "1 volume by the author <b>%s</b>" % (author["author_name"])
-		else:
-			summary = "<b>%d</b> volumes by the author <b>%s</b>" % (num_total_results, author["author_name"])
 	# generate the HTML template
 	context["summary"] = Markup(summary)
 	context["pagination"] = Markup(pagination_html)	
