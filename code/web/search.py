@@ -178,9 +178,9 @@ def populate_search_results(context, db, current_solr, spec):
 	if spec["location"].lower() != "all":
 		# need to quote due to spaces?
 		if " " in spec["location"] and not spec["location"][0] == '"':
-			filters["location"] = '"%s"' % spec["location"]
+			filters["location_places"] = '"%s"' % spec["location"]
 		else:
-			filters["location"] = spec["location"]
+			filters["location_places"] = spec["location"]
 	# filter by Mudie's library?
 	if spec["mudies_match"]:
 		filters["mudies_match"] = 1
