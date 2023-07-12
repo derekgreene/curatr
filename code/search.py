@@ -16,7 +16,7 @@ class SolrWrapper:
 		self.num_snippets = 3
 		self.fragsize = 300
 
-	def query(self, query_string, field, filters=[], start=0, highlight=True, num_snippets=0, page_size=0, fl=None):
+	def query(self, query_string, field, filters=[], start=0, highlight=True, num_snippets=0, page_size=0, fl=None, sort=None):
 		""" Perform a query on the current Solr core using the specified criteria """
 		# remove problematic square brackets
 		query_string = query_string.replace("[", "").replace("]", "")
@@ -53,7 +53,7 @@ class SolrWrapper:
 		# perform the search
 		log.debug("Running query: %s" % str(params) )
 		try:
-			res = self.client.query(self.core_name, params)
+			res = self.client.query(self.core_name, params, sort=sort)
 		except Exception as e:
 			log.error("Error: Failed to make Solr search query")
 			log.error(str(e))

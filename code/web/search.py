@@ -14,14 +14,34 @@ from web.format import field_name_map, field_plural_map
 def parse_search_request(req):
 	""" Parse all of the parameters from a search request response """
 	spec = {}
+	# query words
 	spec["query"] = req.args.get("qwords", default = "").strip()
-	# TODO: more nuanced way of doing this?
+	# what type of document?
 	spec["type"] = req.args.get("type", default = "volume").strip().lower()
+	# which field?
 	spec["field"] = req.args.get("field", default = "").strip().lower()
 	if (not spec["field"] in field_name_map) or (spec["field"] == "*"):
 		spec["field"] = "all"
 	if spec["field"] != "all" and spec["query"].startswith(spec["field"] +":"):
 		spec["query"] = spec["query"][len(spec["field"])+1:]
+	# sort information
+	sort_info = req.args.get("sort", default=None)
+	if sort_info is None:
+		spec["sort_field"], spec["sort_order"] = None, None
+	else:
+		parts = sort_info.lower().strip().rsplit("-", 1)
+		# just relevance? then treat as no sorting
+		if parts[0] == "rel" or parts[0] == "relevance" or parts[0] == "":
+			spec["sort_field"], spec["sort_order"] = None, None
+		# otherwise parts the sort field and the order
+		else:
+			if len(parts) == 1:
+				spec["sort_field"], spec["sort_order"] = parts[0], "asc"
+			else:
+				spec["sort_field"], spec["sort_order"] = parts[0].strip(), parts[1].strip()
+				if not spec["sort_order"] in ["asc", "desc"]:
+					spec["sort_order"] = "asc"
+	# date range
 	spec["year_start"] = max(0, parse_arg_int(req, "year_start", 0))
 	spec["year_end"] = max(0, parse_arg_int(req, "year_end", 2000))
 	# just in case the user has specified these in the wrong order, swap them
@@ -50,14 +70,14 @@ def parse_search_request(req):
 	return spec
 
 def format_search_results(context, db, spec, res, snippets, is_segments = False, verbose = True, max_title_length = 200):
-	""" Perform th HTML formatting for the individual Curatr search results """
+	""" Perform HTML formatting for the individual Curatr search results """
 	html = ""
 	# quote any strings that need to be used subsequently in URLs
 	quoted_query_string = urllib.parse.quote_plus(spec["query"])
 	quoted_class = urllib.parse.quote_plus(spec["class"])
 	quoted_subclass = urllib.parse.quote_plus(spec["subclass"])
 	quoted_location= urllib.parse.quote_plus(spec["location"])
-	# Construct required URL prefixes
+	# construct required URL prefixes
 	if is_segments:
 		target_page = "segment"
 	else:
@@ -68,7 +88,7 @@ def format_search_results(context, db, spec, res, snippets, is_segments = False,
 		result_url_prefix += "&year_start=%d" % spec["year_start"]
 	if spec["year_end"] < 2000:
 		result_url_prefix += "&year_end=%d" % spec["year_end"]
-	# Generate HTML	for each result
+	# generate HTML	for each result
 	for i, doc in enumerate(res.docs):
 		doc_id = doc["id"]
 		title = tidy_title(doc["title"])
@@ -140,22 +160,31 @@ def format_search_results(context, db, spec, res, snippets, is_segments = False,
 	return html
 
 def populate_search_results(context, db, current_solr, spec):
-	""" Perform the main HTML formatting for the Curatr search results page """
+	""" Perform main HTML formatting for the Curatr search results page """
 	# no query? search for everything
 	if len(spec["query"]) == 0:
 		spec["query"] = "*"
 	query_string = spec["query"]
 	quoted_query_string = urllib.parse.quote_plus(query_string)
-	# Dealing with volumes or segments?
+	# dealing with volumes or segments?
 	if spec["type"].lower() == "segment":
 		is_segments = True
 	else:
 		is_segments = False
-	# Create the Solr parameters
+	# create the Solr parameters
 	start = max(parse_arg_int(context.request, "start", 0), 0)
 	current_page = max(int(start / current_solr.page_size) + 1, 1)
 	num_snippets = parse_arg_int(context.request, "snippets", 0)
 	filters = {}
+	# have any sorting parameters been specified?
+	if spec["sort_field"] is None:
+		sort_params = None
+	else:
+		sort_params = spec["sort_field"]
+		if spec["sort_order"] is None:
+			sort_params += " asc"
+		else:
+			sort_params += " " + spec["sort_order"]
 	# year range for search
 	filters["year"] = "[%d TO %d]" % (spec["year_start"], spec["year_end"])
 	# has a particular classification or subclassification been specified?
@@ -181,9 +210,9 @@ def populate_search_results(context, db, current_solr, spec):
 			filters["location_places"] = '"%s"' % spec["location"]
 		else:
 			filters["location_places"] = spec["location"]
-	# filter by Mudie's library?
-	if spec["mudies_match"]:
-		filters["mudies_match"] = 1
+	# TODO: filter by Mudie's library?
+	# if spec["mudies_match"]:
+	# 	filters["mudies_match"] = 1
 	# has any specific book_id been specified?
 	if spec["book_id"] != "":
 		filters["book_id"] = spec["book_id"]
@@ -198,8 +227,8 @@ def populate_search_results(context, db, current_solr, spec):
 		if lexicon["user_id"] != context.user_id:
 			abort(403, "You do not own this lexicon (lexicon_id=%s)" % spec["lexicon_id"])
 		lexicon_url = "%s/lexicon?action=edit&lexicon_id=%s" % (context.prefix, spec["lexicon_id"])
-	# Perform the actual search
-	res = current_solr.query(query_string, spec["field"], filters, start, True, num_snippets)
+	# perform the actual Solr search
+	res = current_solr.query(query_string, spec["field"], filters, start, True, num_snippets, sort=sort_params)
 	# failed to connect to Solr?
 	if res is None:
 		abort(500, "Cannot connect to Solr search server to perform search")
@@ -271,6 +300,10 @@ def populate_search_results(context, db, current_solr, spec):
 		summary += ", filtered by Mudie's library matches"
 	# create the link URLs
 	page_url_suffix = "field=%s&class=%s&subclass=%s&type=%s" % (spec["field"], spec["class"], spec["subclass"], spec["type"])
+	if not spec["sort_field"] is None:
+		page_url_suffix += "&sort=" + spec["sort_field"]
+		if not spec["sort_order"] is None:
+			page_url_suffix += "-" + spec["sort_order"]
 	if spec["year_start"] > 0:
 		page_url_suffix += "&year_start=%d" % spec["year_start"]
 		summary += " from %d" % spec["year_start"]
