@@ -13,7 +13,7 @@ import sys, io, json, re
 from pathlib import Path
 import logging as log
 from optparse import OptionParser
-from datetime import datetime
+from datetime import datetime, timedelta
 # Flask imports
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask import request, Response, render_template, Markup, session
@@ -43,6 +43,7 @@ from user import validate_email, generate_password, password_to_hash
 print("Creating Curatr server...")
 app = CuratrServer(__name__)
 app.debug = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 print("Creating login manager...")
 login_manager = LoginManager()	
 # login_manager.session_protection = None
@@ -132,6 +133,9 @@ def handle_index():
 def handle_about():
 	""" Render the Curatr about page """
 	context = app.get_context(request)
+	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
 	return render_template("about.html", **context)
 
 # --------------------------------------------------------------
