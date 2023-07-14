@@ -8,7 +8,11 @@
 <div class="container">
 	<div class="section text-center" style="padding-bottom: 14px;">
 		<h2>Collection Search</h2>
-		<p class="text-justify">The <i>Curatr</i> platform currently indexes content and metadata for {{ num_volumes }} volumes and 12,334,075 short text segments from 35,918 different English-language books dating from {{ year_min }} to {{ year_max }}. You can use the form below to search the entire collection or a specific subset of the collection.</p>
+		<p class="text-justify">The <i>Curatr</i> platform currently indexes content and metadata for {{ num_volumes }} volumes 
+			and {{ num_segments }} short text segments from {{ num_books }} different English-language books dating 
+			from {{ year_min }} to {{ year_max }}. You can use the form below to search the entire collection or 
+			a specific subset of the collection.
+		</p>
 	</div>
 	<form id="search" method="get" action="{{prefix}}/search">
 		<input type="hidden" id="action" name="action" value="search">
@@ -61,12 +65,22 @@
 			</div>
 		</div>
 
-		<div class="form-row form-block" style="width: 50%;">
+		<div class="form-row form-block">
 			<div class="col">
 				<label for="location">Publication Location</label>
 		        <select class="form-control dropdown" id="location" name="location">
 		            {{ location_options }}
 		        </select>
+			</div>
+			<div class="col form-col-right">				
+				<label for="location">Sort By</label>
+		        <select class="form-control dropdown" id="sort" name="sort">
+					<option value="rel" {{selected_sort_rel}}>Relevance</option>
+					<option value="year-asc" {{selected_sort_year_asc}}>Year (Oldest First)</option>
+					<option value="year-desc" {{selected_sort_year_desc}}>Year (Newest First)</option>
+					<option value="title-asc" {{selected_sort_title_asc}}>Title (A-Z)</option>
+					<option value="title-desc" {{selected_sort_title_desc}}>Title (Z-A)</option>
+				</select>
 			</div>
 <!-- 		<div class="col form-col-right">
 				<label for="type">Filter by Mudie's Library</label>
@@ -74,7 +88,8 @@
 		            {{ mudies_options }}
 	            </select>				
 			</div>
- -->	</div>
+ -->	
+		</div>
 		<button type="submit" class="btn btn-primary">Search</button>
 	</form>    
 	<br/> 

@@ -309,9 +309,11 @@ def populate_search_results(context, db, current_solr, spec):
 		summary += " from %d" % spec["year_start"]
 	if spec["year_end"] < 2000:
 		page_url_suffix += "&year_end=%d" % spec["year_end"]
-		# don't add if it's a single lear
+		# don't add if it's a single year
 		if spec["year_start"] != spec["year_end"]:
 			summary += " until %d" % spec["year_end"]
+	elif spec["year_start"] > 0:
+		summary += " onwards"
 	if spec["lexicon_id"] != "":
 		page_url_suffix += "&lexicon_id=%s" % urllib.parse.quote_plus(spec["lexicon_id"])
 	if spec["mudies_match"]:
@@ -321,7 +323,7 @@ def populate_search_results(context, db, current_solr, spec):
 		page_url_suffix += "&location=%s" % urllib.parse.quote_plus(spec["location"])
 		summary += " published in %s" % spec["location"]
 	context["summary"] = Markup(summary)
-	# Do we need search suggestions?
+	# do we need search suggestions?
 	suggest = parse_arg_bool(context.request, "suggest", False)
 	suggestions = []
 	if suggest and len(spec["query"]) > 1:
@@ -345,20 +347,42 @@ def populate_search_results(context, db, current_solr, spec):
 		context["suggestions"] = Markup(suggestion_html)
 	else:
 		context["search_suggestions"] = False
-	# Add the repeat search with alternative format (i.e. volumes or segments)
-	# Note we don't provide this if we are showing all volumes for a classification
+	# add the search options?
+	# note we don't provide this if we are showing all volumes for a classification
 	if spec["query"] == "*" and "classification" in filters:
-		context["search_repeat"] = ""
+		context["search_options"] = False
 	else:
-		url_repeat = "%s/search?qwords=%s&%s" % (context.prefix, quoted_query_string, page_url_suffix)
-		url_repeat = url_repeat.replace("&type=volume", "").replace("&type=segment", "")
+		context["search_options"] = True
+		# add selected values for document type dropdown
 		if is_segments:
-			repeat_type = "volumes"
-			url_repeat += "&type=volume" 
+			context["selected_segment"] = "selected"
 		else:
-			repeat_type = "segments"
-			url_repeat += "&type=segment" 
-		context["search_repeat"] = Markup("Repeat this search for <a href='%s'>%s</a> instead" % (url_repeat, repeat_type))
+			context["selected_volume"] = "selected"
+		# add selected values for sort order dropdown
+		if spec["sort_field"] is None or spec["sort_field"] == "":
+			context["selected_sort_rel"] = "selected"
+		else:
+			if spec["sort_field"] == "year":
+				if spec["sort_order"] == "desc":
+					context["selected_sort_year_desc"] = "selected"
+				else:
+					context["selected_sort_year_asc"] = "selected"
+			elif spec["sort_field"] == "title":
+				if spec["sort_order"] == "desc":
+					context["selected_sort_title_desc"] = "selected"
+				else:
+					context["selected_sort_title_asc"] = "selected"
+			else:
+				context["selected_sort_rel"] = "selected"
+		# 	url_repeat = "%s/search?qwords=%s&%s" % (context.prefix, quoted_query_string, page_url_suffix)
+	# 	url_repeat = url_repeat.replace("&type=volume", "").replace("&type=segment", "")
+	# 	if is_segments:
+	# 		repeat_type = "volumes"
+	# 		url_repeat += "&type=volume" 
+	# 	else:
+	# 		repeat_type = "segments"
+	# 		url_repeat += "&type=segment" 
+	# 	context["search_repeat"] = Markup("Repeat this search for <a href='%s'>%s</a> instead" % (url_repeat, repeat_type))
 	# Create the search results 
 	context["results"] = Markup(format_search_results(context, db, spec, res, snippets, is_segments=is_segments))
 	# do we need pagination?

@@ -121,6 +121,8 @@ class CoreCuratr(CoreBase):
 		# basic statistics
 		self.cache["book_count"] = db.book_count()
 		self.cache["volume_count"] = db.volume_count()
+		# TODO: calculate dynamically
+		self.cache["segment_count"] = 12322488
 		self.cache["author_count"] = db.author_count()
 		year_range = db.get_book_year_range()
 		self.cache["year_min"] = year_range[0]
