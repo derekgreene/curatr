@@ -153,6 +153,27 @@ def handle_search():
 	# are we modifying an existing query?
 	if action == "modify":
 		context = app.get_navigation_context(request, spec)
+		context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
+		context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
+		context["num_segments"] =  "{:,}".format(app.core.cache["segment_count"])
+		context["year_min"] = app.core.cache["year_min"]
+		context["year_max"] = app.core.cache["year_max"]
+		# add selected values for sort order dropdown
+		if spec["sort_field"] is None or spec["sort_field"] == "":
+			context["selected_sort_rel"] = "selected"
+		else:
+			if spec["sort_field"] == "year":
+				if spec["sort_order"] == "desc":
+					context["selected_sort_year_desc"] = "selected"
+				else:
+					context["selected_sort_year_asc"] = "selected"
+			elif spec["sort_field"] == "title":
+				if spec["sort_order"] == "desc":
+					context["selected_sort_title_desc"] = "selected"
+				else:
+					context["selected_sort_title_asc"] = "selected"
+			else:
+				context["selected_sort_rel"] = "selected"		
 		return render_template("search.html", **context)
 	# is this an empty query? then show the search page
 	if len(query_string) == 0:
@@ -174,7 +195,9 @@ def handle_search():
 def handle_empty_search(spec):
 	""" Populate the context values for an empty search page """
 	context = app.get_context(request)
+	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
+	context["num_segments"] =  "{:,}".format(app.core.cache["segment_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
 	# use default parameters

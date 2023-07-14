@@ -19,12 +19,34 @@
 					<a class="act" href="{{url_modify}}"><p class="act">Modify Search</p></a>
 				</td>
 				<td class="text-center" width="100%">
-					<h2 style="margin-top: 0;">Search Results</h2>	
-					<p class="left-justify">{{ summary }}. {{ search_repeat }}.</p>
+					<!-- <h2 style="margin-top: 0;">Search Results</h2>	 -->
+					<p class="text-center">{{ summary }}</p>
 					{% if search_suggestions %}
-					<p class="left-justify" style="padding-right: 30px; padding-bottom: 0px;">Try also:&nbsp;&nbsp;{{ suggestions }} </p>
+						<p class="left-justify" style="padding-bottom: 0px; padding-top: 8px;">
+							Related Keywords:&nbsp;&nbsp;{{ suggestions }} 
+						</p>
 					{% endif %}
-				</td>
+					{% if search_options %}
+						<p class="text-center" style="padding-bottom: 0px;">
+							Document Type:
+							<select class="form-control form-select search-options" style="width: 12em !important">
+								<option value="volume" {{selected_volume}}>Volumes</option>
+								<option value="segment" {{selected_segment}}>Segments</option>
+							</select>
+							</span>
+							<span style="margin-left: 5em">
+								Sort By: 
+								<select class="form-control form-select search-options" style="width: 12em !important">
+									<option value="rel" {{selected_sort_rel}}>Relevance</option>
+									<option value="year-asc" {{selected_sort_year_asc}}>Year (Oldest First)</option>
+									<option value="year-desc" {{selected_sort_year_desc}}>Year (Newest First)</option>
+									<option value="title-asc" {{selected_sort_title_asc}}>Title (A-Z)</option>
+									<option value="title-desc" {{selected_sort_title_desc}}>Title (Z-A)</option>
+								</select>
+							</span>
+						</p>
+						{% endif %}
+					</td>
 				<td class="text-center" width="52px" style="vertical-align: middle;">
 					<a class="act" href="{{url_export}}"><i class="act-large bi bi-save"></i></a>
 					<a class="act" href="{{url_export}}"><p class="act">Export Results</p></a>

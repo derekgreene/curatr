@@ -161,13 +161,20 @@ input:-internal-autofill-selected
     background-color: none !important;
 }
 
-
 /** Search Results Page */
+
+select.search-options
+{
+	display: inline !important; 
+	margin-left: 10px; 
+	font-weight: bold;
+	text-align: center;
+}
 
 div.results-container
 {
-	margin-top: 16px; 
-	padding-top: 12px;
+	margin-top: 8px; 
+	padding-top: 8px;
 	margin-bottom: 1.4em;
 	text-align: left;
 	clear: both; 
