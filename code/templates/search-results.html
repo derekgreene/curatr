@@ -36,12 +36,14 @@
 							</span>
 							<span style="margin-left: 5em">
 								Sort By: 
-								<select class="form-control form-select search-options" style="width: 12em !important">
-									<option value="rel" {{selected_sort_rel}}>Relevance</option>
-									<option value="year-asc" {{selected_sort_year_asc}}>Year (Oldest First)</option>
-									<option value="year-desc" {{selected_sort_year_desc}}>Year (Newest First)</option>
-									<option value="title-asc" {{selected_sort_title_asc}}>Title (A-Z)</option>
-									<option value="title-desc" {{selected_sort_title_desc}}>Title (Z-A)</option>
+								<select class="form-control form-select search-options" 
+										style="width: 12em !important"
+										onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+									<option value="{{link_sort_rel}}" {{selected_sort_rel}}>Relevance</option>
+									<option value="{{link_sort_year_asc}}" {{selected_sort_year_asc}}>Year (Oldest First)</option>
+									<option value="{{link_sort_year_desc}}" {{selected_sort_year_desc}}>Year (Newest First)</option>
+									<option value="{{link_sort_title_asc}}" {{selected_sort_title_asc}}>Title (A-Z)</option>
+									<option value="{{link_sort_title_desc}}" {{selected_sort_title_desc}}>Title (Z-A)</option>
 								</select>
 							</span>
 						</p>

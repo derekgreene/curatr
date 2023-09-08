@@ -374,15 +374,6 @@ def populate_search_results(context, db, current_solr, spec):
 					context["selected_sort_title_asc"] = "selected"
 			else:
 				context["selected_sort_rel"] = "selected"
-		# 	url_repeat = "%s/search?qwords=%s&%s" % (context.prefix, quoted_query_string, page_url_suffix)
-	# 	url_repeat = url_repeat.replace("&type=volume", "").replace("&type=segment", "")
-	# 	if is_segments:
-	# 		repeat_type = "volumes"
-	# 		url_repeat += "&type=volume" 
-	# 	else:
-	# 		repeat_type = "segments"
-	# 		url_repeat += "&type=segment" 
-	# 	context["search_repeat"] = Markup("Repeat this search for <a href='%s'>%s</a> instead" % (url_repeat, repeat_type))
 	# Create the search results 
 	context["results"] = Markup(format_search_results(context, db, spec, res, snippets, is_segments=is_segments))
 	# do we need pagination?
@@ -431,6 +422,14 @@ def populate_search_results(context, db, current_solr, spec):
 	# create the search modification URL
 	if len(parts) > 1:
 		context["url_modify"] = "%s/search?action=modify&%s" % (context.prefix, parts[1])
+		# remove multiple actions, in case they exist
+		context["url_modify"] = context["url_modify"].replace("&action=search", "")
 	else:
 		log.warning("Warning: Cannot create search modification URL from %s" % context.request.url)
+	# create the sorting URLs
+	# note we need to remove the old sorting spec from the previous URL
+	tidy_params = re.sub("&sort=[A-Za-z\-]+", "", parts[1])
+	for opt in ["rel", "year-asc", "year-desc", "title-asc", "title-desc"]:
+		var_name = "link_sort_%s" % (opt.replace("-", "_"))
+		context[var_name] = "%s/search?%s&sort=%s" % (context.prefix, tidy_params, opt)
 	return context
