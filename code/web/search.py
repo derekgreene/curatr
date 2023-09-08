@@ -414,22 +414,30 @@ def populate_search_results(context, db, current_solr, spec):
 			pagination_html += "<li class='page-item'><a href='%s' class='page-link'>Next</a></li>\n" % page_url_string
 	context["pagination"] = Markup(pagination_html)
 	# create the export URL
-	parts = context.request.url.split("?",2)
+	# note we need to remove the old page start position from the previous URL
+	parts = context.request.url.split("?", 2)
+	tidy_params = re.sub("&start=[0-9]+", "", parts[1], flags=re.IGNORECASE)
 	if len(parts) > 1:
-		context["url_export"] = "%s/export?%s&total_results=%d" % (context.prefix, parts[1], num_total_results)
+		context["url_export"] = "%s/export?%s&total_results=%d" % (context.prefix, tidy_params, num_total_results)
 	else:
 		log.warning("Warning: Cannot create search export URL from %s" % context.request.url)
 	# create the search modification URL
 	if len(parts) > 1:
-		context["url_modify"] = "%s/search?action=modify&%s" % (context.prefix, parts[1])
+		context["url_modify"] = "%s/search?action=modify&%s" % (context.prefix, tidy_params)
 		# remove multiple actions, in case they exist
 		context["url_modify"] = context["url_modify"].replace("&action=search", "")
 	else:
 		log.warning("Warning: Cannot create search modification URL from %s" % context.request.url)
+	# create the document type URLs
+	# note we need to remove the old type spec from the previous URL too
+	tidy_params_type = re.sub("&type=[a-z]+", "", tidy_params, flags=re.IGNORECASE)	
+	for opt in ["volume", "segment"]:
+		var_name = "link_type_%s" % opt
+		context[var_name] = "%s/search?%s&type=%s" % (context.prefix, tidy_params_type, opt)
 	# create the sorting URLs
-	# note we need to remove the old sorting spec from the previous URL
-	tidy_params = re.sub("&sort=[A-Za-z\-]+", "", parts[1])
+	# note we need to remove the old sorting spec from the previous URL too
+	tidy_params_sort = re.sub("&sort=[a-z\-]+", "", tidy_params, flags=re.IGNORECASE)	
 	for opt in ["rel", "year-asc", "year-desc", "title-asc", "title-desc"]:
 		var_name = "link_sort_%s" % (opt.replace("-", "_"))
-		context[var_name] = "%s/search?%s&sort=%s" % (context.prefix, tidy_params, opt)
+		context[var_name] = "%s/search?%s&sort=%s" % (context.prefix, tidy_params_sort, opt)
 	return context

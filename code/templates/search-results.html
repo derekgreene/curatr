@@ -29,9 +29,11 @@
 					{% if search_options %}
 						<p class="text-center" style="padding-bottom: 0px;">
 							Document Type:
-							<select class="form-control form-select search-options" style="width: 12em !important">
-								<option value="volume" {{selected_volume}}>Volumes</option>
-								<option value="segment" {{selected_segment}}>Segments</option>
+							<select class="form-control form-select search-options" 
+									style="width: 12em !important"
+									onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+								<option value="{{link_type_volume}}" {{selected_volume}}>Volumes</option>
+								<option value="{{link_type_segment}}" {{selected_segment}}>Segments</option>
 							</select>
 							</span>
 							<span style="margin-left: 5em">
