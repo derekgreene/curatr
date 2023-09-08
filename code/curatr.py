@@ -15,7 +15,7 @@ import logging as log
 from optparse import OptionParser
 from datetime import datetime, timedelta
 # Flask imports
-from flask_login import LoginManager, current_user, login_user, logout_user, login_required
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required, confirm_login
 from flask import request, Response, render_template, Markup, session
 from flask import redirect, url_for, abort, send_file
 # project imports
@@ -42,8 +42,10 @@ from user import validate_email, generate_password, password_to_hash
 
 print("Creating Curatr server...")
 app = CuratrServer(__name__)
-app.debug = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
+app.debug = False
+app.config["SESSION_COOKIE_NAME"] = "curatrsession"
+login_duration = timedelta(days=100)
+app.config['PERMANENT_SESSION_LIFETIME'] = login_duration
 print("Creating login manager...")
 login_manager = LoginManager()	
 # login_manager.session_protection = None
@@ -58,14 +60,15 @@ login_manager.init_app(app)
 def load_user(user_id):
 	""" Code to handle user logins using the flask_login package """
 	if user_id is None:
-		log.warning("Warning: Login manager had failed login. Cannot log in user empty NULL ID")
+		log.warning("LOGIN load_user() - Warning: Login manager had failed login. Cannot log in user empty NULL ID")
 		return None
 	# retrieve details for the user from the database
 	db = app.core.get_db()
-	log.info("Login manager: Requesting user with ID %s" % user_id)
+	log.info("LOGIN load_user() - Requesting user with ID '%s'" % user_id)
 	user = db.get_user_by_id(user_id)
 	if user is None:
-		log.error("Error: Failed login. No user with ID %s" % user_id)
+		log.error("LOGIN load_user() - Error: Failed login. No user with ID '%s'" % user_id)
+	log.info("LOGIN load_user() - Retrieved user '%s'" % user_id)
 	db.close()
 	return user
 
@@ -74,6 +77,7 @@ def load_user(user_id):
 def handle_logout():
 	""" End point for handling users logging out """
 	logout_user()
+	log.info("LOGIN logout() - Current user logged out")
 	return redirect(url_for('handle_index'))
 
 @app.route("/login", methods=['POST','GET'])
@@ -81,31 +85,36 @@ def handle_login():
 	""" End point for handling user logins """
 	if request.method == 'GET':
 		return redirect(url_for('handle_index'))
+	# refresh
+	log.warning("LOGIN login() - Refreshing login")
+	confirm_login()
 	# get form values
 	email = request.values.get("email", default = "").strip().lower()
 	passwd = request.values.get("password", default = "").strip()
 	db = app.core.get_db()
 	user = db.get_user_by_email(email)
 	# validate form values
+	log.warning("LOGIN login() - Checking login for user email '%s'" % email)
 	verified = False
 	if user is None:
-		log.warning("Login: Failed login attempt, no such user '%s'" % email )
+		log.warning("LOGIN login() - Failed login attempt, no such user email '%s'" % email)
 	else:
 		if user.verify(passwd):
 			verified = True
 		else:
-			log.warning("Login: Failed login, bad password for user '%s'" % email )
+			log.warning("LOGIN login() - Failed login, bad password for user email '%s'" % email)
 	# proceed with login?
 	if verified:
-		login_user(user, remember=True)
+		login_user(user, remember=True, duration=login_duration)
 		session.email = email
 		session.permanent = True
-		log.info( "Login: Login ok for user '%s'" % email )
+		log.info("LOGIN login() - Verified ok for user '%s'" % email)
 		# update the last login time
 		db.record_login(user.id)
 		# finished with the database
 		db.close()
 		return redirect(url_for('handle_index'))
+	log.info("LOGIN login() - Verified failed for user '%s'" % email)
 	# finished with the database 
 	db.close()
 	# invalid login
