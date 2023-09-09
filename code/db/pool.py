@@ -39,7 +39,7 @@ class CuratrDBPool:
 	""" Implementation of Curatr database pooling system """
 	_MAX_POOL_SIZE = 200
 	_THREAD_LOCAL = threading.local()
-	_THREAD_LOCAL.retry_counter = 0 
+	_THREAD_LOCAL.retry_counter = 0
 	_REYCLE_TIME = 60 * 30
 
 	def __init__(self, pool_size, hostname, port, username, password, dbname, autocommit=False):
@@ -68,16 +68,17 @@ class CuratrDBPool:
 		db._pool = self
 		self._pool.put(db)
 
-	def get_connection(self, timeout=3, retry_num=1):
+	def get_connection(self, timeout=3, retry_num=5):
 		"""
 		timeout: timeout of get a connection from pool, should be a int(0 means return or raise immediately)
 		retry_num: how many times will retry to get a connection
 		"""
 		try:
 			db = self._pool.get(timeout=timeout) if timeout > 0 else self._pool.get_nowait()
-			log.info("Got database from pool, size now %d" % self.size() )
+			log.info("DB get_connection() - Got database from pool, size now %d" % self.size() )
 			# connection closed?
 			if not db.ping():
+				log.info("DB get_connection() - Warning: Database ping failed")
 				raise queue.Empty()
 			return db
 		except queue.Empty:
@@ -85,12 +86,13 @@ class CuratrDBPool:
 				self._THREAD_LOCAL.retry_counter = 0
 			if retry_num > 0:
 				self._THREAD_LOCAL.retry_counter += 1
-				log.debug("Retry get connection from pool, the %d times" % self._THREAD_LOCAL.retry_counter)
+				log.info("DDB get_connection() - Retry get connection from pool - attempt %d" % self._THREAD_LOCAL.retry_counter)
 				retry_num -= 1
 				return self.get_connection(timeout, retry_num)
 			else:
 				total_times = self._THREAD_LOCAL.retry_counter + 1
 				self._THREAD_LOCAL.retry_counter = 0
+				log.error("DB get_connection() - Error - Failed to get database from pool after %d attempts" % total_times)
 				raise GetConnectionFromPoolError("Cannot get database from pool({}) within {}*{} second(s)".format(self.name, timeout, total_times))
 
 	def return_connection(self, db):
