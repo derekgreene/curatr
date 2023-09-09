@@ -87,7 +87,7 @@ def handle_login():
 		return redirect(url_for('handle_index'))
 	# refresh
 	log.warning("LOGIN login() - Refreshing login")
-	confirm_login()
+	# confirm_login()
 	# get form values
 	email = request.values.get("email", default = "").strip().lower()
 	passwd = request.values.get("password", default = "").strip()
