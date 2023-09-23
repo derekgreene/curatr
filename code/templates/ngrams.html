@@ -43,16 +43,22 @@
                     <label for="year_start">Start Year</label>
                     <input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="{{ yearstart }}">
                 </div>
-                <div class="col form-col-right">                
+                <div class="col form-col-right">
                     <label for="year_end">End Year</label>
                     <input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" size="10" value="{{ yearend }}" >   
                 </div>
             </div>            
 			<div class="form-row form-block">
 				<div class="col">			
+					<label for="collection">Collection</label>
+		            <select class="form-control dropdown" id="collection" name="collection" style="width: 25%;">
+						{{ collection_options }}
+					</select>				
+				</div>
+				<div class="col form-col-right">	
 					<label for="year_start">Plot Type</label>
 		            <select class="form-control dropdown" id="normalize" name="normalize" style="width: 40%;">
-		            {{ normalize_options }}
+			            {{ normalize_options }}
 		            </select>				
 				</div>
 			</div>            

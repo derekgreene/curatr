@@ -160,7 +160,7 @@ def create_gexf(out, seed_nodes, other_nodes, edges):
 
 # --------------------------------------------------------------
 
-def format_neighbor_options(selected = 10):
+def format_neighbor_options(selected=10):
 	""" Populate the list of options for the neighborhood size drop-down list """
 	html = ""
 	for k in neighborhood_sizes:
@@ -170,7 +170,7 @@ def format_neighbor_options(selected = 10):
 			html += "<option value='%s'>%s</option>\n" % (k, k)
 	return html	
 
-def format_embedding_options(core, selected = "all"):
+def format_embedding_options(core, selected="all"):
 	""" Populate the list of options for the embedding drop-down list """
 	html = ""
 	for embed_id in core.get_embedding_ids():
