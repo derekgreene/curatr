@@ -10,33 +10,46 @@ from web.util import parse_keyword_query, parse_arg_int
 # --------------------------------------------------------------
 
 def format_ngram_normalize_options(normalize=False):
+	""" Generate the drop-down menu for the normaliation choice for ngram counts """
 	html = ""
 	if normalize:
-		html += "<option value='false'>Number of Volumes</option>"
-		html += "<option value='true' selected>Relative Percentage of Volumes</option>"
+		html += "<option value='false'>Number of Volumes</option>\n"
+		html += "<option value='true' selected>Relative Percentage of Volumes</option>\n"
 	else:
-		html += "<option value='false' selected>Number of Volumes</option>"
-		html += "<option value='true'>Relative Percentage of Volumes</option>"
+		html += "<option value='false' selected>Number of Volumes</option>\n"
+		html += "<option value='true'>Relative Percentage of Volumes</option>\n"
 	return html	
+
+def format_collection_options(collection_id="all"):
+	""" Generate the drop-down menu for the collection choice for ngram counts """
+	html = ""
+	for opt in ["all", "fiction", "nonfiction"]:
+		if opt == collection_id:
+			html += "<option value='%s' selected>%s</option>\n" % (opt, opt.capitalize())
+		else:
+			html += "<option value='%s'>%s</option>\n" % (opt, opt.capitalize())
+	return html
 
 # --------------------------------------------------------------
 
-def populate_ngrams_page(context, app, collection_id="all"):
+def populate_ngrams_page(context, app):
 	# handle year parameters
 	ngram_default_year_min = app.core.config["ngrams"].getint("default_year_min", 0)
 	ngram_default_year_max = app.core.config["ngrams"].getint("default_year_max", 0)
 	year_start = max(0, parse_arg_int(context.request, "year_start", ngram_default_year_min))
 	year_end = max(0, parse_arg_int(context.request, "year_end", ngram_default_year_max))
+	# which collection are taking the counts from?
+	collection_id = context.request.args.get("collection", default="all").lower()
 	# invalid years?
 	if year_start < 1:
 		year_start = app.core.cache["year_min"]	
 	if year_end < 1:
 		year_end = app.core.cache["year_max"]	
 	# do we want normalized counts?
-	snormalize = context.request.args.get("normalize", default = "false").lower()
-	normalize = ( snormalize == "1" or snormalize == "true" )
+	snormalize = context.request.args.get("normalize", default="false").lower()
+	normalize = (snormalize == "1" or snormalize == "true")
 	# parse the query
-	raw_query_string = context.request.args.get("qwords", default = "").lower()
+	raw_query_string = context.request.args.get("qwords", default="").lower()
 	queries = parse_keyword_query(raw_query_string)
 	# if nothing specified, use the default query
 	if len(queries) > 0:
@@ -54,31 +67,37 @@ def populate_ngrams_page(context, app, collection_id="all"):
 	else:
 		context["yaxis"] = "Number of Volumes"
 		context["allowdecimals"] = "false"
+	# format dropdown options
 	context["normalize_options"] = Markup(format_ngram_normalize_options(normalize))
+	context["collection_options"] = Markup(format_collection_options(collection_id))
 	# add the API data URL
-	context["jsonurlprefix"] = Markup("%s/ngrams?year_start=%s&year_end=%s&normalize=%s&q=" % (app.apiprefix, year_start, year_end, normalize))
+	context["jsonurlprefix"] = Markup("%s/ngrams?year_start=%s&year_end=%s&normalize=%s&collection=%s&q=" 
+		% (app.apiprefix, year_start, year_end, normalize, collection_id))
 	# add the export URL
 	quoted_query_string = urllib.parse.quote_plus(query_string)
-	context["export_url"] = Markup("%s/exportngrams?year_start=%s&year_end=%s&normalize=%s&qwords=%s" % (context.prefix, year_start, year_end, normalize, quoted_query_string))
+	context["export_url"] = Markup("%s/exportngrams?year_start=%s&year_end=%s&normalize=%s&collection=%s&qwords=%s" 
+		% (context.prefix, year_start, year_end, normalize, collection_id, quoted_query_string))
 	return context
 
-def export_ngrams(context, app, collection_id="all"):
+def export_ngrams(context, app):
 	""" Export ngram counts in CSV format """
 	# handle year parameters
 	ngram_default_year_min = app.core.config["ngrams"].getint("default_year_min", 0)
 	ngram_default_year_max = app.core.config["ngrams"].getint("default_year_max", 0)
 	year_start = max(0, parse_arg_int(context.request, "year_start", ngram_default_year_min))
 	year_end = max(0, parse_arg_int(context.request, "year_end", ngram_default_year_max))
+	# which collection are taking the counts from?
+	collection_id = context.request.args.get("collection", default="all").lower()
 	# invalid years?
 	if year_start < 1:
 		year_start = app.core.cache["year_min"]	
 	if year_end < 1:
 		year_end = app.core.cache["year_max"]	
 	# do we want normalized counts?
-	snormalize = context.request.args.get("normalize", default = "false").lower()
-	normalize = ( snormalize == "1" or snormalize == "true" )
+	snormalize = context.request.args.get("normalize", default="false").lower()
+	normalize = (snormalize == "1" or snormalize == "true")
 	# parse the query
-	raw_query_string = context.request.args.get("qwords", default = "").lower()
+	raw_query_string = context.request.args.get("qwords", default="").lower()
 	queries = parse_keyword_query(raw_query_string)
 	# if nothing specified, use the default query
 	if len(queries) == 0:

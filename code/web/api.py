@@ -13,10 +13,12 @@ def author_list(core):
 	""" End point for author catalogue JSON """
 	return {"data" : core.cache["author_catalogue"]}
 
-def ngram_counts(core, db, collection_id="all"):
+def ngram_counts(core, db):
 	""" Endpoint to handle ngram counts, which are returned as JSON. """	
 	""" Return API data relating to n-gram counts """
 	query = request.args.get("q", default = "").lower()
+	# which collection are taking the counts from?
+	collection_id = request.args.get("collection", default="all").lower()
 	# NB: spaces in bigrams get replaced with underscores
 	query = query.replace(" ", "_")
 	query = re.sub("[^a-zA-Z0-9_]", "", query).strip()
@@ -30,7 +32,7 @@ def ngram_counts(core, db, collection_id="all"):
 	if year_end > core.cache["year_max"]:
 		year_end = core.cache["year_max"]
 	# do we want normalized counts?
-	snormalize = request.args.get("normalize", default = "false").lower()
+	snormalize = request.args.get("normalize", default="false").lower()
 	normalize = (snormalize == "1" or snormalize == "true")
 	if normalize:
 		total_year_counts = db.get_cached_volume_years(year_start, year_end)
