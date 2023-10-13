@@ -208,10 +208,11 @@ class CoreCuratr(CoreBase):
 			# ensure the input word is lowercase and tidy
 			word = word.lower().replace("-","_").replace('"','')
 			# get the word's neighbors in the embedding
-			neighbors = self.get_embedding(embed_id).most_similar(positive=[word], topn=topn*2)
-			return [ x[0] for x in neighbors ]
+			neighbors = self.get_embedding(embed_id).most_similar(positive=[word], topn=topn)
+			#neighbors = self.get_embedding(embed_id).most_similar(positive=[word], topn=topn*2)
+			return [x[0] for x in neighbors]
 		except KeyError as e:
-			log.warning("Warning: Failed to find most similar words for '%s'" % word )
+			log.warning("Warning: Failed to find most similar words for '%s'" % word)
 			log.warning(e)
 			return []
 

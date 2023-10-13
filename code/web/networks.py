@@ -10,13 +10,13 @@ from web.util import parse_keyword_query, parse_arg_int
 # --------------------------------------------------------------
 
 """ list of available neighborhood sizes for construction semantic networks """
-neighborhood_sizes = [1, 3, 5, 10, 12, 15, 20]
+neighborhood_sizes = [3, 5, 10, 12, 15, 20]
 """ default number of neighbors for smenatic networks """
-default_num_k = 5
+default_num_k = 10
 
 # --------------------------------------------------------------
 
-def create_network(core, embed_id, queries, k, expand = True):
+def create_network(core, embed_id, queries, k, expand=True):
 	""" Construct a semantic network representation based on a set of query words and their
 	neighbors """
 	# add the seed_nodes
