@@ -296,6 +296,7 @@ def populate_search_results(context, db, current_solr, spec):
 			if spec["subclass"].lower() != "all":
 				summary += " (<strong>%s</strong>)" % spec["subclass"]
 	# filtered by Mudie's library
+	# TODO: fix Mudies
 	if spec["mudies_match"]:
 		summary += ", filtered by Mudie's library matches"
 	# create the link URLs
