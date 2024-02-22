@@ -16,7 +16,7 @@ class SolrWrapper:
 		self.num_snippets = 3
 		self.fragsize = 300
 
-	def query(self, query_string, field, filters=[], start=0, highlight=True, num_snippets=0, page_size=0, fl=None, sort=None):
+	def query(self, query_string, field, filters=[], start=0, highlight=True, num_snippets=0, page_size=0, fl=None, sort=None, frag_size=0):
 		""" Perform a query on the current Solr core using the specified criteria """
 		# remove problematic square brackets
 		query_string = query_string.replace("[", "").replace("]", "")
@@ -31,7 +31,10 @@ class SolrWrapper:
 		if highlight:
 			params["highlight"] = True
 			params["hl"] = True
-			params["hl.fragsize"] = self.fragsize
+			if frag_size < 1:
+				params["hl.fragsize"] = self.fragsize
+			else:
+				params["hl.fragsize"] = frag_size
 			params["hl.fl"] = "content"
 			params["hl.usePhraseHighlighter"] = True
 			params["hl.simple.pre"] = "<span class='highlight'>"

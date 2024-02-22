@@ -21,6 +21,7 @@ from flask import redirect, url_for, abort, send_file
 # project imports
 from server import CuratrServer
 from web.search import parse_search_request, populate_search_results
+from web.concordance import populate_concordance_results
 from web.view import populate_segment, populate_volume
 from web.format import format_field_options, format_type_options
 from web.format import format_classification_options, format_subclassification_options, format_place_options
@@ -303,6 +304,46 @@ def handle_volume():
 	db.close()
 	# render the template
 	return render_template("volume.html", **context)
+
+# --------------------------------------------------------------
+# Endpoints: Concordance
+# --------------------------------------------------------------
+
+@app.route("/concordance")
+@login_required
+def handle_concordance():
+	""" Handle requests for the concordance page and concordance results page """
+	# get the basic concordance specification, using same approach as search
+	spec = parse_search_request(request)
+	query_string = spec["query"]
+	# TODO: do we need the action?
+	action = request.args.get("action", default = "").strip().lower()
+	# is this an empty query? then show the concordance page
+	context = handle_empty_concordance(spec)
+	if len(query_string) == 0:
+		context = handle_empty_search(spec)
+		return render_template("concordance.html", **context)
+	# always working with segments for concordance
+	current_solr = app.core.get_solr("segments")
+	db = app.core.get_db()
+	# populate the values in template
+	context = app.get_navigation_context(request, spec)
+	context = populate_concordance_results(context, db, current_solr, spec)
+	# finished with the database
+	db.close()
+	return render_template("concordance-results.html", **context)
+
+def handle_empty_concordance(spec):
+	""" Populate the context values for an empty concordance page """
+	context = app.get_context(request)
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
+	context["num_segments"] =  "{:,}".format(app.core.cache["segment_count"])
+	# use default parameters
+	context["class_options"] = Markup(format_classification_options(context))
+	context["subclass_options"] = Markup(format_subclassification_options(context))
+	context["location_options"] = Markup(format_place_options( context))
+	return context
 
 # --------------------------------------------------------------
 # Endpoints: Authors
