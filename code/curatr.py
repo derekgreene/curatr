@@ -183,7 +183,7 @@ def handle_search():
 				else:
 					context["selected_sort_title_asc"] = "selected"
 			else:
-				context["selected_sort_rel"] = "selected"		
+				context["selected_sort_rel"] = "selected"
 		return render_template("search.html", **context)
 	# is this an empty query? then show the search page
 	if len(query_string) == 0:
