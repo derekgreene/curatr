@@ -97,7 +97,7 @@ def populate_lexicon_edit(context, db, lexicon_id):
 	# get word recommendations 
 	lexicon_words = db.get_lexicon_words(lexicon_id)
 	lexicon_ignores = db.get_lexicon_ignores(lexicon_id)
-	recommendations = context.core.recommend_words(lexicon_words, lexicon_ignores)
+	recommendations = context.core.multi_word_similarity(lexicon_words, ignores=lexicon_ignores)
 	if recommendations is None or len(recommendations) == 0:
 		context["message"] = "Unable to generate recommended words for lexicon"
 	else:

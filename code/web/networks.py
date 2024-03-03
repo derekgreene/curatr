@@ -37,7 +37,7 @@ def find_neighbors(core, embed_id, queries, k, hops):
 				hop_dict[input_word] = hop-1
 			all_words.add(input_word)
 			# find its neighbours
-			neighbors = core.similar_words(embed_id, input_word, k)
+			neighbors = core.word_similarity(input_word, k=k, embed_id=embed_id)
 			if len(neighbors) == 0:
 				log.warning("Warning: No neighbors for '%s'" % word)
 				continue
@@ -57,7 +57,7 @@ def find_neighbors(core, embed_id, queries, k, hops):
 	# now check all pairs
 	extra_neighbors = {}
 	for word in all_words:
-		extra_neighbors[word] = core.similar_words(embed_id, word, k)
+		extra_neighbors[word] = core.word_similarity(word, k=k, embed_id=embed_id)
 	for word1, word2 in itertools.combinations(all_words, r=2):
 		if word1 in extra_neighbors[word2] and word2 in extra_neighbors[word1]:
 			edges.append([word1, word2])	
