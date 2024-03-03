@@ -2,6 +2,7 @@ import re
 import logging as log
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
+from gensim.parsing.porter import PorterStemmer
 from preprocessing.cleaning import clean_content
 
 # --------------------------------------------------------------
@@ -47,6 +48,18 @@ def load_stopwords():
 		if len(line) > 0:
 			stopwords.add(line.lower())
 	return list(stopwords)
+
+stemmer = PorterStemmer()
+def stem_words(words):
+	""" Apply English stemming to the specified words """
+	word_stems = []
+	for word in words:
+		word_stems.append(stemmer.stem(word))
+	return word_stems
+
+def stem_word(word):
+	""" Apply English stemming to the specified word """
+	return stemmer.stem(word)
 
 # --------------------------------------------------------------
 
