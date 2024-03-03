@@ -4,6 +4,8 @@ Various utility functions used as part of the Curatr web search implementation.
 import re
 import logging as log
 
+# --------------------------------------------------------------
+
 def safe_int(value, default=0):
 	""" Make sure the specified value is a valid integer """
 	if value is None:

@@ -336,7 +336,7 @@ def populate_search_results(context, db, current_solr, spec):
 			if len(p) > 1:
 				query_words.append(p)
 		if len(query_words) > 0:
-			suggestions = context.core.aggregate_recommend_words(query_words, [], 5, True)
+			suggestions = context.core.aggregate_word_similarity(query_words, k=5, enforce_diversity=True)
 	if len(suggestions) > 0:
 		context["search_suggestions"] = True
 		suggestion_html = ""

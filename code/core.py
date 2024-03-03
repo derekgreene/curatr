@@ -2,8 +2,9 @@ from pathlib import Path
 import configparser
 import logging as log
 from collections import Counter
-import gensim
 from search import SolrWrapper
+from wordembeddding import EmbeddingWrapper
+from preprocessing.text import stem_word, stem_words
 from SolrClient import SolrClient
 from db.pool import CuratrDBPool
 
@@ -43,21 +44,25 @@ class CoreCuratr(CoreBase):
 	def __init__(self, dir_root):
 		super().__init__(dir_root)
 		# set up the embeddings
-		self._embedding_paths = {}
-		self._embeddings = {}
 		self.default_embedding_id = self.config["app"].get("default_embedding", None)
+		self._embeddings = {}
 		for embed_id in self.config["embeddings"]:
+			# make sure it exists
+			embedding_path = self.dir_embeddings / self.config["embeddings"][embed_id]
+			if not embedding_path.exists():
+				log.warning("Embedding '%s' does not exist: %s" % (embed_id, embedding_path))
+				continue
+			log.debug("Embedding '%s' found %s" % (embed_id, embedding_path))
+			# use this as our default?
 			if self.default_embedding_id is None:
 				self.default_embedding_id = embed_id
-			self._embedding_paths[embed_id] = self.dir_embeddings / self.config["embeddings"][embed_id]
-			if not self._embedding_paths[embed_id].exists():
-				log.warning("Embedding '%s' does not exist: %s" % (embed_id, self._embedding_paths[embed_id]))
-			else:
-				log.debug("Embedding '%s' found %s" % (embed_id, self._embedding_paths[embed_id]))
+			# create the wrapper
+			self._embeddings[embed_id] = EmbeddingWrapper(embedding_path, False)
 		log.info("Embeddings: %s" % str(self.get_embedding_ids()))
 		log.info("Default embedding: %s" % self.default_embedding_id)
 
 	def shutdown(self):
+		""" Close down the Curatr core - i.e. the database pool """
 		log.info("Shutting down core ...")
 		try:
 			if not self._pool is None:
@@ -167,106 +172,72 @@ class CoreCuratr(CoreBase):
 		return volume_path_map
 
 	def get_embedding(self, embed_id=None):
-		""" Return back the specified word embedding model used by Curatr. 
-		If no embeedding ID is specified, we return the default embedding. """
+		""" Return back the specified word embedding wrapper used by Curatr. 
+		If no embedding ID is specified, we return the default embedding. """
+		# use the default embedding?
 		if embed_id is None:
 			embed_id = self.default_embedding_id
-		if embed_id is None or not embed_id in self._embedding_paths:
+		if embed_id is None or not embed_id in self._embeddings:
 			log.error("No word embedding model ID specified")
 			return None
-		# has the embedding already been loaded?
-		if not embed_id in self._embeddings:
-	 		# load the embedding model
-			filepath = self._embedding_paths[embed_id]
-			try:
-				# is this a FastText embedding?
-				if "-ft" in filepath.stem:
-					log.info("Loading FastText model from %s ..." % filepath)
-					self._embeddings[embed_id] = gensim.models.FastText.load(filepath)
-				# otherwise assume this is a word2vec embedding
-				else:
-					log.info("Loading Word2vec model from %s ..." % filepath)
-					self._embeddings[embed_id] = gensim.models.KeyedVectors.load_word2vec_format(filepath, binary=True)  			
-			except Exception as e:
-				log.error("Failed to load embedding model from %s" % filepath)
-				log.error(str(e))
-				return None
 		return self._embeddings[embed_id]
 
 	def get_embedding_ids(self):
 		""" Return list of identifiers for all available word embedding models """
-		return sorted(self._embedding_paths.keys())
+		return sorted(self._embeddings.keys())
 
 	def has_embedding(self, embed_id):
 		""" Check if the word embedding model with the specified ID exists """
-		return embed_id in self._embedding_paths
+		return embed_id in self._embeddings
 
-	def similar_words(self, embed_id, word, topn=10):
-		""" Find top-N most similar words to the specified word, using the
-		word embedding model with the specified identifier """
-		try:
-			# ensure the input word is lowercase and tidy
-			word = word.lower().replace("-","_").replace('"','')
-			# get the word's neighbors in the embedding
-			neighbors = self.get_embedding(embed_id).most_similar(positive=[word], topn=topn)
-			return [x[0] for x in neighbors]
-		except KeyError as e:
-			log.warning("Warning: Failed to find most similar words for '%s'" % word)
-			log.warning(e)
-			return []
-
-	def recommend_words(self, words, ignores, topn=10, embed_id=None):
-		""" Find top-N most similar words to a set of one or more input words,
-		using the default word embedding model """
-		# get the embedding model to use for recommendations
+	def word_similarity(self, word, k=10, embed_id=None, ignores=[]):
+		""" Find top-K most similar words to the specified word, using the
+		word embedding model with the specified ID. If no ID is specified, 
+		we use the default model """
+		# do we have the requested model?
 		embedding = self.get_embedding(embed_id)
-		recommendations = {}
+		if embedding is None:
+			log.warning("Warning: Failed to find most similar words for '%s'" % word )
+			return []
+		return embedding.get(word, k, ignores)
+	
+	def multi_word_similarity(self, words, k=10, embed_id=None, ignores=[]):
+		""" Find top-K most similar words for one or more input words, using the
+		word embedding model with the specified ID. If no ID is specified, 
+		we use the default model """
+		# note we ignore words in the current list
+		ignores = set(ignores).union(words)
 		# get the nearest neighbors in the model for each input word
+		word_neighbors = {}
 		for word in words:
-			try:
-				# ensure this word is lowercase and tidy
-				word = word.lower().replace("-","_").replace('"','')
-				neighbors = embedding.most_similar(positive=[word], topn=topn*2)
-			except KeyError as e:
-				log.warning("Warning: Failed to find most similar words for '%s'" % word )
-				log.warning(e)
-				recommendations[word] = []
-				continue
-			nwords = []
-			for n in neighbors:
-				if len(nwords) == topn:
-					break
-				# do not add existing words
-				if not (n[0] in words or n[0] in ignores):
-					nwords.append( n[0] )
-			recommendations[word] = nwords
-		return recommendations
+			word_neighbors[word] = self.word_similarity(word, k, embed_id, ignores)
+		return word_neighbors
 
-	def aggregate_recommend_words(self, words, ignores, topn=10, enforce_diversity=False, embed_id=None):
+	def aggregate_word_similarity(self,  words, k=10, embed_id=None, ignores=[], enforce_diversity=False):
 		""" Combine words recommendations for an input set of multiple query words,
-		using the default word embedding model """
-		recommendations = self.recommend_words(words, ignores, topn*3, embed_id)
+		using the specified word embedding model """
+		# get the similar words
+		recommendations = self.multi_word_similarity(words, k*3, embed_id, ignores)
+		# turn the variouis rankings into scores based on reciprocal rank
 		scores = Counter()
 		for word in recommendations:
 			for i, neighbor in enumerate(recommendations[word]):
 				rank = i+1
-				score = 0.5 + ( 1.0/rank )
+				score = 0.5 + (1.0/rank)
 				scores[neighbor] += score
-		# rank the top words
-		top_words = scores.most_common(topn)
+		# rank the top ranked words
+		ranked_words = scores.most_common()
 		# merge the words
 		word_stems = set()
-		stemmer = gensim.parsing.porter.PorterStemmer()
 		if enforce_diversity:
-			for word in words:
-				word_stems.add(stemmer.stem(word))
+			word_stems = set(stem_words(words))
 		merged, pos = [], 0
-		while len(merged) < topn and pos < len(top_words):
-			word = top_words[pos][0]
+		while len(merged) < k and pos < len(ranked_words):
+			word = ranked_words[pos][0]
 			pos += 1
-			# need to enforce diversity in the recommendations?
+			# need to enforce diversity in the final aggregated list?
 			if enforce_diversity:
-				word_stem = stemmer.stem(word)
+				word_stem = stem_word(word)
 				if word_stem in word_stems:
 					continue
 				word_stems.add(word_stem)
