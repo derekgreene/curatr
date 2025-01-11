@@ -75,7 +75,7 @@ def user_list(db):
 	users = db.get_all_users()
 	log.info("Database has %d user(s)" % len(users))
 	for user in users:
-		log.info("%s (admin=%s)" % (str(user), user.admin))
+		log.info("%s (admin=%s, guest=%s)" % (str(user), user.admin, user.guest))
 	return True
 
 def user_change_password(db):
