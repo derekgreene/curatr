@@ -29,6 +29,8 @@ def main():
 		log.error("Invalid core directory: %s" % dir_core.absolute())
 		sys.exit(1)
 	core = CoreCuratr(dir_core)
+	# only need a single DB connection
+	core.config.set("db", "pool_size", "1")
 	# try connecting to the database
 	if not core.init_db():
 		sys.exit(1)
