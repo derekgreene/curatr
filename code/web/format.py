@@ -8,8 +8,8 @@ from preprocessing.cleaning import tidy_extract, tidy_authors, tidy_location_pla
 
 # --------------------------------------------------------------
 
-field_name_map = {  "all" : "Full Text", "title_text" : "Title", "authors_text" : "Author", "location_text" : "Location" }
-field_plural_map = {  "title_text" : "titles", "authors_text" : "authors", "location_text" : "locations" }
+field_name_map = {  "all" : "Full Text", "title_text" : "Title", "authors_text" : "Author", "location_places" : "Location" }
+field_plural_map = {  "title_text" : "titles", "authors_text" : "authors", "location_places" : "locations" }
 type_name_map = {  "volume" : "Volumes", "segment" : "Segments" }
 
 # --------------------------------------------------------------
