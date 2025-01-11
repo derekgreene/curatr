@@ -229,7 +229,7 @@ class CuratrDB(GenericDB):
 			for row in self.cursor.fetchall():
 				locations.append(row[0])
 		except Exception as e:
-			log.error( "SQL error in get_published_location_names(): %s" % str(e))
+			log.error("SQL error in get_published_location_names(): %s" % str(e))
 		return locations		
 
 	def get_published_location_counts(self, kind=None, top = -1):
@@ -253,7 +253,7 @@ class CuratrDB(GenericDB):
 			for row in self.cursor.fetchall():
 				location_counts[row[0]] = row[1]
 		except Exception as e:
-			log.error( "SQL error in get_published_location_counts(): %s" % str(e))
+			log.error("SQL error in get_published_location_counts(): %s" % str(e))
 		return location_counts
 
 	def get_book_classifications_map(self):
@@ -302,7 +302,7 @@ class CuratrDB(GenericDB):
 				if not row[0] is None:
 					class_names.append(row[0])
 		except Exception as e:
-			log.error( "SQL error in get_classification_names(): %s" % str(e))
+			log.error("SQL error in get_classification_names(): %s" % str(e))
 		return class_names
 
 	def get_classification_counts(self, level, top=-1):
@@ -320,7 +320,7 @@ class CuratrDB(GenericDB):
 				if not row[0] is None:
 					class_counts[row[0]] = row[1]
 		except Exception as e:
-			log.error( "SQL error in get_top_classification_counts(): %s" % str(e))
+			log.error("SQL error in get_top_classification_counts(): %s" % str(e))
 		return class_counts
 
 	def volume_count(self):
@@ -396,7 +396,7 @@ class CuratrDB(GenericDB):
 			sql = "UPDATE Volumes SET word_count=%s WHERE id=%s"
 			self.cursor.execute(sql, (count, volume_id))
 		except Exception as e:
-			log.error( "SQL error in set_volume_word_count(): %s" % str(e) )
+			log.error("SQL error in set_volume_word_count(): %s" % str(e))
 			return False
 		return True
 
@@ -639,7 +639,7 @@ class CuratrDB(GenericDB):
 			self.cursor.execute(sql, (lexicon_id, word))
 			return True
 		except Exception as e:
-			log.error( "SQL error in add_lexicon_word(): %s" % str(e) )
+			log.error("SQL error in add_lexicon_word(): %s" % str(e))
 			return False
 
 	def add_lexicon_ignore(self, lexicon_id, word):
@@ -745,14 +745,14 @@ class CuratrDB(GenericDB):
 			sql = "DELETE FROM LexiconWords WHERE lexicon_id = %s"
 			self.cursor.execute(sql, lexicon_id)
 		except Exception as e:
-			log.error( "SQL error in delete_lexicon(): %s" % str(e) )		
+			log.error("SQL error in delete_lexicon(): %s" % str(e))		
 			return False
 		# remove the ignored words for the lexicon
 		try:
 			sql = "DELETE FROM LexiconIgnores WHERE lexicon_id = %s"
 			self.cursor.execute(sql, lexicon_id)
 		except Exception as e:
-			log.error( "SQL error in delete_lexicon(): %s" % str(e) )
+			log.error("SQL error in delete_lexicon(): %s" % str(e))
 			return False
 		return True
 
@@ -774,7 +774,7 @@ class CuratrDB(GenericDB):
 			sql = "INSERT INTO Corpora (id, user_id, name, format, documents, filename) VALUES(%s,%s,%s,%s,%s,%s)"
 			self.cursor.execute(sql, (corpus_id, user_id, meta["name"], meta["format"], meta["documents"], filename ) )	
 		except Exception as e:
-			log.error( "SQL error when adding corpus in add_subcorpus(): %s" % str(e) )
+			log.error("SQL error when adding corpus in add_subcorpus(): %s" % str(e))
 			return -1
 		# add the metadata
 		for key in meta:
@@ -784,7 +784,7 @@ class CuratrDB(GenericDB):
 				sql = "INSERT INTO CorpusMetadata (corpus_id, field, value) VALUES (%s,%s,%s)"
 				self.cursor.execute(sql, (corpus_id, key, str(meta[key]) ) )
 			except Exception as e:
-				log.error( "SQL error when adding metadata in add_subcorpus(): %s" % str(e) )
+				log.error("SQL error when adding metadata in add_subcorpus(): %s" % str(e))
 				return -1
 		return corpus_id
 
@@ -796,7 +796,7 @@ class CuratrDB(GenericDB):
 			for row in self.cursor.fetchall():
 				corpus_ids.append( row[0] )
 		except Exception as e:
-			log.error( "SQL error in get_all_subcorpus_ids(): %s" % str(e) )
+			log.error("SQL error in get_all_subcorpus_ids(): %s" % str(e))
 		return corpus_ids
 
 	def get_all_subcorpus_names(self):
@@ -831,7 +831,7 @@ class CuratrDB(GenericDB):
 			sql = "SELECT * FROM Corpora WHERE id=%s" 
 			return self._sql_to_dict(sql, subcorpus_id)
 		except Exception as e:
-			log.error( "SQL error in get_subcorpus(): %s" % str(e))
+			log.error("SQL error in get_subcorpus(): %s" % str(e))
 			return []
 
 	def get_subcorpus_metadata(self, subcorpus_id):
@@ -929,12 +929,12 @@ class CuratrDB(GenericDB):
 		""" Add a new user to the database. """
 		try:
 			# get the next user id
-			user_id = self._get_next_id( "Users" )
+			user_id = self._get_next_id("Users")
 			# add the user
 			sql = "INSERT INTO Users (email, hash) VALUES(%s,%s)"
 			self.cursor.execute(sql, (email, hashed_passwd) )
 		except Exception as e:
-			log.error( "SQL error in add_user(): %s" % str(e) )
+			log.error("SQL error in add_user(): %s" % str(e))
 			return -1
 		return user_id
 
@@ -947,7 +947,7 @@ class CuratrDB(GenericDB):
 				return True
 			return False
 		except Exception as e:
-			log.error( "SQL error in has_user_email(): %s" % str(e) )
+			log.error("SQL error in has_user_email(): %s" % str(e))
 			return False
 
 	def get_all_users(self):
@@ -958,7 +958,7 @@ class CuratrDB(GenericDB):
 				users.append(dict_to_user(d))
 			return users
 		except Exception as e:
-			log.error( "SQL error in get_users(): %s" % str(e) )
+			log.error("SQL error in get_users(): %s" % str(e))
 			return []
 
 	def user_count(self):
@@ -976,7 +976,7 @@ class CuratrDB(GenericDB):
 		try:
 			return dict_to_user(self._sql_to_dict("SELECT * FROM Users WHERE id=%s", user_id))
 		except Exception as e:
-			log.error( "SQL error in get_user_by_id(): %s" % str(e) )
+			log.error("SQL error in get_user_by_id(): %s" % str(e))
 			return None
 
 	def get_user_by_email(self, email):
@@ -984,7 +984,7 @@ class CuratrDB(GenericDB):
 		try:
 			return dict_to_user(self._sql_to_dict("SELECT * FROM Users WHERE email=%s", email))
 		except Exception as e:
-			log.error( "SQL error in get_user_by_email(): %s" % str(e) )
+			log.error("SQL error in get_user_by_email(): %s" % str(e))
 			return None
 
 	def update_user_password(self, user_id, hashed_passwd):
@@ -993,7 +993,7 @@ class CuratrDB(GenericDB):
 			sql = "UPDATE Users SET hash=%s WHERE id=%s"
 			self.cursor.execute(sql, (hashed_passwd, user_id))
 		except Exception as e:
-			log.error( "SQL error in update_user_password(): %s" % str(e) )
+			log.error("SQL error in update_user_password(): %s" % str(e))
 			return False
 		return True
 
@@ -1004,24 +1004,34 @@ class CuratrDB(GenericDB):
 			sql = "UPDATE Users SET last_login=NOW() WHERE id=%s"
 			self.cursor.execute(sql, user_id)
 		except Exception as e:
-			log.error( "SQL error in update_user_last_login(): %s" % str(e) )
+			log.error("SQL error in update_user_last_login(): %s" % str(e))
 			return False
 		# update the login count
 		try:
 			sql = "UPDATE Users SET num_logins=num_logins+1 WHERE id=%s"
 			self.cursor.execute(sql, user_id)
 		except Exception as e:
-			log.error( "SQL error in update_user_last_login(): %s" % str(e) )
+			log.error("SQL error in update_user_last_login(): %s" % str(e))
 			return False
 		return True
 
+	def log_query(self, user_id, query):
+		""" Log a user query in the database. """
+		try:
+			sql = "INSERT INTO QueryLog (user_id, query) VALUES(%s,%s)"
+			self.cursor.execute(sql, (user_id, query))
+		except Exception as e:
+			log.error("SQL error in log_query(): %s" % str(e))
+			return False
+		return True
+	
 	def delete_user(self, user_id):
 		""" Delete the user with the specified ID. """
 		try:
 			sql = "DELETE FROM Users WHERE id = %s"
 			self.cursor.execute(sql, user_id)
 		except Exception as e:
-			log.error( "SQL error in delete_user_by_id(): %s" % str(e) )
+			log.error("SQL error in delete_user_by_id(): %s" % str(e))
 			return False
 		return True
 
@@ -1031,7 +1041,7 @@ class CuratrDB(GenericDB):
 			sql = "INSERT INTO Bookmarks (user_id, volume_id, segment_id) VALUES(%s,%s,%s)"
 			self.cursor.execute(sql, (user_id, volume_id, segment_id))		
 		except Exception as e:
-			log.error( "SQL error in add_bookmark(): %s" % str(e) )
+			log.error("SQL error in add_bookmark(): %s" % str(e))
 			return False
 		return True
 
@@ -1045,7 +1055,7 @@ class CuratrDB(GenericDB):
 				sql = "DELETE FROM Bookmarks WHERE user_id=%s AND volume_id=%s AND segment_id=%s"
 				self.cursor.execute(sql, (user_id, volume_id, segment_id) )		
 		except Exception as e:
-			log.error( "SQL error in delete_bookmark(): %s" % str(e) )
+			log.error("SQL error in delete_bookmark(): %s" % str(e))
 			return False
 		return True
 
@@ -1055,7 +1065,7 @@ class CuratrDB(GenericDB):
 			sql = "DELETE FROM Bookmarks WHERE id=%s AND user_id=%s"
 			self.cursor.execute(sql, (bookmark_id, user_id) )		
 		except Exception as e:
-			log.error( "SQL error in delete_bookmark_by_bookmark_id(): %s" % str(e) )
+			log.error("SQL error in delete_bookmark_by_bookmark_id(): %s" % str(e))
 			return False
 		return True
 

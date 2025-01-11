@@ -9,13 +9,16 @@ from flask_login import UserMixin
 
 class User(UserMixin):
 	""" Implementation of user properties """
-	def __init__(self, user_id, email, hashed_passwd, admin=False, created_at=None, last_login=None, num_logins=0):
+	def __init__(self, user_id, email, hashed_passwd, admin=False, guest=False, created_at=None, 
+			  last_login=None, log_queries=False, num_logins=0):
 		self.id = user_id
 		self.email = email
 		self.hashed_passwd = hashed_passwd
 		self.admin = admin
+		self.guest = guest
 		self.created_at = created_at
 		self.last_login = last_login
+		self.log_queries = log_queries
 		self.num_logins = num_logins
 
 	def get_id(self):
@@ -51,8 +54,10 @@ class User(UserMixin):
 def dict_to_user(d):
 	""" Convert a dictionary to a User object """
 	is_admin = (d["admin"] == 1) or (d["admin"] == True)
-	return User(d["id"], email=d["email"], hashed_passwd=d["hash"], admin=is_admin,
-		created_at=d["created_at"], last_login=d["last_login"], num_logins=d["num_logins"])
+	is_guest = (d["guest"] == 1) or (d["guest"] == True)
+	is_log_queries = (d["log_queries"] == 1) or (d["log_queries"] == True) 
+	return User(d["id"], email=d["email"], hashed_passwd=d["hash"], admin=is_admin, guest=is_guest,
+		created_at=d["created_at"], last_login=d["last_login"], log_queries=is_log_queries, num_logins=d["num_logins"])
 
 def password_to_hash(passwd):
 	""" Convert a password string to its hashed equivalent """
