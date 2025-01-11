@@ -18,10 +18,12 @@ def format_user_list(context, db):
 		# user id column
 		html += "\t\t<td class='text-left user'>%s</td>" % user.id
 		# email address column
+		suffix = ""
 		if user.admin:
-			html += "\t\t<td class='text-left user'>%s **</td>" % user.email
-		else:
-			html += "\t\t<td class='text-left user'>%s</td>" % user.email
+			suffix += " (Admin)"
+		if user.guest:
+			suffix += " (Guest)"
+		html += "\t\t<td class='text-left user'>%s%s</td>" % (user.email, suffix)
 		# user date created column
 		html += "\t\t<td class='text-left user'>%s</td>" % user.created_at.strftime('%Y-%m-%d %H:%M')
 		# user last login column

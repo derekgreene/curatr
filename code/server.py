@@ -105,7 +105,7 @@ class CuratrServer(Flask):
 			context["query_titles"] = spec["query"]
 		if spec["field"] == "authors_text":
 			context["query_authors"] = spec["query"]
-		if spec["field"] == "location_text":
+		if spec["field"] == "location_places":
 			context["query_location"] = spec["query"]
 		# date range
 		if spec["year_start"] > 0:
