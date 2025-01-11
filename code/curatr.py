@@ -198,6 +198,11 @@ def handle_search():
 	# populate the values in template
 	context = app.get_navigation_context(request, spec)
 	context = populate_search_results(context, db, current_solr, spec)
+	# should we log this query in the database?
+	if current_user.log_queries:
+		# TODO: remove
+		log.info("Logging query for user_id=%s" % current_user.id)
+		db.log_query(current_user.id, query_string)
 	# finished with the database
 	db.close()
 	return render_template("search-results.html", **context)

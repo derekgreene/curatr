@@ -116,6 +116,8 @@ CREATE TABLE Users (
 	last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	num_logins MEDIUMINT DEFAULT 0,
 	admin BOOLEAN DEFAULT FALSE,
+	guest BOOLEAN DEFAULT FALSE,
+	log_queries BOOLEAN DEFAULT FALSE,
 	PRIMARY KEY (id)
 );
 """
@@ -233,6 +235,22 @@ CREATE TABLE CachedClassificationCounts (
 	class_name VARCHAR(255) NOT NULL,
 	level SMALLINT NOT NULL,
 	count INT NOT NULL
+);
+"""
+
+sql_statements["TableCachedClassificationCounts"] = """
+CREATE TABLE CachedClassificationCounts (
+	class_name VARCHAR(255) NOT NULL,
+	level SMALLINT NOT NULL,
+	count INT NOT NULL
+);
+"""
+
+sql_statements["TableQueryLog"] = """
+CREATE TABLE QueryLog (
+	query_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	user_id INT NOT NULL,
+	query VARCHAR(2000) DEFAULT NULL
 );
 """
 
