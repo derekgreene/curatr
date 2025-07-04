@@ -39,7 +39,7 @@ def find_neighbors(core, embed_id, queries, k, hops):
 			# find its neighbours
 			neighbors = core.word_similarity(input_word, k=k, embed_id=embed_id)
 			if len(neighbors) == 0:
-				log.warning("Warning: No neighbors for '%s'" % word)
+				log.warning("Warning: No neighbors for '%s'" % input_word)
 				continue
 			for neighbor in neighbors[0:k]:
 				if not neighbor in hop_dict:
