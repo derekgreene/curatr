@@ -35,13 +35,21 @@ To create recommendations, we run the following process. Again this will take so
 
 ## Ngram Setup
 
-For ngram frequency counts, we need to run the following to process the collection and update the database. Note that this will take some time.
+For ngram frequency counts, we need to run the following to process the collection and update the database. Note that this will take some time. 
 
 ```python code/create-ngrams.py core```
 
 ```python code/create-ngrams.py core -c fiction```
 
 ```python code/create-ngrams.py core -c nonfiction```
+
+If we want to count both unigrams and bigrams, we require an additional argument:
+
+```python code/create-ngrams.py core -b```
+
+```python code/create-ngrams.py core -b -c fiction```
+
+```python code/create-ngrams.py core -b -c nonfiction```
 
 ## Database Indexing
 
