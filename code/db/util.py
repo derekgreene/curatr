@@ -105,10 +105,11 @@ class GenericDB:
 	def _get_next_id(self, table_name):
 		""" Generate the next unique identifier for the specified table """
 		try:
-			self.cursor.execute( "SELECT AUTO_INCREMENT FROM information_schema.tables WHERE table_name=%s", table_name )
+			sql = "SELECT MAX(id) FROM %s" % table_name
+			self.cursor.execute(sql)
 			result = self.cursor.fetchone()
-			return result[0]
+			return result[0] + 1
 		except Exception as e:
-			log.error( "SQL error in _get_next_id(): %s" % str(e) )
+			log.error("SQL error in _get_next_id(): %s" % str(e))
 			return 1
 

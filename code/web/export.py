@@ -1,7 +1,7 @@
 """
 Implementation for corpus export-related features of the Curatr web interface
 """
-import json, zipfile, threading, re
+import json, zipfile, threading, re, time
 from pathlib import Path
 import logging as log
 from flask import Markup, send_file, abort
@@ -77,41 +77,49 @@ def populate_export(context, db, spec):
 	return context
 
 def handle_export_build(context, core, spec):
-	request = context.request
-	# valid user ID?
-	corpus_user_id = context.user_id
-	if corpus_user_id is None:
-		abort(403, "Cannot create lexicon for anonymous user")
-	# start the export process
-	export_name = request.args.get("export_name", default="").strip()
-	if len(export_name) == 0:
-		export_name = "Untitled"
-	export_format = request.args.get("export_format", default="").strip()
-	if len(export_format) == 0:
-		export_format = "text"
+	""" Handle an export request by getting the export parameters and starting the bulk exporter thread """
 	try:
-		export_num = int(request.args.get("export_num", default="10"))
+		request = context.request
+		# valid user ID?
+		corpus_user_id = context.user_id
+		if corpus_user_id is None:
+			abort(403, "Cannot create lexicon for anonymous user")
+		# start the export process
+		export_name = request.args.get("export_name", default="").strip()
+		if len(export_name) == 0:
+			export_name = "Untitled"
+		export_format = request.args.get("export_format", default="").strip()
+		if len(export_format) == 0:
+			export_format = "text"
+		try:
+			export_num = int(request.args.get("export_num", default="10"))
+		except:
+			export_num = -1
+		search_context = {}
+		for arg in request.args:
+			if arg.startswith("spec_"):
+				spec_key = arg[5:]
+				value = request.args.get(arg, None)
+				if not value is None:
+					search_context[spec_key] = value
+		current_solr = core.get_solr(search_context["type"])
+		log.info("Export: Search context %s" % str(search_context))
+		# Perform the export
+		exp = BulkExporter(core, current_solr, export_name, export_format, export_num, corpus_user_id, search_context)
+		# create a background thread for the exporter
+		thread = threading.Thread(target=exp.run, args=(), name="bulk-export-thread")
+		log.info("Export: Starting bulk export thread ...")
+		thread.daemon = True
+		# thread.daemon = False
+		thread.start()
+		# add a message
+		url_reload = "%s/corpora" % context.prefix
+		context["message"] = Markup("Your sub-corpus is currently being exported and will be available for download from this page in a few minutes. <br>Please do not click 'Refresh' in your browser. Instead, click <a href='%s'>here to reload this page</a>." % url_reload)
 	except:
-		export_num = -1
-	search_context = {}
-	for arg in request.args:
-		if arg.startswith("spec_"):
-			spec_key = arg[5:]
-			value = request.args.get(arg, None)
-			if not value is None:
-				search_context[spec_key] = value
-	current_solr = core.get_solr(search_context["type"])
-	log.info("Export: Search context %s" % str(search_context))
-	# Perform the export
-	exp = BulkExporter(core, current_solr, export_name, export_format, export_num, corpus_user_id, search_context)
-	# create a background thread for the exporter
-	thread = threading.Thread(target=exp.run, args=())
-	thread.daemon = True
-	thread.start()
-	# add a message
-	url_reload = "%s/corpora" % context.prefix
-	context["message"] = Markup("Your sub-corpus is currently being exported and will be available for download from this page in a few minutes. <br>Please do not click 'Refresh' in your browser. Instead, click <a href='%s'>here to reload this page</a>." % url_reload)
+		log.exception("ERROR: Export initial build failed due to unexpected exception")
+		context["message"] = Markup("Failed to start sub-corpus export process. Please try again at a later time.")
 	return context
+
 
 def handle_export_download(core, subcorpus_id):
 	""" Send an export file for download """
@@ -239,75 +247,94 @@ class BulkExporter:
 		self.search_params = search_params
 
 	def run(self):
-		db = self.core.get_db()
-		base_export_id = re.sub(r'[^a-zA-Z0-9]', '', self.export_name.lower().strip())
-		if len(base_export_id) == 0:
-			base_export_id = "untitled"
-		# add the user id
-		base_export_id = "%s_%s" % (self.user_id, base_export_id)
-		export_id = base_export_id
-		num = 0
-		existing_ids = set(db.get_all_subcorpus_ids())
-		while export_id in existing_ids:
-			num += 1
-			export_id = base_export_id + str(num)
-		# perform the search
-		results = self.search()
-		if len(results) == 0:
-			log.warning("Warning: No results found for export_id '%s'" % export_id)
-			db.close()
+		log.info("Export: Starting export for export_name '%s'" % self.export_name)
+		# Step 1: Get DB & Perform the search
+		db, export_id = None, "untitled"
+		try:
+			db = self.core.get_db()
+			base_export_id = re.sub(r'[^a-zA-Z0-9]', '', self.export_name.lower().strip())
+			if len(base_export_id) == 0:
+				base_export_id = "untitled"
+			# add the user id
+			base_export_id = "%s_%s" % (self.user_id, base_export_id)
+			export_id = base_export_id
+			num = 0
+			existing_ids = set(db.get_all_subcorpus_ids())
+			while export_id in existing_ids:
+				num += 1
+				export_id = base_export_id + str(num)
+			log.info("Export: Starting export for export_id '%s'" % export_id)
+			# perform the search
+			results = self.search()
+			if len(results) == 0:
+				log.warning("Warning: No results found for export_id '%s'" % export_id)
+				db.close()
+				return
+			log.info("Export: Found %d results for export_id '%s'" % (len(results), export_id))
+		except Exception:
+			log.exception("ERROR: Export failed for export_id '%s' due to unhandled exception in Step 1 of exp.run" % export_id)
+			if db:
+				db.close()
 			return
-		log.info("Export: Found %d results for export_id '%s'" % (len(results), export_id))
-		# create the metadata file
-		is_segments = self.search_params.get("type", "volume") == "segment"
-		meta_fname = base_export_id + ".meta.json"
-		meta_path = self.core.dir_export / meta_fname
-		self.write_metadata(results, meta_path, is_segments)
-		# create the JSON file
-		description_fname = base_export_id + ".json"
-		description_path = self.core.dir_export / description_fname
-		self.write_description(results, description_path)
-		# create the ZIP file
-		zip_fname = base_export_id + ".zip"
-		zip_path = self.core.dir_export / zip_fname
-		log.info("Export: Preparing to write ZIP file: %s" % zip_path)
-		# only write the metadata
-		if self.export_format == "metadata":
-			results = []
-		if self.write_zip(results, zip_path, meta_path, description_path, is_segments):
-			log.info("Export: Export complete for export_id '%s'" % export_id)
-		else:
-			log.error("ERROR: Export failed for export_id '%s'" % export_id)
-			# need to delete the JSON description file after the failed export
-			if description_path.exists():
-				description_path.unlink()
-			db.close()
-			return
-		# always delete the metadata file
-		if meta_path.exists():
-			meta_path.unlink()
-		# read back in the description, and tidy it
-		fin = open(description_path, "r")
-		desc = json.load(fin)		
-		fin.close()
-		desc["export_format"] = self.export_format
-		if not "type" in desc:
-			desc["type"] = "volume"
-		if not "field" in desc:
-			desc["field"] = "Full text"
-		if not "name" in desc:
-			desc["name"] = "Untitled"
-		for key in desc["properties"]:
-			desc[key] = desc["properties"][key]
-		del desc["properties"]
-		if len(desc["lexicon"].strip()) == 0:
-			del desc["lexicon"]		
-		# now add to the database
-		log.info("Export: Adding corpus: %s - %s" % (export_id, desc["name"]))
-		subcorpus_id = db.add_subcorpus(desc, zip_fname, self.user_id)
-		log.info("Export: Added subcorpus with ID=%s" % subcorpus_id)	
+
+		# Step 2: File creation
+		try:
+			# create the metadata file
+			is_segments = self.search_params.get("type", "volume") == "segment"
+			meta_fname = base_export_id + ".meta.json"
+			meta_path = self.core.dir_export / meta_fname
+			self.write_metadata(results, meta_path, is_segments)
+			# create the JSON file
+			description_fname = base_export_id + ".json"
+			description_path = self.core.dir_export / description_fname
+			self.write_description(results, description_path)
+			# create the ZIP file
+			zip_fname = base_export_id + ".zip"
+			zip_path = self.core.dir_export / zip_fname
+			log.info("Export: Preparing to write ZIP file: %s" % zip_path)
+			# only write the metadata
+			if self.export_format == "metadata":
+				results = []
+			if self.write_zip(results, zip_path, meta_path, description_path, is_segments):
+				log.info("Export: Export complete for export_id '%s'" % export_id)
+			else:
+				log.error("ERROR: Export failed for export_id '%s' when writing ZIP file" % export_id)
+				# need to delete the JSON description file after the failed export
+				if description_path.exists():
+					description_path.unlink()
+				db.close()
+				return
+			# always delete the metadata file
+			if meta_path.exists():
+				meta_path.unlink()
+			# read back in the description, and tidy it
+			fin = open(description_path, "r")
+			desc = json.load(fin)		
+			fin.close()
+			desc["export_format"] = self.export_format
+			if not "type" in desc:
+				desc["type"] = "volume"
+			if not "field" in desc:
+				desc["field"] = "Full text"
+			if not "name" in desc:
+				desc["name"] = "Untitled"
+			for key in desc["properties"]:
+				desc[key] = desc["properties"][key]
+			del desc["properties"]
+			if len(desc["lexicon"].strip()) == 0:
+				del desc["lexicon"]		
+			# now add to the database
+			log.info("Export: Adding corpus: %s - %s" % (export_id, desc["name"]))
+			subcorpus_id = db.add_subcorpus(desc, zip_fname, self.user_id)
+			if subcorpus_id == -1:
+				log.exception("ERROR: Export failed for export_id '%s' when add sub-corpus to database" % export_id)
+			else:
+				log.info("Export: Added subcorpus with ID=%s" % subcorpus_id)	
+		except Exception:
+			log.exception("ERROR: Export failed for export_id '%s' due to unhandled exception in Step 2 of exp.run" % export_id)
 		# finished
-		db.close()	
+		if db:
+			db.close()	
 
 	def write_metadata(self, results, meta_path, is_segments):
 		log.info("Writing sub-corpus metadata file to %s" % meta_path)
@@ -332,16 +359,22 @@ class BulkExporter:
 		# create the properties
 		properties = { "date_range" : [0,2000] }
 		spec = self.parse_search_params(self.search_params)
-		# TODO: should the data in these fields be improved?
 		for key in spec:
+			# note we need to remove the prefix, if it's applied
+			if key.startswith("spec_"):
+				key = key[5:]
 			if key == "lexicon_id":
 				properties["lexicon"] = spec[key]
 			elif key == "class":
 				properties["classification"] = spec[key]
+			elif key == "subclass":
+				properties["subclassification"] = spec[key]
 			elif key == "type":
 				properties["type"] = spec[key]
+			elif key == "location":
+				properties["location"] = spec[key]
 			elif key == "field":
-				properties["search_field"] = field_name_map.get(spec[key],"Full text")
+				properties["search_field"] = field_name_map.get(spec[key], "Full text")
 			# TODO: more nuanced parsing of query string
 			elif key == "query":
 				properties["query"] = spec[key].split(" ")
@@ -370,7 +403,7 @@ class BulkExporter:
 				zip.writestr(str(arc_path), doc["content"])
 			zip.close()
 		except Exception as e:
-			log.error("Error: Failed to create export ZIP file %s" % zip_path)
+			log.error("ERROR: Export failed when writing ZIP file %s" % zip_path)
 			log.error(str(e))
 			return False
 		return True

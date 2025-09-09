@@ -42,7 +42,7 @@ class CuratrDB(GenericDB):
 		for table_name in tables:
 			if table_name in core_tables:
 				log.info("Dropping table %s" % table_name)
-				self.cursor.execute( "DROP TABLE %s" % table_name )
+				self.cursor.execute("DROP TABLE %s" % table_name )
 		self.conn.commit()
 		# check tables now
 		tables = self._get_existing_tables()
@@ -769,7 +769,7 @@ class CuratrDB(GenericDB):
 	def add_subcorpus(self, meta, filename, user_id):
 		try:
 			# get the next corpus id
-			corpus_id = self._get_next_id( "Corpora" )
+			corpus_id = self._get_next_id("Corpora")
 			# add the corpus
 			sql = "INSERT INTO Corpora (id, user_id, name, format, documents, filename) VALUES(%s,%s,%s,%s,%s,%s)"
 			self.cursor.execute(sql, (corpus_id, user_id, meta["name"], meta["format"], meta["documents"], filename ) )	
@@ -931,8 +931,9 @@ class CuratrDB(GenericDB):
 			# get the next user id
 			user_id = self._get_next_id("Users")
 			# add the user
-			sql = "INSERT INTO Users (email, hash) VALUES(%s,%s)"
-			self.cursor.execute(sql, (email, hashed_passwd) )
+			sql = "INSERT INTO Users (id, email, hash) VALUES(%s,%s,%s)"
+			self.cursor.execute(sql, (user_id, email, hashed_passwd) )
+			log.info("Added new user id=%d email=%s" % (user_id, email) )
 		except Exception as e:
 			log.error("SQL error in add_user(): %s" % str(e))
 			return -1

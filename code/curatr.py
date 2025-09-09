@@ -9,7 +9,7 @@ Sample usage, specifying the core configuration directory:
 Then access the search interface at:
 http://127.0.0.1:5000
 """
-import sys, io, json, re
+import sys, io, json, re, threading
 from pathlib import Path
 import logging as log
 from optparse import OptionParser
@@ -838,8 +838,10 @@ def configure_server(dir_core, dir_log=None):
 	log_prefix = app.start_time.strftime('%Y%m%d-%H%M')
 	log_fname = log_prefix + ".log"
 	log_path = dir_log / log_fname
+	log.propagate = True
 	handlers = [log.FileHandler(log_path), log.StreamHandler()]
-	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO, handlers=handlers, datefmt='%Y-%m-%d %H:%M')
+	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO, handlers=handlers, datefmt='%Y-%m-%d %H:%M', force=True)
+	# ensuire 
 	log.info("+++ Starting Curatr: %s" % log_prefix)
 	log.info("Log files will be stored in %s" % dir_log )
 
