@@ -1,4 +1,4 @@
-import re
+import re, unicodedata
 import logging as log
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,7 +10,10 @@ from preprocessing.cleaning import clean_content
 token_pattern = re.compile(r"\b\w\w+\b", re.U)
 
 def simple_tokenizer(s):
-	return [x.lower() for x in token_pattern.findall(s) ]
+	""" 
+	Implements the most basic word tokenizer used by Curatr
+	"""
+	return [x.lower() for x in token_pattern.findall(s)]
 
 def custom_tokenizer(s, min_term_length=2):
 	"""
@@ -49,6 +52,8 @@ def load_stopwords():
 			stopwords.add(line.lower())
 	return list(stopwords)
 
+# --------------------------------------------------------------
+
 stemmer = PorterStemmer()
 def stem_words(words):
 	""" Apply English stemming to the specified words """
@@ -60,6 +65,24 @@ def stem_words(words):
 def stem_word(word):
 	""" Apply English stemming to the specified word """
 	return stemmer.stem(word)
+
+# --------------------------------------------------------------
+
+def strip_accents_unicode(s):
+    """
+    Remove diacritics (accent marks) from a Unicode string using NFKD normalization.
+    Mirrors scikit-learn's strip_accents='unicode' behavior.
+    """
+    if not isinstance(s, str):
+        s = str(s)
+    # Fast path for ASCII-only strings
+    try:
+        s.encode("ASCII")
+        return s
+    except UnicodeEncodeError:
+        pass
+    normalized = unicodedata.normalize("NFKD", s)
+    return "".join(c for c in normalized if not unicodedata.combining(c))
 
 # --------------------------------------------------------------
 
