@@ -18,25 +18,39 @@ from collections import Counter
 import nltk
 from core import CoreCuratr
 from preprocessing.cleaning import clean_content
-from preprocessing.text import  custom_tokenizer, load_stopwords
+from preprocessing.text import custom_tokenizer, load_stopwords, strip_accents_unicode
 
 # --------------------------------------------------------------
 
-def extract_tokens(volume_path, stopwords, use_bigrams=False, max_ngram_length=99):
+def extract_tokens(volume_path, stopwords, use_bigrams=False, min_ngram_length=2, max_ngram_length=80):
 	with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
 		volume_tokens = set()
 		content = clean_content(fin.read())
-		tokens = custom_tokenizer(content)
+		tokens = custom_tokenizer(content, min_term_length=min_ngram_length)
+		stripped_tokens = []
 		for token in tokens:
-			if not (token in stopwords or len(token) > max_ngram_length):
-				volume_tokens.add(token)
+			# remove diacritics (accent marks) from using NFKD normalization
+			token = strip_accents_unicode(token)
+			stripped_tokens.append(token)
+			# too short/long or a stopword?
+			if len(token) < min_ngram_length or len(token) > max_ngram_length or token in stopwords:
+				continue
+			volume_tokens.add(token)
 		# add bigrams too?
 		if use_bigrams:
-			for b in nltk.bigrams(tokens):
-				if not (b[0] in stopwords or b[1] in stopwords):
-					bigram = "%s_%s" % (b[0], b[1])
-					if len(bigram) <= max_ngram_length:
-						volume_tokens.add(bigram)
+			for b in nltk.bigrams(stripped_tokens):
+				# first token too short/long or a stopword?
+				if len(b[0]) < min_ngram_length or len(b[0]) > max_ngram_length or b[0] in stopwords:
+					continue
+				# second token too short/long or a stopword?
+				if len(b[1]) < min_ngram_length or len(b[1]) > max_ngram_length or b[1] in stopwords:
+					continue
+				# create the bigram
+				bigram = "%s_%s" % (b[0], b[1])
+				# bigram too long or a stopword?
+				if len(bigram) > max_ngram_length or bigram in stopwords:
+					continue
+				volume_tokens.add(bigram)
 		return volume_tokens
 
 # --------------------------------------------------------------
@@ -45,7 +59,8 @@ def main():
 	log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.INFO)
 	parser = OptionParser(usage="usage: %prog [options] dir_core")
 	parser.add_option("-c","--collection", action="store", type="string", dest="collection", help="set of books to use (all, fiction, nonfiction)", default="all")
-	parser.add_option("-b","--bigrams", action="store_true", dest="bigrams", help="produce bigrams in addition to unigrams")
+	parser.add_option("-b","--bigrams", action="store_true", dest="bigrams", help="produce bigrams in addition to unigrams?")
+	parser.add_option("-s","--stopwords", action="store_true", dest="use_stopwords", help="filter tokens based on English stopwords?")
 	(options, args) = parser.parse_args()
 	if len(args) < 1:
 		parser.error("Must specify core directory")
@@ -78,8 +93,12 @@ def main():
 	log.info("Processing %s books from collection '%s'..." % (len(book_ids), collection_id))
 
 	# read the stopword list
-	stopwords = load_stopwords()
-	log.info("Using default list of %d stopwords" % len(stopwords))
+	if options.use_stopwords:
+		stopwords = load_stopwords()
+		log.info("Stopwords: Using default list of %d stopwords" % len(stopwords))
+	else:
+		stopwords = set()
+		log.info("Stopwords: Not applying any stopword filtering")
 	# get year ranges
 	year_map = db.get_book_year_map()
 	year_min, year_max = db.get_book_year_range()
@@ -113,7 +132,7 @@ def main():
 			log.info("Volume contains %d tokens" % len(volume_tokens))
 			for token in volume_tokens:
 				year_counts[token] += 1
-			log.info("Year dictionary now contains %d ngrams" % len(year_counts))
+			log.debug("Year dictionary now contains %d ngrams" % len(year_counts))
 		# now update the database
 		log.info("Adding counts for %d ngrams to database" % len(year_counts))
 		for token in year_counts:
