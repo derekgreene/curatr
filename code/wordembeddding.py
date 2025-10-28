@@ -36,14 +36,14 @@ class EmbeddingWrapper:
 		""" Load the underlying Gensim word embedding model"""
 		self._model = None
 		try:
-			# is this a FastText embedding?
-			if "-ft" in self.filepath.stem:
-				log.info("Loading FastText model from %s ..." % self.filepath.resolve())
-				self._model = gensim.models.FastText.load(self.filepath)
-			# otherwise assume this is a word2vec embedding
+			# loading Gensim .kv format?
+			if self.filepath.suffix == ".kv":
+				log.info("Loading Word2vec model in .kv format from %s ..." % self.filepath.resolve())
+				self._model = gensim.models.KeyedVectors.load(str(self.filepath), mmap="r")
+			# otherwise assume this is a word2vec binary format
 			else:
-				log.info("Loading Word2vec model from %s ..." % self.filepath.resolve())
-				self._model= gensim.models.KeyedVectors.load_word2vec_format(self.filepath, binary=True)  			
+				log.info("Loading Word2vec model in binary format from %s ..." % self.filepath.resolve())
+				self._model= gensim.models.KeyedVectors.load_word2vec_format(str(self.filepath), binary=True)  			
 		except Exception as e:
 			log.error("Failed to load embedding model from %s" % self.filepath.resolve())
 			log.error(str(e))
