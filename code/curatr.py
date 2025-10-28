@@ -851,12 +851,14 @@ def configure_server(dir_core, dir_log=None):
 		sys.exit(1)
 
 def main():
+	# handle command line arguments - the key argument is the Curatr core directory
 	parser = OptionParser(usage="usage: %prog [options] dir_core")
 	(options, args) = parser.parse_args()
 	if len(args) != 1:
 		parser.error("Must specify core directory")
+	core_dir_path = Path(args[0])
 	# configure the Curatr server
-	configure_server(Path(args[0]))
+	configure_server(core_dir_path)
 	# start the server
 	app.run()
 
