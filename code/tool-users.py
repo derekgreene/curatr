@@ -15,23 +15,23 @@ from user import password_to_hash, validate_email, generate_password
 # --------------------------------------------------------------
 
 def validate_password(passwd):
-	""" Check if the specified password string meets our required criteria """
-	if len(passwd) < 6: 
-		log.error('Password should be at least 6 characters long') 
+	"""Check if the specified password string meets our required criteria."""
+	if len(passwd) < 6:
+		log.error("Password should be at least 6 characters long")
 		return False
-	if len(passwd) > 20: 
-		log.error('Password should not be longer than 20 characters') 
+	if len(passwd) > 20:
+		log.error("Password should not be longer than 20 characters")
 		return False
-	if not any(char.isdigit() for char in passwd): 
-		log.error('Password should have at least one numeric character') 
+	if not any(char.isdigit() for char in passwd):
+		log.error("Password should have at least one numeric character")
 		return False
-	if any(char.isspace() for char in passwd): 
-		log.error('Password should not contain spaces') 
+	if any(char.isspace() for char in passwd):
+		log.error("Password should not contain spaces")
 		return False
 	return True
 
 def user_add(db):
-	""" Add a new user to the database """
+	"""Add a new user to the database."""
 	# prompt for details
 	try:
 		# request & validate new email address
@@ -39,26 +39,26 @@ def user_add(db):
 			email = input("Email: ").strip().lower()
 			# does this email already exist in the DB?
 			if db.has_user_email(email):
-				log.warning("User with email address '%s' already exists" % email)
+				log.warning(f"User with email address '{email}' already exists")
 				continue
 			if validate_email(email):
 				break
-			log.error('Invalid email address')
+			log.error("Invalid email address")
 		# request & validate new password
-		log.info("Suggestion: %s" % generate_password())
+		log.info(f"Suggestion: {generate_password()}")
 		while True:
-			passwd = getpass.getpass(prompt='Password: ', stream=None).strip()
+			passwd = getpass.getpass(prompt="Password: ", stream=None).strip()
 			if validate_password(passwd):
 				break
 		# double check password
 		while True:
-			passwd2 = getpass.getpass(prompt='Re-enter Password: ', stream=None).strip()
+			passwd2 = getpass.getpass(prompt="Re-enter Password: ", stream=None).strip()
 			if passwd == passwd2:
 				break
 			else:
 				log.warning("Passwords do not match")
 	except Exception as e:
-		log.warning("Cancelling user addition - %s" % e)
+		log.warning(f"Cancelling user addition - {e}")
 		return
 	# hash the password
 	hashed_passwd = password_to_hash(passwd)
@@ -67,52 +67,52 @@ def user_add(db):
 	if user_id == -1:
 		log.error("Failed to add new user")
 		return False
-	log.info("Added new user: email=%s user_id=%s" % (email, user_id))
+	log.info(f"Added new user: email={email} user_id={user_id}")
 	return True
 
 def user_list(db):
-	""" Print a list of all current users """
+	"""Print a list of all current users."""
 	users = db.get_all_users()
-	log.info("Database has %d user(s)" % len(users))
+	log.info(f"Database has {len(users)} user(s)")
 	for user in users:
-		log.info("%s (admin=%s, guest=%s)" % (str(user), user.admin, user.guest))
+		log.info(f"{str(user)} (admin={user.admin}, guest={user.guest})")
 	return True
 
 def user_change_password(db):
-	""" Change a user's existing password """
+	"""Change a user's existing password."""
 	log.info("Changing user password ...")
 	email = input("Enter Email: ").strip()
 	user = db.get_user_by_email(email)
 	if user is None:
-		log.warning("No such user '%s'" % email)
+		log.warning(f"No such user '{email}'")
 		return False
 	# request & validate new password
-	log.info("Suggestion: %s" % generate_password())
+	log.info(f"Suggestion: {generate_password()}")
 	while True:
-		passwd = getpass.getpass(prompt='Password: ', stream=None).strip()
+		passwd = getpass.getpass(prompt="Password: ", stream=None).strip()
 		if validate_password(passwd):
 			break
 	# double check password
 	while True:
-		passwd2 = getpass.getpass(prompt='Re-enter Password: ', stream=None).strip()
+		passwd2 = getpass.getpass(prompt="Re-enter Password: ", stream=None).strip()
 		if passwd == passwd2:
 			break
 		else:
-			log.warning("Passwords do not match")			
+			log.warning("Passwords do not match")
 	# hash the password
 	hashed_passwd = password_to_hash(passwd)
 	return db.update_user_password(user.get_id(), hashed_passwd)
 
 def user_verify_password(db):
-	""" Verify a user's password """
+	"""Verify a user's password."""
 	log.info("Verifying user password ...")
 	email = input("Enter Email: ").strip()
 	user = db.get_user_by_email(email)
 	if user is None:
-		log.warning("No such user '%s'" % email)
+		log.warning(f"No such user '{email}'")
 		return False
 	while True:
-		passwd = getpass.getpass(prompt='Enter Password: ', stream=None).strip()
+		passwd = getpass.getpass(prompt="Enter Password: ", stream=None).strip()
 		if user.verify(passwd):
 			log.info("Password verified")
 			break
@@ -120,57 +120,68 @@ def user_verify_password(db):
 	return True
 
 def user_remove(db):
-	""" Delete an existing user from the database """
+	"""Delete an existing user from the database."""
 	log.info("Removing user ...")
 	email = input("Enter Email: ").strip()
 	user = db.get_user_by_email(email)
 	if user is None:
-		log.warning("No such user '%s'" % email)
+		log.warning(f"No such user '{email}'")
 		return False
 	return db.delete_user(user.get_id())
 
 def user_lexicons(db):
-	""" List lexicons for each user """
+	"""List lexicons for each user."""
 	users = db.get_all_users()
 	for user in users:
 		lexicons = db.get_user_lexicons(user.id)
-		log.info("User %s: %d lexicon(s)" % (user.email, len(lexicons)))
+		log.info(f"User {user.email}: {len(lexicons)} lexicon(s)")
 		for lex in lexicons:
-			log.info("  - %d: %s" % (lex["id"], lex["name"]))
+			log.info(f"  - {lex['id']}: {lex['name']}")
 	return True
 
 def user_subcorpora(db):
-	""" List subcorpora for each user """
+	"""List subcorpora for each user."""
 	users = db.get_all_users()
 	for user in users:
 		corpora = db.get_user_subcorpora(user.id)
-		log.info("User %s: %d sub-corpora" % (user.email, len(corpora)))
+		log.info(f"User {user.email}: {len(corpora)} sub-corpora")
 		for corpus in corpora:
-			log.info("  - %d: %s" % (corpus["id"], corpus["name"]))
+			log.info(f"  - {corpus['id']}: {corpus['name']}")
 	return True
 
 # --------------------------------------------------------------
 
 def main():
+	"""
+	Manage Curatr user accounts via command-line interface.
+
+	Provides functionality for user account management including:
+	- Adding new users
+	- Removing existing users
+	- Changing passwords
+	- Verifying passwords
+	- Listing users
+	- Viewing user lexicons and subcorpora
+	"""
 	actions = ["list", "add", "remove", "password", "verify", "lexicons", "corpora"]
 	parser = OptionParser(usage="usage: %prog [options] dir_core action")
 	(options, args) = parser.parse_args()
 	if(len(args) != 2):
 		sactions = ", ".join(actions)
-		parser.error("Must specify core directory and action (%s)" % sactions )	
-	log.basicConfig(level=log.INFO, format='%(message)s')
+		parser.error(f"Must specify core directory and action ({sactions})")
+	log.basicConfig(level=log.INFO, format="%(message)s")
 	action = args[1].lower()
 
 	# valid action?
 	if not action in actions:
-		log.warning("Invalid action '%s'" % action)
-		log.warning("Valid actions are: %s" % str(actions))
+		log.warning(f"Invalid action '{action}'")
+		log.warning(f"Valid actions are: {str(actions)}")
 		sys.exit(1)
 
 	# set up the Curatr core
 	dir_core = Path(args[0])
 	if not dir_core.exists():
-		log.error("Invalid core directory: %s" % dir_core.absolute())
+		log.error(f"Invalid core directory: {dir_core.absolute()}")
 		sys.exit(1)
 	core = CoreCuratr(dir_core)
 
