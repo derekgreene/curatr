@@ -16,15 +16,19 @@ from user import password_to_hash, validate_email, generate_password
 
 def validate_password(passwd):
 	"""Check if the specified password string meets our required criteria."""
+	# enforce minimum length for security
 	if len(passwd) < 6:
 		log.error("Password should be at least 6 characters long")
 		return False
+	# enforce maximum length to prevent potential buffer issues
 	if len(passwd) > 20:
 		log.error("Password should not be longer than 20 characters")
 		return False
+	# require at least one digit for stronger passwords
 	if not any(char.isdigit() for char in passwd):
 		log.error("Password should have at least one numeric character")
 		return False
+	# disallow spaces as they can cause issues with some authentication systems
 	if any(char.isspace() for char in passwd):
 		log.error("Password should not contain spaces")
 		return False
@@ -51,6 +55,7 @@ def user_add(db):
 			if validate_password(passwd):
 				break
 		# double check password
+		# require re-entry to prevent typos
 		while True:
 			passwd2 = getpass.getpass(prompt="Re-enter Password: ", stream=None).strip()
 			if passwd == passwd2:
@@ -64,6 +69,7 @@ def user_add(db):
 	hashed_passwd = password_to_hash(passwd)
 	# actually add the user
 	user_id = db.add_user(email, hashed_passwd)
+	# check if insertion failed (returns -1 on error)
 	if user_id == -1:
 		log.error("Failed to add new user")
 		return False
@@ -74,6 +80,7 @@ def user_list(db):
 	"""Print a list of all current users."""
 	users = db.get_all_users()
 	log.info(f"Database has {len(users)} user(s)")
+	# display each user with their role information
 	for user in users:
 		log.info(f"{str(user)} (admin={user.admin}, guest={user.guest})")
 	return True
@@ -81,6 +88,7 @@ def user_list(db):
 def user_change_password(db):
 	"""Change a user's existing password."""
 	log.info("Changing user password ...")
+	# prompt for and look up the user by email
 	email = input("Enter Email: ").strip()
 	user = db.get_user_by_email(email)
 	if user is None:
@@ -93,6 +101,7 @@ def user_change_password(db):
 		if validate_password(passwd):
 			break
 	# double check password
+	# require re-entry to prevent typos
 	while True:
 		passwd2 = getpass.getpass(prompt="Re-enter Password: ", stream=None).strip()
 		if passwd == passwd2:
@@ -101,16 +110,19 @@ def user_change_password(db):
 			log.warning("Passwords do not match")
 	# hash the password
 	hashed_passwd = password_to_hash(passwd)
+	# update the password in the database
 	return db.update_user_password(user.get_id(), hashed_passwd)
 
 def user_verify_password(db):
 	"""Verify a user's password."""
 	log.info("Verifying user password ...")
+	# prompt for and look up the user by email
 	email = input("Enter Email: ").strip()
 	user = db.get_user_by_email(email)
 	if user is None:
 		log.warning(f"No such user '{email}'")
 		return False
+	# keep prompting until correct password is entered
 	while True:
 		passwd = getpass.getpass(prompt="Enter Password: ", stream=None).strip()
 		if user.verify(passwd):
@@ -122,19 +134,23 @@ def user_verify_password(db):
 def user_remove(db):
 	"""Delete an existing user from the database."""
 	log.info("Removing user ...")
+	# prompt for and look up the user by email
 	email = input("Enter Email: ").strip()
 	user = db.get_user_by_email(email)
 	if user is None:
 		log.warning(f"No such user '{email}'")
 		return False
+	# delete the user from the database
 	return db.delete_user(user.get_id())
 
 def user_lexicons(db):
 	"""List lexicons for each user."""
 	users = db.get_all_users()
+	# iterate through each user and display their lexicons
 	for user in users:
 		lexicons = db.get_user_lexicons(user.id)
 		log.info(f"User {user.email}: {len(lexicons)} lexicon(s)")
+		# display each lexicon with its ID and name
 		for lex in lexicons:
 			log.info(f"  - {lex['id']}: {lex['name']}")
 	return True
@@ -142,9 +158,11 @@ def user_lexicons(db):
 def user_subcorpora(db):
 	"""List subcorpora for each user."""
 	users = db.get_all_users()
+	# iterate through each user and display their subcorpora
 	for user in users:
 		corpora = db.get_user_subcorpora(user.id)
 		log.info(f"User {user.email}: {len(corpora)} sub-corpora")
+		# display each subcorpus with its ID and name
 		for corpus in corpora:
 			log.info(f"  - {corpus['id']}: {corpus['name']}")
 	return True
@@ -166,10 +184,12 @@ def main():
 	actions = ["list", "add", "remove", "password", "verify", "lexicons", "corpora"]
 	parser = OptionParser(usage="usage: %prog [options] dir_core action")
 	(options, args) = parser.parse_args()
+	# require exactly 2 arguments: core directory and action
 	if(len(args) != 2):
 		sactions = ", ".join(actions)
 		parser.error(f"Must specify core directory and action ({sactions})")
 	log.basicConfig(level=log.INFO, format="%(message)s")
+	# convert to lowercase for case-insensitive action matching
 	action = args[1].lower()
 
 	# valid action?
@@ -186,13 +206,14 @@ def main():
 	core = CoreCuratr(dir_core)
 
 	# only need a single DB connection
+	# limit connection pool to 1 since this is a single-user CLI tool
 	core.config.set("db", "pool_size", "1")
 	# connect to the database
 	if not core.init_db():
 		sys.exit(1)
 	db = core.get_db()
 
-	# Perform the required action
+	# perform the required action
 	if action == "add":
 		user_add(db)
 	elif action == "verify":
@@ -208,7 +229,7 @@ def main():
 	elif action == "corpora":
 		user_subcorpora(db)
 
-	# Finished
+	# finished
 	db.close()
 	core.shutdown()
 	
