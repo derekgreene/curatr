@@ -14,7 +14,17 @@ from core import CoreCuratr
 # --------------------------------------------------------------
 
 def main():
-	log.basicConfig(format='%(message)s', level=log.INFO)
+	"""
+	Execute the main search functionality for querying a Solr-indexed corpus.
+
+	This function initialises the logging system, parses command-line arguments,
+	establishes a connection to the Solr core, executes the search query with
+	pagination support, and displays the results. Results can be filtered by
+	field, sorted by specified criteria, and limited to a maximum number of
+	matches. The function supports searching both full volumes and individual
+	segments within the corpus.
+	"""
+	log.basicConfig(format="%(message)s", level=log.INFO)
 	parser = OptionParser(usage="usage: %prog [options] dir_core word1 word2...")
 	parser.add_option("-s","--segment", action="store_true", dest="segment", help="use segments instead of full volumes")
 	parser.add_option("-f","--field", action="store", type="string", dest="field", help="field to search (default is all)", default="all")
@@ -35,7 +45,7 @@ def main():
 	# set up the Curatr core
 	dir_core = Path(args[0])
 	if not dir_core.exists():
-		log.error("Invalid core directory: %s" % dir_core.absolute())
+		log.error(f"Invalid core directory: {dir_core.absolute()}")
 		sys.exit(1)
 	core = CoreCuratr(dir_core)
 	
@@ -59,11 +69,13 @@ def main():
 			sort_params += " desc"
 		else:
 			sort_params += " asc"
-	log.info("-- Running query (kind='%s', field='%s', sort='%s'): %s" % (kind, options.field, sort_params, query_string))
+	log.info(f"-- Running query (kind='{kind}', field='{options.field}', sort='{sort_params}'): {query_string}")
 
 	# run the query with paging
+	# limit page size to 100 to avoid overwhelming the Solr server
 	page_size = min(100, options.max_results)
 	start, page = 0, 0
+	# track the current rank across all pages for display purposes
 	current_rank = 0
 	while True:
 		page += 1
@@ -74,21 +86,24 @@ def main():
 				log.info("No results found for query")
 			break
 		# display the results
-		log.info("-- Query Page %d: %d results of %d" % ( page, res.get_results_count(), res.get_num_found()))
+		log.info(f"-- Query Page {page}: {res.get_results_count()} results of {res.get_num_found()}")
 		for doc in res.docs:
 			current_rank += 1
+			# stop displaying results once we've reached the maximum requested
 			if current_rank > options.max_results :
 				break
 			if options.segment:
-				log.info("%d. %s (%d) - Volume %s, Segment %s" % (current_rank, doc["title"][:75], doc["year"], doc["volume"], doc["segment"]))
+				log.info(f"{current_rank}. {doc['title'][:75]} ({doc['year']}) - Volume {doc['volume']}, Segment {doc['segment']}")
 			else:
-				log.info("%d. %s (%d) - Volume %s" % (current_rank, doc["title"][:75], doc["year"], doc["volume"]))
+				log.info(f"{current_rank}. {doc['title'][:75]} ({doc['year']}) - Volume {doc['volume']}")
 			if options.verbose:
+				# replace full content with character count to avoid overwhelming the output
 				if "content" in doc:
-					doc["content"] = "%d characters" % len(doc["content"])
+					doc["content"] = f"{len(doc['content'])} characters"
 				log.info(doc)
+		# move to the next page of results
 		start += page_size
-		# reached the end?
+		# stop if we've reached either the end of results or the maximum requested
 		if start >= min(res.get_num_found(), options.max_results):
 			break	
 
