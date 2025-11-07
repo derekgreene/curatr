@@ -1,5 +1,5 @@
 """
-Implementation for semantic network-related features of the Curatr web interface
+Implementation for basic semantic network-related features of the Curatr web interface
 """
 import urllib.parse
 import io
@@ -7,12 +7,10 @@ import logging as log
 from flask import Markup, send_file
 from xml.sax.saxutils import escape
 from web.util import parse_keyword_query, parse_arg_int
-from semantic import find_neighbors, find_neighbors_fast, neighborhood_sizes, default_num_k, default_num_hops
+from semantic import find_neighbors, neighborhood_sizes, default_num_k, default_num_hops
 
 # --------------------------------------------------------------
 	
-fast_network_implementation = True
-
 def populate_networks_page(context):
 	"""
 	Populate the parameters for the template for the semantic networks page.
@@ -56,12 +54,7 @@ def populate_networks_page(context):
 	context["querylist"] = Markup(str(queries))
 
 	# Build the network
-	if fast_network_implementation:
-		log.info("Using fast network implementation")
-		nodes, edges, hop_dict = find_neighbors_fast(context.core, embed_id, queries, k, hops)
-	else:
-		log.info("Using standard network implementation")
-		nodes, edges, hop_dict = find_neighbors(context.core, embed_id, queries, k, hops)
+	nodes, edges, hop_dict = find_neighbors(context.core, embed_id, queries, k, hops)
 
 	# Convert to JavaScript
 	nodes_js, edges_js = "", ""

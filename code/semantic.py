@@ -12,6 +12,8 @@ neighborhood_sizes = [3, 5, 10, 12, 15, 20]
 default_num_k = 10
 """ default number of hops for semantic networks """
 default_num_hops = 1
+""" use the more effecient network construction implementation by default """
+fast_network_implementation = True
 
 # --------------------------------------------------------------
 # Helper Functions
@@ -31,10 +33,18 @@ def _only_words(sim_result):
 			words.append(x)
 	return words
 
+def find_neighbors(core, embed_id, queries, k, hops):
+	"""
+	Build a semantic network from word embeddings using either the original or fast implementation.
+	"""
+	if fast_network_implementation:
+		return find_neighbors_fast(core, embed_id, queries, k, hops)
+	return find_neighbors_original(core, embed_id, queries, k, hops)
+
 # --------------------------------------------------------------
 # Original Implementations
 
-def find_neighbors(core, embed_id, queries, k, hops):
+def find_neighbors_original(core, embed_id, queries, k, hops):
 	"""
 	Build a semantic network from word embeddings using BFS expansion and mutual neighbour detection.
 

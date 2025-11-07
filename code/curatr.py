@@ -28,13 +28,13 @@ from web.format import format_classification_options, format_subclassification_o
 from web.format import format_classification_links, format_subclassification_links
 from web.features import populate_author_page, populate_bookmark_page, populate_similar_page
 from web.ngrams import populate_ngrams_page, export_ngrams
-from web.networks import populate_networks_page, export_network
 from web.lexicon import populate_lexicon_create, populate_lexicon_delete, format_lexicon_list, populate_lexicon_edit
 from web.export import handle_export_download, handle_export_build, format_subcorpus_list
 from web.admin import format_user_list
 from web.export import populate_export
 from web.api import author_list, ngram_counts
 from web.util import safe_int
+from web.networks import populate_networks_page, export_network
 from user import validate_email, generate_password, password_to_hash
 
 # --------------------------------------------------------------
@@ -433,28 +433,6 @@ def handle_ngram_export():
 	return file	
 
 # --------------------------------------------------------------
-# Endpoints: Networks
-# --------------------------------------------------------------
-
-@app.route("/networks")
-@login_required
-def handle_networks():
-	""" Endpoint for the semantic network visualization page. """
-	context = app.get_context(request)	
-	context = populate_networks_page(context)
-	return render_template("networks.html", **context)
-
-@app.route("/exportnetworks")
-@login_required
-def handle_network_export():
-	""" Handle export a GEXF representation of a semantic network. """
-	context = app.get_context(request)	
-	file = export_network(context)
-	if file is None:
-		abort(404, description="No inputs specified for network export")
-	return file
-
-# --------------------------------------------------------------
 # Endpoints: Lexicons
 # --------------------------------------------------------------
 
@@ -743,6 +721,28 @@ def handle_user_create():
 	for line in messages:
 		context["user_creation"] += Markup("<p>" + line + "</p>") + "\n"
 	return render_template("user-create.html", **context)
+
+# --------------------------------------------------------------
+# Endpoints: Basic Network Viewer
+# --------------------------------------------------------------
+
+@app.route("/networks")
+@login_required
+def handle_networks():
+	""" Endpoint for the basic semantic network visualization page. """
+	context = app.get_context(request)	
+	context = populate_networks_page(context)
+	return render_template("networks.html", **context)
+
+@app.route("/exportnetworks")
+@login_required
+def handle_network_export():
+	""" Handle export a GEXF representation of a basic semantic network. """
+	context = app.get_context(request)	
+	file = export_network(context)
+	if file is None:
+		abort(404, description="No inputs specified for network export")
+	return file
 
 # --------------------------------------------------------------
 # Endpoints: API
