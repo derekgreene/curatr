@@ -36,6 +36,7 @@ from web.api import author_list, ngram_counts
 from web.util import safe_int
 from web.networks import populate_networks_page, export_network
 from user import validate_email, generate_password, password_to_hash
+from advanced import create_dash_app
 
 # --------------------------------------------------------------
 # Application Setup
@@ -48,7 +49,7 @@ app.config["SESSION_COOKIE_NAME"] = "curatrsession"
 login_duration = timedelta(days=100)
 app.config['PERMANENT_SESSION_LIFETIME'] = login_duration
 print("Creating login manager...")
-login_manager = LoginManager()	
+login_manager = LoginManager()
 # login_manager.session_protection = None
 print("Initializing login manger...")
 login_manager.init_app(app)
@@ -76,7 +77,7 @@ def load_user(user_id):
 @app.route('/logout')
 @login_required
 def handle_logout():
-	""" End point for handling users logging out """
+	""" End point for handling users logout """
 	logout_user()
 	log.info("LOGIN logout() - Current user logged out")
 	return redirect(url_for('handle_index'))
@@ -200,8 +201,6 @@ def handle_search():
 	context = populate_search_results(context, db, current_solr, spec)
 	# should we log this query in the database?
 	if current_user.log_queries:
-		# TODO: remove
-		log.info("Logging query for user_id=%s" % current_user.id)
 		db.log_query(current_user.id, query_string)
 	# finished with the database
 	db.close()
@@ -745,6 +744,20 @@ def handle_network_export():
 	return file
 
 # --------------------------------------------------------------
+# Endpoints: Advanced Network Viewer
+# --------------------------------------------------------------
+
+@app.route("/advanced")
+@login_required
+def handle_advanced():
+	""" Redirect to the Dash-powered advanced network viewer page """
+	# confirm administration is allow
+	if current_user.is_anonymous:
+		log.info("Admin: anonymous user advanced network access attempt")
+		abort(403, description="Access not available to anonymous users")
+	return redirect("/advanced/")
+
+# --------------------------------------------------------------
 # Endpoints: API
 # --------------------------------------------------------------
 
@@ -850,10 +863,15 @@ def configure_server(dir_core, dir_log=None):
 	if not app.init_server(dir_core):
 		sys.exit(1)
 
+	# Create the Dash app for advanced semantic network visualisation
+	log.info("Creating Dash app for /advanced route...")
+	dash_app = create_dash_app(app)
+	log.info("Dash app initialised successfully")
+
 def main():
 	# handle command line arguments - the key argument is the Curatr core directory
 	parser = OptionParser(usage="usage: %prog [options] dir_core")
-	(options, args) = parser.parse_args()
+	(_, args) = parser.parse_args()
 	if len(args) != 1:
 		parser.error("Must specify core directory")
 	core_dir_path = Path(args[0])

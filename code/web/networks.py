@@ -55,6 +55,10 @@ def populate_networks_page(context):
 
 	# Build the network
 	nodes, edges, hop_dict = find_neighbors(context.core, embed_id, queries, k, hops)
+	log.info(
+		f"Basic network built: |V|={len(nodes)} |E|={len(edges)} "
+		f"k={k} hops={hops} seeds={','.join(queries)}"
+	)
 
 	# Convert to JavaScript
 	nodes_js, edges_js = "", ""
