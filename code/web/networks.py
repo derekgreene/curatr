@@ -2,12 +2,32 @@
 Implementation for basic semantic network-related features of the Curatr web interface
 """
 import urllib.parse
-import io
+import io, re
 import logging as log
 from flask import Markup, send_file
 from xml.sax.saxutils import escape
-from web.util import parse_keyword_query, parse_arg_int
+from web.util import parse_arg_int
 from semantic import find_neighbors, neighborhood_sizes, default_num_k, default_num_hops
+
+# --------------------------------------------------------------
+# Helper functions
+# --------------------------------------------------------------
+
+def parse_seed_text(text):
+    """
+    Parse seed text into a unique, ordered list of words (dedup, keep order).
+    """
+    if not text:
+        return []
+    text = text.lower()
+    cleaned = re.sub(r"[,;\t]+", " ", text)
+    parts = re.split(r"\s+", cleaned.strip())
+    seen, out = set(), []
+    for p in parts:
+        if p and p not in seen:
+            seen.add(p)
+            out.append(p)
+    return out
 
 # --------------------------------------------------------------
 	
@@ -15,7 +35,7 @@ def populate_networks_page(context):
 	"""
 	Populate the parameters for the template for the semantic networks page.
 
-	This function retrieves network configuration parameters, parses the query words,
+	This function retrieves network configuration parameters, parses the seed words,
 	builds a semantic network using the find_neighbors function, and formats the
 	network data as JavaScript objects for visualisation in the web interface.
 
@@ -42,14 +62,14 @@ def populate_networks_page(context):
 	neighbor_node_size = context.core.config["networks"].getint("neighbor_node_size", 20)
 
 	# Parse the query
-	raw_query_string = context.request.args.get("qwords", default="").lower()
-	queries = parse_keyword_query(raw_query_string)
+	raw_query_string = context.request.args.get("seeds", default="").lower()
+	queries = parse_seed_text(raw_query_string)
 	# If nothing specified, use the default query
 	if len(queries) > 0:
 		query_string = ", ".join(queries)
 	else:
 		query_string = context.core.config["networks"].get("default_query", "contagion")
-		queries = parse_keyword_query(query_string)
+		queries = parse_seed_text(query_string)
 	context["query"] = query_string
 	context["querylist"] = Markup(str(queries))
 
@@ -87,7 +107,7 @@ def populate_networks_page(context):
 
 	# Add export URL
 	quoted_query_string = urllib.parse.quote_plus(query_string)
-	context["export_url"] = Markup(f"{context.prefix}/exportnetworks?k={k}&embedding={embed_id}&qwords={quoted_query_string}")
+	context["export_url"] = Markup(f"{context.prefix}/exportnetworks?k={k}&embedding={embed_id}&seeds={quoted_query_string}")
 	return context
 
 def export_network(context):
@@ -118,8 +138,8 @@ def export_network(context):
 	embed_id = context.request.args.get("embedding", default=context.core.default_embedding_id)
 
 	# Parse the query
-	raw_query_string = context.request.args.get("qwords", default="").lower()
-	queries = parse_keyword_query(raw_query_string)
+	raw_query_string = context.request.args.get("seeds", default="").lower()
+	queries = parse_seed_text(raw_query_string)
 	if len(queries) == 0:
 		return None
 
