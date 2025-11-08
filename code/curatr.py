@@ -60,7 +60,17 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-	""" Code to handle user logins using the flask_login package """
+	"""
+	Load a user from the database by their unique identifier. 
+	This function is used by the Flask-Login extension to retrieve user details
+	from the database during the authentication process.
+
+	Args:
+		user_id: The unique identifier of the user to load.
+
+	Returns:
+		User object if found, None otherwise.
+	"""
 	if user_id is None:
 		log.warning("LOGIN load_user() - Warning: Login manager had failed login. Cannot log in user empty NULL ID")
 		return None
@@ -77,14 +87,29 @@ def load_user(user_id):
 @app.route('/logout')
 @login_required
 def handle_logout():
-	""" End point for handling users logout """
+	"""
+	Handle user logout requests.
+
+	This endpoint logs out the currently authenticated user and redirects them
+	to the home page.
+
+	Returns:
+		Redirect response to the index page.
+	"""
 	logout_user()
 	log.info("LOGIN logout() - Current user logged out")
 	return redirect(url_for('handle_index'))
 
 @app.route("/login", methods=['POST','GET'])
 def handle_login():
-	""" End point for handling user logins """
+	"""
+	Handle user login requests.
+	This endpoint processes login form submissions, validates user credentials
+	against the database, and establishes an authenticated session if successful.
+
+	Returns:
+		Redirect response to the index page (successful login or invalid credentials).
+	"""
 	if request.method == 'GET':
 		return redirect(url_for('handle_index'))
 	# refresh
@@ -132,8 +157,14 @@ def handle_login():
 @app.route("/")
 @app.route('/index')
 def handle_index():
-	""" Render the main Curatr home page """
+	"""
+	Render the main Curatr home page.
+
+	Returns:
+		Rendered HTML template for the index page.
+	"""
 	context = app.get_context(request)
+	# add key statistics
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
@@ -142,8 +173,14 @@ def handle_index():
 
 @app.route("/about")
 def handle_about():
-	""" Render the Curatr about page """
+	"""
+	Render the Curatr about page, which contains a project overview.
+
+	Returns:
+		Rendered HTML template for the about page.
+	"""
 	context = app.get_context(request)
+	# add key statistics
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
@@ -156,7 +193,16 @@ def handle_about():
 @app.route("/search")
 @login_required
 def handle_search():
-	""" Handle requests for the search page and search results page """
+	"""
+	Handle requests for the search page and search results page.
+
+	This endpoint processes search queries against the Solr index, supporting both
+	volumes and segments. It handles empty queries, query modifications, and various
+	sorting options. 
+
+	Returns:
+		Rendered HTML template for either the search form or search results page.
+	"""
 	# get the basic search specification
 	spec = parse_search_request(request)
 	query_string = spec["query"]
@@ -207,7 +253,18 @@ def handle_search():
 	return render_template("search-results.html", **context)
 
 def handle_empty_search(spec):
-	""" Populate the context values for an empty search page """
+	"""
+	Populate the context values for an empty search page.
+
+	This function prepares all the necessary template context data for displaying
+	the search form, including dropdown options for filters.
+
+	Args:
+		spec: Search specification dictionary containing filter parameters.
+
+	Returns:
+		Dictionary containing context values for the search template.
+	"""
 	context = app.get_context(request)
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
@@ -227,7 +284,12 @@ def handle_empty_search(spec):
 @app.route("/segment")
 @login_required
 def handle_segment():
-	""" End point to display the text for a single segment """
+	"""
+	Display the text for a single segment.
+
+	Returns:
+		Rendered HTML template for the segment view, or 404 error if not found.
+	"""
 	current_solr = app.core.get_solr("segments")
 	# Get the basic search specification
 	segment_id = request.args.get("id", default = "").strip().lower()
@@ -270,7 +332,12 @@ def handle_segment():
 @app.route("/volume")
 @login_required
 def handle_volume():
-	""" End point to display the text for a single volume """
+	"""
+	Display the text for a single volume.
+
+	Returns:
+		Rendered HTML template for the volume view, or 404 error if not found.
+	"""
 	current_solr = app.core.get_solr("volumes")
 	# Get the basic search specification
 	volume_id = request.args.get("id", default = "").strip().lower()
@@ -316,7 +383,12 @@ def handle_volume():
 @app.route("/concordance")
 @login_required
 def handle_concordance():
-	""" Handle requests for the concordance page and concordance results page """
+	"""
+	Handle requests for the concordance page and concordance results page.
+
+	Returns:
+		Rendered HTML template for either the concordance form or results page.
+	"""
 	# get the basic concordance specification, using same approach as search
 	spec = parse_search_request(request)
 	query_string = spec["query"]
@@ -338,7 +410,17 @@ def handle_concordance():
 	return render_template("concordance-results.html", **context)
 
 def handle_empty_concordance(spec):
-	""" Populate the context values for an empty concordance page """
+	"""
+	Populate the context values for an empty concordance page.
+	This function prepares the template context data for displaying the concordance
+	search form, including dropdown options.
+
+	Args:
+		spec: Search specification dictionary containing filter parameters.
+
+	Returns:
+		Dictionary containing context values for the concordance template.
+	"""
 	context = app.get_context(request)
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
@@ -356,6 +438,12 @@ def handle_empty_concordance(spec):
 @app.route("/authors")
 @login_required
 def handle_authors():
+	"""
+	Display a list of all authors in the corpus, with links to individual author search pages.
+
+	Returns:
+		Rendered HTML template for the author list page.
+	"""
 	context = app.get_context(request)
 	context["author_count"] =  "{:,}".format( app.core.cache["author_count"] )
 	context["year_min"] = app.core.cache["year_min"]
@@ -365,7 +453,12 @@ def handle_authors():
 @app.route("/author")
 @login_required
 def handle_author():
-	""" End point for delivering recommended content """
+	"""
+	Display volume search results for a specific author.
+
+	Returns:
+		Rendered HTML template for the author page, or 404 error if not found.
+	"""
 	sauthor_id = request.args.get("author_id", default = "").strip().lower()
 	if len(sauthor_id) == 0:
 		abort(404, description="No author ID specified")
@@ -392,6 +485,13 @@ def handle_author():
 @app.route("/classification")
 @login_required
 def handle_classification():
+	"""
+	Display the classification index for browsing the corpus 
+	(i.e. the top two levels of the British Library Alston index).
+
+	Returns:
+		Rendered HTML template for the classification index page.
+	"""
 	context = app.get_context(request)
 	context["classification"] = Markup(format_classification_links(context))
 	context["subclassification"] = Markup(format_subclassification_links(context))
@@ -402,6 +502,13 @@ def handle_classification():
 @app.route("/catalogue")
 @login_required
 def handle_catalogue():
+	"""
+	Display the catalogue browsing interface, with year, title, and author metadata for all books
+	in the collection.
+
+	Returns:
+		Rendered HTML template for the catalogue page.
+	"""
 	context = app.get_context(request)
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["year_min"] = app.core.cache["year_min"]
@@ -415,7 +522,15 @@ def handle_catalogue():
 @app.route("/ngrams")
 @login_required
 def handle_ngrams():
-	""" Endpoint for the ngram viewer page. """
+	"""
+	Display the ngram viewer interface.
+
+	This endpoint provides an interactive ngram visualisation tool for exploring
+	word frequency trends across the corpus over time.
+
+	Returns:
+		Rendered HTML template for the ngram viewer page.
+	"""
 	context = app.get_context(request)	
 	context = populate_ngrams_page(context, app)
 	# render the template
@@ -424,7 +539,13 @@ def handle_ngrams():
 @app.route("/exportngrams")
 @login_required
 def handle_ngram_export():
-	""" Handle export a CSV representation of ngram counts. """
+	"""
+	This endpoint generates and delivers a CSV file containing ngram frequency
+	counts based on the user's query parameters.
+
+	Returns:
+		CSV file download response, or 404 error if no inputs specified.
+	"""
 	context = app.get_context(request)	
 	file = export_ngrams(context, app)
 	if file is None:
@@ -438,6 +559,13 @@ def handle_ngram_export():
 @app.route("/lexicon")
 @login_required
 def handle_lexicon():
+	"""
+	Display the lexicon management interface.
+	This endpoint handles viewing, creating, and deleting custom word lexicons.
+
+	Returns:
+		Rendered HTML template for the lexicon management page.
+	"""
 	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
 	context = app.get_context(request)
 	db = app.core.get_db()
@@ -460,7 +588,14 @@ def handle_lexicon():
 @app.route("/lexiconedit")
 @login_required
 def handle_lexicon_edit():
-	""" Handle editing an individual word lexicon. """
+	"""
+	Edit an individual word lexicon.
+	This endpoint allows users to modify the contents of a specific lexicon,
+	including adding or removing words from the list.
+
+	Returns:
+		Rendered HTML template for the lexicon editing page, or 404 error if invalid ID.
+	"""
 	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
 	# any ID specified?
 	if lexicon_id < 1:
@@ -476,7 +611,15 @@ def handle_lexicon_edit():
 @app.route("/exportlexicon")
 @login_required
 def handle_lexicon_export():
-	""" Handle exporting a plain text representation of an individual word lexicon. """
+	"""
+	Export a word lexicon as a plain text file.
+
+	This endpoint generates and delivers a text file containing all words from
+	a specified lexicon, with one word per line in alphabetical order.
+
+	Returns:
+		Plain text file download response, or 403/404 error if invalid/unauthorised.
+	"""
 	lexicon_id = safe_int(request.args.get("lexicon_id", default = "").strip().lower(), 0)
 	# any ID specified?
 	if lexicon_id < 1:
@@ -521,6 +664,12 @@ def handle_lexicon_export():
 @app.route("/corpora")
 @login_required
 def handle_corpora():
+	"""
+	Manage custom sub-corpora for data export.
+
+	Returns:
+		Rendered HTML template for sub-corpus management or file download response.
+	"""
 	db = app.core.get_db()
 	spec = parse_search_request(request)
 	# has the user submitted an action?
@@ -546,6 +695,12 @@ def handle_corpora():
 @app.route("/export")
 @login_required
 def handle_export():
+	"""
+	Display the data export configuration interface.
+
+	Returns:
+		Rendered HTML template for the export configuration page.
+	"""
 	context = app.get_context(request)
 	spec = parse_search_request(request)
 	# populate the template context
@@ -562,7 +717,12 @@ def handle_export():
 @app.route("/bookmarks")
 @login_required
 def handle_bookmarks():
-	""" End point for showing a user's bookmarks """
+	"""
+	Display and manage user bookmarks.
+
+	Returns:
+		Rendered HTML template for the bookmarks page.
+	"""
 	db = app.core.get_db()
 	# has the user submitted an action?
 	action = request.args.get("action", default = "").strip().lower()
@@ -587,7 +747,12 @@ def handle_bookmarks():
 @app.route("/similar")
 @login_required
 def handle_similar():
-	""" End point for delivering recommended content """
+	"""
+	Display similar volumes based on content similarity.
+
+	Returns:
+		Rendered HTML template for similar volumes page, or 404 error if not found.
+	"""
 	volume_id = request.args.get("volume_id", default = "").strip().lower()
 	if len(volume_id) == 0:
 		abort(404, description="No volume ID specified")
@@ -612,7 +777,12 @@ def handle_similar():
 @app.route("/admin")
 @login_required
 def handle_admin():
-	""" Endpoint for the system administration page. """
+	"""
+	Display the system administration interface for managing users.
+
+	Returns:
+		Rendered HTML template for the admin page, or 403 error if unauthorised.
+	"""
 	# confirm administration is allow
 	if current_user.is_anonymous:
 		log.info("Admin: anonymous access attempt")
@@ -638,7 +808,12 @@ def handle_admin():
 @app.route("/useredit")
 @login_required
 def handle_user_edit():
-	""" Endpoint for the user editing administration page. """
+	"""
+	Edit user account details.
+
+	Returns:
+		Rendered HTML template for user editing page, or 403/404 error if unauthorised/not found.
+	"""
 	# confirm administration is allow
 	if current_user.is_anonymous:
 		log.info("Admin: anonymous user edit access attempt")
@@ -675,7 +850,13 @@ def handle_user_edit():
 @app.route("/usercreate")
 @login_required
 def handle_user_create():
-	""" Endpoint for the user creation administration page. """
+	"""
+	This administrative endpoint allows administrators to create one or more new
+	user accounts.
+
+	Returns:
+		Rendered HTML template showing creation results and generated passwords.
+	"""
 	db = app.core.get_db()
 	context = app.get_context(request)	
 	messages = []
@@ -728,7 +909,12 @@ def handle_user_create():
 @app.route("/networks")
 @login_required
 def handle_networks():
-	""" Endpoint for the basic semantic network visualization page. """
+	"""
+	Display the basic semantic network visualisation interface.
+
+	Returns:
+		Rendered HTML template for the network visualisation page.
+	"""
 	context = app.get_context(request)	
 	context = populate_networks_page(context)
 	return render_template("networks.html", **context)
@@ -736,7 +922,14 @@ def handle_networks():
 @app.route("/exportnetworks")
 @login_required
 def handle_network_export():
-	""" Handle export a GEXF representation of a basic semantic network. """
+	"""
+	Export a semantic network as a GEXF file.
+	This endpoint generates and delivers a GEXF format file representing
+	a semantic network graph, suitable for import into network analysis tools.
+
+	Returns:
+		GEXF file download response, or 404 error if no inputs specified.
+	"""
 	context = app.get_context(request)	
 	file = export_network(context)
 	if file is None:
@@ -750,7 +943,12 @@ def handle_network_export():
 @app.route("/advanced")
 @login_required
 def handle_advanced():
-	""" Redirect to the Dash-powered advanced network viewer page """
+	"""
+	Redirect to the Dash-powered advanced semantic network viewer.
+
+	Returns:
+		Redirect response to the Dash application, or 403 error if anonymous user.
+	"""
 	# confirm administration is allow
 	if current_user.is_anonymous:
 		log.info("Admin: anonymous user advanced network access attempt")
@@ -762,14 +960,25 @@ def handle_advanced():
 # --------------------------------------------------------------
 
 @app.route("/api/authors")
-def handle_api_authors():	
-	""" Return API data relating to complete list of authors """
+def handle_api_authors():
+	"""
+	API endpoint: returns the complete list of authors as JSON data.
+
+	Returns:
+		JSON response containing all authors and their metadata.
+	"""
 	data = author_list(app.core)
 	# return the author catalogue as JSON
 	return Response(json.dumps(data), mimetype="application/json")
 
 @app.route("/api/ngrams")
 def handle_counts():
+	"""
+	API endpoint: returns ngram frequency counts as JSON data.
+
+	Returns:
+		JSON response containing ngram counts, or 404 error if query fails.
+	"""
 	db = app.core.get_db()
 	try:
 		values = ngram_counts(app.core, db)
@@ -782,6 +991,15 @@ def handle_counts():
 
 @app.route("/api/volume/<volume_id>")
 def handle_volume_text(volume_id):
+	"""
+	API endpoint: returns the full text of a volume as plain text.
+
+	Args:
+		volume_id: The unique identifier of the volume.
+
+	Returns:
+		Plain text response containing the volume content, or 404 error if not found.
+	"""
 	# which volume are we looking for?
 	current_solr = app.core.get_solr("volumes")
 	doc = current_solr.query_document(volume_id)
@@ -793,6 +1011,15 @@ def handle_volume_text(volume_id):
 
 @app.route("/api/segment/<segment_id>")
 def handle_segment_text(segment_id):
+	"""
+	API endpoint: returns the full text of a segment as plain text.
+
+	Args:
+		segment_id: The unique identifier of the segment.
+
+	Returns:
+		Plain text response containing the segment content, or 404 error if not found.
+	"""
 	# which segment are we looking for?
 	current_solr = app.core.get_solr("segments")
 	doc = current_solr.query_document(segment_id)
@@ -808,14 +1035,30 @@ def handle_segment_text(segment_id):
 
 @app.errorhandler(404)
 def page_not_found(e):
-	""" Handle HTTP 404 errors """
+	"""
+	Handle HTTP 404 (Not Found) errors.
+
+	Args:
+		e: The exception object containing error details.
+
+	Returns:
+		Tuple of rendered error template and 404 status code.
+	"""
 	context = app.get_context()
 	# note that we set the status explicitly
 	return render_template('error-404.html', **context), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-	""" Handle HTTP 500 errors """
+	"""
+	Handle HTTP 500 (Internal Server Error) errors.
+
+	Args:
+		e: The exception object containing error details.
+
+	Returns:
+		Tuple of rendered error template and 500 status code.
+	"""
 	context = app.get_context()
 	context["message"] = e.description
 	if context["message"] is None:
@@ -825,7 +1068,15 @@ def internal_server_error(e):
 
 @app.errorhandler(403)
 def page_forbidden(e):
-	""" Handle HTTP 403 errors """
+	"""
+	Handle HTTP 403 (Forbidden) errors.
+
+	Args:
+		e: The exception object containing error details.
+
+	Returns:
+		Tuple of rendered error template and 403 status code.
+	"""
 	context = app.get_context()
 	context["message"] = e.description
 	if context["message"] is None:
@@ -836,7 +1087,13 @@ def page_forbidden(e):
 # --------------------------------------------------------------
 
 def configure_server(dir_core, dir_log=None):
-	""" Configure server directories, logging output, and initialize the web server. """
+	"""
+	Configure server directories, logging output, and initialise the web server.
+
+	Args:
+		dir_core: Path to the core configuration directory.
+		dir_log: Optional path to the logging directory (defaults to dir_core/log).
+	"""
 	# get core configuration and read the metadata
 	if not (dir_core.exists() and dir_core.is_dir()):
 		sys.exit("Error: invalid core directory %s" % dir_core)
@@ -847,8 +1104,8 @@ def configure_server(dir_core, dir_log=None):
 	if dir_log is None:
 		# use the default log file directory
 		dir_log = dir_core / "log"
-	dir_log.mkdir( exist_ok=True )
-	log_prefix = app.start_time.strftime('%Y%m%d-%H%M')
+	dir_log.mkdir(exist_ok=True)
+	log_prefix = app.start_time.strftime('%Y%m%d')
 	log_fname = log_prefix + ".log"
 	log_path = dir_log / log_fname
 	log.propagate = True
@@ -869,6 +1126,9 @@ def configure_server(dir_core, dir_log=None):
 	log.info("Dash app initialised successfully")
 
 def main():
+	"""
+	Main entry point for the Curatr web server application.
+	"""
 	# handle command line arguments - the key argument is the Curatr core directory
 	parser = OptionParser(usage="usage: %prog [options] dir_core")
 	(_, args) = parser.parse_args()
