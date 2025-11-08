@@ -20,6 +20,12 @@ def filter_list(existing, ignores, max_len):
 	filtered_values = [item for item in existing if item not in ignores_set]
 	return filtered_values[0:max_len]
 
+def normalize_word(word):
+	""" Normalize a word for embedding lookup """
+	return word.lower().replace("-","_").replace('"','')
+
+# --------------------------------------------------------------
+
 class EmbeddingWrapper:
 	""" Wrapper for Gensim word embeddings which implements caching """
 	def __init__(self, filepath, preload=False):
@@ -48,6 +54,18 @@ class EmbeddingWrapper:
 			log.error("Failed to load embedding model from %s" % self.filepath.resolve())
 			log.error(str(e))
 
+	def in_vocab(self, word):
+		""" Check if the specified word is in the embedding vocabulary """
+		# no model loaded?
+		if self._model is None:
+			self.load()
+			# still no model?
+			if self._model is None:
+				return False
+		# ensure the input word is lowercase and tidy
+		word = normalize_word(word)
+		return word in self._model.key_to_index
+
 	def get(self, word, k=default_max_k, ignores=[]):
 		""" Return back neighbors for the specified list"""
 		# no model loaded?
@@ -57,7 +75,7 @@ class EmbeddingWrapper:
 			if self._model is None:
 				return []
 		# ensure the input word is lowercase and tidy
-		word = word.lower().replace("-","_").replace('"','')
+		word = normalize_word(word)
 		# cached already?
 		if word in self._cache:
 			neighbors = self._cache[word]
