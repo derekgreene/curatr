@@ -21,7 +21,11 @@ def add_recommendations(core, top=50):
 	""" Add volume recommendations, based on pairwise cosine similarities
 	calculated on a sparse bag-of-words model. """
 
-	# set up the DB connection	
+	# initialize word embeddings
+	log.info("Initializing embeddings ...")
+	if not core.init_embeddings():
+		sys.exit(1)
+	# set up the DB connection
 	log.info("Connecting to database ...")
 	if not core.init_db():
 		sys.exit(1)
