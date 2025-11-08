@@ -79,15 +79,24 @@ def main():
 		window=options.window_size, workers=4, sg=sg, seed=options.seed, sorted_vocab=1)
 	log.info( "Built word embedding %s" % embed)
 
-	# save the Word2Vec model
+	# save the Word2Vec model in binary format
 	if options.collection == "all":
 		fname = "bl-w2v-%s-d%d.bin" % (options.embed_type, options.dimensions)
 	else:
 		fname = "bl%s-w2v-%s-d%d.bin" % (options.collection, options.embed_type, options.dimensions)
 	out_path = core_prep.dir_embeddings / fname
 	log.info("Writing word embedding to %s ..." % out_path)
-	# always save in binary format
 	embed.wv.save_word2vec_format(out_path, binary=True) 
+
+	# save the Word2Vec model in native Gensim .kv format
+	if options.collection == "all":
+		fname = "bl-w2v-%s-d%d.kv" % (options.embed_type, options.dimensions)
+	else:
+		fname = "bl%s-w2v-%s-d%d.kv" % (options.collection, options.embed_type, options.dimensions)
+	out_path = core_prep.dir_embeddings / fname
+	log.info("Writing word embedding (Gensim format) to %s ..." % out_path)
+	embed.save(out_path)
+	
 	log.info("Actions complete")
 
 # --------------------------------------------------------------

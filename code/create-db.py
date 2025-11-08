@@ -315,6 +315,9 @@ def main():
 	if not dir_root.exists():
 		parser.error("Invalid core directory: %s" % dir_root)
 	core = CoreCuratr(dir_root)
+	# initialize embeddings
+	if not core.init_embeddings():
+		sys.exit(1)
 	# try connecting to the database
 	if not core.init_db():
 		sys.exit(1)
