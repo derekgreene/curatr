@@ -3,7 +3,7 @@
 This script implements the functionality required to do initial preprocessing of the British Library
 Digital Collection and associated raw data files, prior to setting up Curatr.
 
-Same usage:
+Sample usage:
 	python code/create-metadata.py core all
 
 
