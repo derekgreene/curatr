@@ -208,6 +208,9 @@ def main():
 	# only need a single DB connection
 	# limit connection pool to 1 since this is a single-user CLI tool
 	core.config.set("db", "pool_size", "1")
+	# initialize embeddings
+	if not core.init_embeddings():
+		sys.exit(1)
 	# connect to the database
 	if not core.init_db():
 		sys.exit(1)

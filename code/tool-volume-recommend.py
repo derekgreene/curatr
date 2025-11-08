@@ -31,6 +31,9 @@ def main():
 	core = CoreCuratr(dir_core)
 	# only need a single DB connection
 	core.config.set("db", "pool_size", "1")
+	# initialize embeddings
+	if not core.init_embeddings():
+		sys.exit(1)
 	# try connecting to the database
 	if not core.init_db():
 		sys.exit(1)
