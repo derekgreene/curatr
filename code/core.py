@@ -46,20 +46,6 @@ class CoreCuratr(CoreBase):
 		# set up the embeddings
 		self.default_embedding_id = self.config["app"].get("default_embedding", None)
 		self._embeddings = {}
-		for embed_id in self.config["embeddings"]:
-			# make sure it exists
-			embedding_path = self.dir_embeddings / self.config["embeddings"][embed_id]
-			if not embedding_path.exists():
-				log.warning("Embedding '%s' does not exist: %s" % (embed_id, embedding_path))
-				continue
-			log.debug("Embedding '%s' found %s" % (embed_id, embedding_path))
-			# use this as our default?
-			if self.default_embedding_id is None:
-				self.default_embedding_id = embed_id
-			# create the wrapper
-			self._embeddings[embed_id] = EmbeddingWrapper(embedding_path, False)
-		log.info("Embeddings: %s" % str(self.get_embedding_ids()))
-		log.info("Default embedding: %s" % self.default_embedding_id)
 
 	def shutdown(self):
 		""" Close down the Curatr core - i.e. the database pool """
@@ -71,6 +57,29 @@ class CoreCuratr(CoreBase):
 		except Exception as e:
 			log.error("Failed to close database pool: %s" % str(e))
 		return None
+	
+	def init_embeddings(self):
+		""" Initialize word embedding models """
+		log.info("Initializing word embeddings from %s ..." % self.dir_embeddings.resolve())
+		self._embeddings = {}
+		for embed_id in self.config["embeddings"]:
+			# make sure it exists
+			embedding_path = self.dir_embeddings / self.config["embeddings"][embed_id]
+			if not embedding_path.exists():
+				log.warning("Embedding '%s' does not exist - %s" % (embed_id, embedding_path.resolve))
+				continue
+			log.info("Embedding '%s' found - %s" % (embed_id, embedding_path.resolve()))
+			# use this as our default?
+			if self.default_embedding_id is None:
+				self.default_embedding_id = embed_id
+			# create the wrapper
+			self._embeddings[embed_id] = EmbeddingWrapper(embedding_path, False)
+		# no word embeddings found?
+		if len(self._embeddings) == 0:
+			log.error("Error: No word embedding models found in path %s" % self.dir_embeddings.resolve())
+			return False
+		log.info(f"Embeddings - {str(self.get_embedding_ids())} - default='{self.default_embedding_id}'")
+		return True
 
 	def init_db(self, autocommit=False, default_pool_size=5):
 		""" Creates a connection to the Curatr MySQL database """
