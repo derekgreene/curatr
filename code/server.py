@@ -47,6 +47,15 @@ class CuratrServer(Flask):
 		self.require_login = core_config["app"].getboolean("require_login", True)
 		log.info("System requires user login: %s" % self.require_login)
 
+		# Initialize embeddings
+		if not self.core.init_embeddings():
+			log.error("Error: Cannot run web server without embeddings")
+			return False
+		# Preload any the embedding model?
+		if str(core_config["app"].get("embedding_preload", "false" )).lower() == "true":
+			log.info("Preloading default embedding model ...")
+			self.core.get_embedding()	
+
 		# Create a connection to the database
 		if not self.core.init_db(autocommit = True):
 			log.error("Error: Cannot run web server without database connection")
@@ -60,10 +69,6 @@ class CuratrServer(Flask):
 		# Cache required values from database
 		self.core.cache_values()
 
-		# Preload any the embedding model?
-		if str( core_config["app"].get("embedding_preload", "false" ) ).lower() == "true":
-			log.info("Preloading embedding model ...")
-			self.core.get_embedding()	
 		# Initalized ok
 		return True	
 
