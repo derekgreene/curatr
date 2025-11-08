@@ -3,8 +3,8 @@
 This script implements the functionality required to do initial setup of the MySQL database
 required by Curatr.
 
-Same usage:
-	python code/create-db.py core all
+Sample usage:
+``` python code/create-db.py core all ``` 
 """
 import sys, json
 import logging as log

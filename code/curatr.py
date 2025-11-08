@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-This script implements the embedded web server for Curatr, which provides search functionality for the British library 
+This script implements the embedded web server for Curatr, which provides search functionality for the British Library
 corpus via an external Solr server and MySQL database containing metadata.
 
 Sample usage, specifying the core configuration directory:
@@ -884,3 +884,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+	

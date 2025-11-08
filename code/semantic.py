@@ -12,7 +12,7 @@ neighborhood_sizes = [3, 5, 10, 12, 15, 20]
 default_num_k = 10
 """ default number of hops for semantic networks """
 default_num_hops = 1
-""" use the more effecient network construction implementation by default """
+""" use the more efficient network construction implementation by default """
 fast_network_implementation = True
 
 # --------------------------------------------------------------
@@ -246,3 +246,4 @@ def find_neighbors_fast(core, embed_id, queries, k, hops):
 	# Convert to same format as original (list of 2-element lists)
 	edges = [list(e) for e in edges]
 	return all_words, edges, hop_dict
+	
