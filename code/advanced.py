@@ -371,7 +371,7 @@ def create_dash_app(flask_app):
     except Exception as e:
         log.error(f"Failed to load Dash app HTML template: {e}")
 
-    # define controls card (left panel)
+    # define the left panel controls
     controls = dbc.Card(
         dbc.CardBody([
             html.H5(app_name, className="app-title-left mb-3", id="title_app"),
