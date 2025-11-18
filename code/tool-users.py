@@ -10,29 +10,9 @@ from pathlib import Path
 import logging as log
 from optparse import OptionParser
 from core import CoreCuratr
-from user import password_to_hash, validate_email, generate_password
+from user import password_to_hash, validate_email, generate_password, validate_password
 
 # --------------------------------------------------------------
-
-def validate_password(passwd):
-	"""Check if the specified password string meets our required criteria."""
-	# enforce minimum length for security
-	if len(passwd) < 6:
-		log.error("Password should be at least 6 characters long")
-		return False
-	# enforce maximum length to prevent potential buffer issues
-	if len(passwd) > 20:
-		log.error("Password should not be longer than 20 characters")
-		return False
-	# require at least one digit for stronger passwords
-	if not any(char.isdigit() for char in passwd):
-		log.error("Password should have at least one numeric character")
-		return False
-	# disallow spaces as they can cause issues with some authentication systems
-	if any(char.isspace() for char in passwd):
-		log.error("Password should not contain spaces")
-		return False
-	return True
 
 def user_add(db):
 	"""Add a new user to the database."""
@@ -52,8 +32,10 @@ def user_add(db):
 		log.info(f"Suggestion: {generate_password()}")
 		while True:
 			passwd = getpass.getpass(prompt="Password: ", stream=None).strip()
-			if validate_password(passwd):
+			is_valid, error_msg = validate_password(passwd)
+			if is_valid:
 				break
+			log.error(error_msg)
 		# double check password
 		# require re-entry to prevent typos
 		while True:
@@ -98,8 +80,10 @@ def user_change_password(db):
 	log.info(f"Suggestion: {generate_password()}")
 	while True:
 		passwd = getpass.getpass(prompt="Password: ", stream=None).strip()
-		if validate_password(passwd):
+		is_valid, error_msg = validate_password(passwd)
+		if is_valid:
 			break
+		log.error(error_msg)
 	# double check password
 	# require re-entry to prevent typos
 	while True:
