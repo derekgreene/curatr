@@ -61,7 +61,7 @@
           {% endif %} 
           <li class="nav-item"><a class="nav-link" id="nav-link-about" href="{{ url_for('handle_about') }}">About</a></li>
           {% if require_login %}
-            <li class="nav-item"><a class="nav-link" id="nav-link-logout" href="{{ url_for('handle_logout') }}" style="color: #333;"><i class="fa fa-user"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="nav-link-profile" href="{{ url_for('handle_profile') }}" style="color: #333;" title="User Profile"><i class="fa fa-user"></i></a></li>
           {% endif %} 
         {% endif %} 
       </ul>
@@ -88,7 +88,7 @@
   <!-- End Title -->
   {% endblock %}
 
-    <!-- Start Cntent -->
+    <!-- Start Content -->
   <div class="main main-raised">
   {% block content %}{% endblock %}
   </div>
@@ -97,7 +97,7 @@
   <footer class="footer footer-default">
     <div class="container">
       <div class="float-right footer-text">
-        Curatr by <a href="https://cca.ucd.ie/" target="_blank">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 License</a>.
+        Curatr by <a href="https://cca.ucd.ie/" target="_blank">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 Licence</a>.
       </div>
     </div>
   </footer>
