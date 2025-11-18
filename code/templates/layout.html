@@ -60,8 +60,8 @@
             <li class="nav-item"><a class="nav-link" id="nav-link-bookmarks" href="{{ url_for('handle_bookmarks') }}">Bookmarks</a></li>
           {% endif %} 
           <li class="nav-item"><a class="nav-link" id="nav-link-about" href="{{ url_for('handle_about') }}">About</a></li>
-          {% if require_login %} 
-            <li class="nav-item"><a class="nav-link" id="nav-link-logout" href="{{ url_for('handle_logout') }}">Logout</a></li>
+          {% if require_login %}
+            <li class="nav-item"><a class="nav-link" id="nav-link-logout" href="{{ url_for('handle_logout') }}" style="color: #333;"><i class="fa fa-user"></i></a></li>
           {% endif %} 
         {% endif %} 
       </ul>
