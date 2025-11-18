@@ -35,7 +35,7 @@ from web.export import populate_export
 from web.api import author_list, ngram_counts
 from web.util import safe_int
 from web.networks import populate_networks_page, export_network
-from user import validate_email, generate_password, password_to_hash
+from user import validate_email, generate_password, password_to_hash, validate_password
 from advanced import create_dash_app
 
 # --------------------------------------------------------------
@@ -901,6 +901,88 @@ def handle_user_create():
 	for line in messages:
 		context["user_creation"] += Markup("<p>" + line + "</p>") + "\n"
 	return render_template("user-create.html", **context)
+
+@app.route("/profile", methods=['GET', 'POST'])
+@login_required
+def handle_profile():
+	"""
+	Handle user profile page where users can view their account information,
+	change their password, logout, or delete their account.
+
+	Returns:
+		Rendered HTML template for user profile page.
+	"""
+	db = app.core.get_db()
+	context = app.get_context(request)
+	context["message"] = ""
+	context["error"] = ""
+
+	# Handle POST requests (password change or account deletion)
+	if request.method == 'POST':
+		action = request.form.get("action", "").strip().lower()
+
+		if action == "changepassword":
+			current_password = request.form.get("current_password", "").strip()
+			new_password = request.form.get("new_password", "").strip()
+			confirm_password = request.form.get("confirm_password", "").strip()
+
+			# Verify current password
+			if not current_user.verify(current_password):
+				context["error"] = "Current password is incorrect."
+			# Validate new password meets all requirements
+			elif new_password != confirm_password:
+				context["error"] = "New passwords do not match."
+			else:
+				# Validate password using centralized validation function
+				is_valid, error_msg = validate_password(new_password, current_password)
+				if not is_valid:
+					context["error"] = error_msg
+				else:
+					# Update the password
+					hashed_passwd = password_to_hash(new_password)
+					if db.update_user_password(current_user.id, hashed_passwd):
+						context["message"] = "Password successfully changed."
+						log.info("PROFILE: User %s (id=%s) changed password" % (current_user.email, current_user.id))
+					else:
+						context["error"] = "Failed to update password. Please try again."
+
+		elif action == "deleteaccount":
+			delete_confirm = request.form.get("delete_confirm", "")
+			current_password = request.form.get("delete_password", "").strip()
+
+			# Verify password before deletion
+			if not current_user.verify(current_password):
+				context["error"] = "Password is incorrect. Account not deleted."
+			elif delete_confirm != "1":
+				context["error"] = "Please confirm account deletion by checking the box."
+			else:
+				# Delete the account
+				user_email = current_user.email
+				user_id = current_user.id
+				if db.delete_user(user_id):
+					log.info("PROFILE: User %s (id=%s) deleted their account" % (user_email, user_id))
+					db.close()
+					logout_user()
+					return redirect(url_for('handle_index'))
+				else:
+					context["error"] = "Failed to delete account. Please try again."
+
+	# Get user information for display
+	context["user_email"] = current_user.email
+	context["user_id"] = current_user.id
+	context["created_at"] = current_user.created_at.strftime('%Y-%m-%d %H:%M') if current_user.created_at else "Unknown"
+	context["last_login"] = current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else "Never"
+	context["num_logins"] = current_user.num_logins
+	context["is_admin"] = current_user.admin
+	context["is_guest"] = current_user.guest
+
+	# Get counts of user data
+	context["bookmark_count"] = db.volume_bookmark_count(current_user.id) + db.segment_bookmark_count(current_user.id)
+	context["lexicon_count"] = len(db.get_user_lexicons(current_user.id))
+	context["corpora_count"] = len(db.get_user_subcorpora(current_user.id))
+
+	db.close()
+	return render_template("profile.html", **context)
 
 # --------------------------------------------------------------
 # Endpoints: Basic Network Viewer
