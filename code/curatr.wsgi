@@ -2,9 +2,13 @@
 import sys
 from pathlib import Path
 
+# Log WSGI setup for debugging purposes
+print("WSGI starting with:", file=sys.stderr)
+print("WSGI sys.executable:", sys.executable, file=sys.stderr)
+print("WSGI sys.version:", sys.version.replace("\n", " "), file=sys.stderr)
+
 # Settings - modify these paths as appropriate
 dir_curatr = Path("/opt/curatr")
-
 dir_code = dir_curatr / "code"
 dir_core = dir_curatr / "core"
 dir_log = dir_curatr / "log"
