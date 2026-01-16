@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block title %}User Profile{% endblock %}
+{% block headcustom %}
+<style>
+  #nav-link-profile { color: #FF6600 !important; }
+  h5 { padding-top: 1em; }
+  .form-block { margin-bottom: 16px; }
+  .message { color: green; font-weight: bold; margin: 10px 0; }
+  .error { color: red; font-weight: bold; margin: 10px 0; }
+  .info-table { margin: 20px 0; }
+  .info-table td { padding: 8px; }
+  .info-table td:first-child { font-weight: bold; width: 150px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="section" style="padding-bottom: 14px;">
+    <div class="text-center">
+      <h2>User Profile</h2>
+    </div>
+
+    {% if message %}
+      <div class="message">{{ message }}</div>
+    {% endif %}
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <h5>Account Information</h5>
+    <table class="info-table">
+      <tr>
+        <td>Email:</td>
+        <td>{{ user_email }}</td>
+      </tr>
+      <tr>
+        <td>Account Created:</td>
+        <td>{{ created_at }}</td>
+      </tr>
+      <tr>
+        <td>Last Login:</td>
+        <td>{{ last_login }}</td>
+      </tr>
+      <tr>
+        <td>Total Logins:</td>
+        <td>{{ num_logins }}</td>
+      </tr>
+      {% if is_admin %}
+      <tr>
+        <td>Account Type:</td>
+        <td>Administrator Account</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td>Data Stored:</td>
+        <td><a href="{{prefix}}/bookmarks">{{ bookmark_count }}</a> bookmark{% if bookmark_count != 1 %}s{% endif %},
+          <a href="{{prefix}}/lexicon">{{ lexicon_count }}</a> custom word lexicon{% if lexicon_count != 1 %}s{% endif %},
+          <a href="{{prefix}}/corpora">{{ corpora_count }}</a> custom sub-corp{% if corpora_count != 1 %}ora{% else %}us{% endif %}
+        </td>
+      </tr>
+    </table>
+
+    <h5 style="margin-top: 8px;">Logout</h5>
+    <div style="margin-left: 10px; margin-right: 10px;">
+      <p>Click the button below to log out of your account.</p>
+      <a href="{{prefix}}/logout" class="btn btn-primary">Logout</a>
+    </div>
+
+
+    <h5 style="margin-top: 20px;">Change Password</h5>
+    <form id="changepassword" method="post" action="{{prefix}}/profile" style="margin-left: 10px; margin-right: 10px;">
+      <input type="hidden" name="action" value="changepassword">
+      <div class="form-block">
+        <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+          Password requirements: 8-20 characters, must contain at least one number, no spaces, and must be different from your current password.
+        </p>
+        <div class="form-group">
+          <label for="current_password">Current Password</label>
+          <input name="current_password" type="password" class="form-control" placeholder="Current Password" style="width: 100%;" required>
+        </div>
+        <div class="form-group">
+          <label for="new_password">New Password</label>
+          <input name="new_password" type="password" autocomplete="new-password" class="form-control" placeholder="New Password" style="width: 100%;" passwordrules="minlength: 8; maxlength: 20;" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm_password">Confirm New Password</label>
+          <input name="confirm_password" type="password" class="form-control" placeholder="Confirm New Password" style="width: 100%;" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Change Password</button>
+    </form>
+
+    <h5 style="margin-top: 10px;">Delete Account</h5>
+    <form id="deleteaccount" method="post" action="{{prefix}}/profile" style="margin-left: 10px; margin-right: 10px;" onsubmit="return confirm('Are you sure you want to permanently delete your account? This action cannot be undone.');">
+      <input type="hidden" name="action" value="deleteaccount">
+      <div class="form-block">
+        <p style="color: #d9534f; font-weight: bold;">Warning: This action is permanent and cannot be undone.</p>
+        <div class="form-group">
+          <label for="delete_password">Confirm Your Password</label>
+          <input name="delete_password" type="password" class="form-control" placeholder="Password" style="width: 100%;" required>
+        </div>
+        <div class="form-group">
+          <input class="form-check-input" type="checkbox" id="delete_confirm" name="delete_confirm" value="1" required>
+          <label class="form-check-label" for="delete_confirm">I understand this will permanently delete my account</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-danger">Delete Account</button>
+    </form>
+    <br>
+  </div>
+</div>
+
+{% endblock %}
