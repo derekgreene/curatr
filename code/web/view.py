@@ -52,7 +52,7 @@ def populate_volume(context, db, doc, spec, volume_id):
 			author = db.get_cached_author(author_id)
 			url_author = "%s/author?author_id=%s" % (context.prefix, author_id) 	
 			author_html += "<a href='%s'>%s</a>" % (url_author, author["sort_name"])
-		context["authors"] = Markup( author_html )
+		context["authors"] = Markup(author_html)
 	# Add the main segment content
 	content = tidy_content(doc["content"])
 	html_text = str(escape(content))
@@ -68,14 +68,18 @@ def populate_volume(context, db, doc, spec, volume_id):
 		url_spec += "&year_start=%d" % spec["year_start"]
 	if spec["year_end"] < 2000:
 		url_spec += "&year_end=%d" % spec["year_end"]
-	context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
 	context["url_similar"] = "%s/similar?volume_id=%s" % (context.prefix, volume_id)
-	# do we have an Ark link?
-	if doc.get("url_ark", None) != None:
-		context["url_ark"] = doc.get("url_ark")
-	# text download link
+	# Text download link
 	context["url_download"] = "%s/volume/%s" % (context.apiprefix, volume_id)
-	# # Any other links?
+	# Create the catalogue search URL
+	context["url_bl_search"] = "https://catalogue.bl.uk/nde/search?query=title,contains," 
+	context["url_bl_search"] += urllib.parse.quote_plus(context["title"])
+	context["url_bl_search"] += ",AND;rtype,exact,books&tab=Everything&search_scope=MyInst_and_CI&mode=advanced&searchInFulltext=false&vid=44BL_MAIN:BLL01_NDE&lang=en"
+
+	# Previous links that are no longer active
+	# context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
+	# if doc.get("url_ark", None) != None:
+	# 	context["url_ark"] = doc.get("url_ark")
 	# context["other_urls1"], context["other_urls2"] = "", ""
 	# if doc.get("url_ark", None) != None:
 	# 	context["other_urls1"] += "<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
@@ -157,13 +161,18 @@ def populate_segment(context, db, doc, spec, segment_id):
 		url_spec += "&year_end=%d" % spec["year_end"]
 	# Create extra URLs
 	context["url_volume"] = "%s/volume?id=%s_%02d&%s" % (context.prefix, id_parts[0], volume, url_spec) 	
-	context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
-	# do we have an Ark link?
-	if doc.get("url_ark", None) != None:
-		context["url_ark"] = doc.get("url_ark")
 	# text download link
 	context["url_download"] = "%s/segment/%s" % (context.apiprefix, segment_id)
-	# Any other links?
+	# Create the catalogue search URL
+	context["url_bl_search"] = "https://catalogue.bl.uk/nde/search?query=title,contains," 
+	context["url_bl_search"] += urllib.parse.quote_plus(context["title"])
+	context["url_bl_search"] += ",AND;rtype,exact,books&tab=Everything&search_scope=MyInst_and_CI&mode=advanced&searchInFulltext=false&vid=44BL_MAIN:BLL01_NDE&lang=en"
+
+	# Previous links that are no longer active
+	# do we have an Ark link?
+	# if doc.get("url_ark", None) != None:
+	# 	context["url_ark"] = doc.get("url_ark")
+	# context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
 	# context["other_urls1"], context["other_urls2"] = "", ""
 	# if doc.get("url_ark", None) != None:
 	# 	context["other_urls1"] += "&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
