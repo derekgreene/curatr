@@ -127,6 +127,34 @@ def user_remove(db):
 	# delete the user from the database
 	return db.delete_user(user.get_id())
 
+def user_change_role(db):
+	"""Change a user's role (admin or standard user)."""
+	log.info("Changing user role ...")
+	# prompt for and look up the user by email
+	email = input("Enter Email: ").strip()
+	user = db.get_user_by_email(email)
+	if user is None:
+		log.warning(f"No such user '{email}'")
+		return False
+	# display current role
+	log.info(f"Current role: admin={user.admin}, guest={user.guest}")
+	# prompt for new role
+	while True:
+		role = input("Enter new role (admin/user/guest): ").strip().lower()
+		if role in ["admin", "user", "guest"]:
+			break
+		log.warning("Invalid role. Please enter 'admin', 'user', or 'guest'")
+	# update the role
+	if role == "admin":
+		success = db.update_user_role(user.get_id(), admin=True, guest=False)
+	elif role == "guest":
+		success = db.update_user_role(user.get_id(), admin=False, guest=True)
+	else:  # standard user
+		success = db.update_user_role(user.get_id(), admin=False, guest=False)
+	if success:
+		log.info(f"Updated role for {email} to '{role}'")
+	return success
+
 def user_lexicons(db):
 	"""List lexicons for each user."""
 	users = db.get_all_users()
@@ -165,7 +193,7 @@ def main():
 	- Listing users
 	- Viewing user lexicons and subcorpora
 	"""
-	actions = ["list", "add", "remove", "password", "verify", "lexicons", "corpora"]
+	actions = ["list", "add", "remove", "password", "verify", "role", "lexicons", "corpora"]
 	parser = OptionParser(usage="usage: %prog [options] dir_core action")
 	(options, args) = parser.parse_args()
 	# require exactly 2 arguments: core directory and action
@@ -211,6 +239,8 @@ def main():
 		user_change_password(db)
 	elif action == "remove":
 		user_remove(db)
+	elif action == "role":
+		user_change_role(db)
 	elif action == "lexicons":
 		user_lexicons(db)
 	elif action == "corpora":

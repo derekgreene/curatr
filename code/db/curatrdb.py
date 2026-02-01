@@ -998,6 +998,20 @@ class CuratrDB(GenericDB):
 			return False
 		return True
 
+	def update_user_role(self, user_id, admin=None, guest=None):
+		""" Update role flags for the user with the specified ID. """
+		try:
+			if admin is not None:
+				sql = "UPDATE Users SET admin=%s WHERE id=%s"
+				self.cursor.execute(sql, (admin, user_id))
+			if guest is not None:
+				sql = "UPDATE Users SET guest=%s WHERE id=%s"
+				self.cursor.execute(sql, (guest, user_id))
+		except Exception as e:
+			log.error("SQL error in update_user_role(): %s" % str(e))
+			return False
+		return True
+
 	def record_login(self, user_id):
 		""" Update a user's last login to the current date/time and increment their login count """
 		# update the date
