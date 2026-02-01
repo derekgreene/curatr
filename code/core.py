@@ -87,7 +87,7 @@ class CoreCuratr(CoreBase):
 			db_hostname = self.config["db"].get("hostname", "localhost")
 			db_port = self.config["db"].getint("port", 3306)
 			db_name = self.config["db"].get("dbname", "curatr")
-			db_username = self.config["db"].get("username", "curatr")
+			db_username = self.config["db"].get("user", "curatr")
 			db_password = self.config["db"].get("pass", "")
 			pool_size = self.config["db"].getint("pool_size", default_pool_size)
 			self._pool = CuratrDBPool(pool_size, db_hostname, db_port, db_username, db_password, db_name, autocommit)
