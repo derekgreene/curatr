@@ -57,11 +57,26 @@
             <li class="nav-item"><a class="nav-link" id="nav-link-concordance" href="{{ url_for('handle_concordance') }}">Concordance</a></li>
             <li class="nav-item"><a class="nav-link" id="nav-link-lexicon" href="{{ url_for('handle_lexicon') }}">Lexicons</a></li>
             <li class="nav-item"><a class="nav-link" id="nav-link-corpora" href="{{ url_for('handle_corpora') }}">Corpora</a></li>
-            <li class="nav-item"><a class="nav-link" id="nav-link-bookmarks" href="{{ url_for('handle_bookmarks') }}">Bookmarks</a></li>
           {% endif %} 
           <li class="nav-item"><a class="nav-link" id="nav-link-about" href="{{ url_for('handle_about') }}">About</a></li>
           {% if require_login %}
-            <li class="nav-item"><a class="nav-link" id="nav-link-profile" href="{{ url_for('handle_profile') }}" style="color: #333;" title="User Profile"><i class="fa fa-user"></i></a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="nav-link-profile" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #333;" title="User Profile">
+                <i class="fa fa-user"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="nav-link-profile">
+                <span class="dropdown-header" style="font-weight: bold;">{{ current_user.email }}</span>
+                <span class="dropdown-header" style="font-size: 0.85em; color: #888;">Role: {% if current_user.admin %}Admin{% else %}User{% endif %}</span>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('handle_profile') }}"><i class="fa fa-id-card-o" style="width: 20px;"></i> Profile</a>
+                <a class="dropdown-item" href="{{ url_for('handle_bookmarks') }}"><i class="fa fa-bookmark-o" style="width: 20px;"></i> Bookmarks</a>
+                {% if current_user.admin %}
+                <a class="dropdown-item" href="{{ url_for('handle_admin') }}"><i class="fa fa-cog" style="width: 20px;"></i> Administration</a>
+                {% endif %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('handle_logout') }}"><i class="fa fa-sign-out" style="width: 20px;"></i> Logout</a>
+              </div>
+            </li>
           {% endif %} 
         {% endif %} 
       </ul>
