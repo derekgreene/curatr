@@ -1,37 +1,38 @@
-{% extends "layout.html" %} 
-{% block title %}Word Lexicon - {{ lexicon_name }}{% endblock %} 
-{% block headcustom %}    
+{% extends "layout.html" %}
+{% block title %}Word Lexicon - {{ lexicon_name }}{% endblock %}
+{% block headcustom %}
 <style>#nav-link-lexicon { color: #FF6600 !important; }</style>
-{% endblock %} 
+{% endblock %}
 
 {% block content %}
 <div class="container">
 	<div class="section" style="padding-bottom: 14px;">
-		<h2>Word Lexicons:</h2>
-		<p class="text-justify">Word lexicons, which consist of curated lists of keywords related to a given topic, allow scholars to
-		further search the British Library Nineteenth Century Digitised Books Collection (BL19), and to define sub-corpora related to that topic. A lexicon can be expanded based on
-		automatically recommended keywords, which frequently appear in the same context as existing words in the lexicon.</p>
+		<h2 style="text-align: center;">Edit Lexicon</h2>
 
 		<div class="message">{{ message }}</div>
-		<h5 style="margin-top: 21px; margin-bottom: 18px;">Edit Word Lexicon - '{{ lexicon_name }}':</h5>
+		<h5 style="margin-top: 12px; margin-bottom: 18px;"><a href="{{ prefix }}/lexicon">Your Lexicons</a> / {{ lexicon_name }}</h5>
 		<p>{{ lexicon_summary }}</p>
 		<table id="keywords" class="table-words">
+			<tbody>
 			{{ lexicon_words }}
+			</tbody>
 		</table>
-		<p>The following additional words were recommended based on word similarities in the corpus: </p>
+		<p>The following additional words were recommended based on word co-occurrence in the collection. Add any that are relevant to expand your lexicon.</p>
 	    <table id="recommendations" class="table table-striped table-recommendations" style="width:100%; font-size:95%;">
 	        <thead>
 	            <tr>
-	                <th width="15%" class="text-left">Recommended Word&nbsp;</th>
-	                <th width="50%" class="text-left">Explanation&nbsp;</th>
-	                <th width="8%" class="text-center">Accept&nbsp;</th>
-	                <th width="8%" class="text-center">Reject&nbsp;</th>
+	                <th style="width:15%;" class="text-left">Recommended Word</th>
+	                <th style="width:50%;" class="text-left">Explanation</th>
+	                <th style="width:8%;" class="text-center">Accept</th>
+	                <th style="width:8%;" class="text-center">Reject</th>
 	            </tr>
 	        </thead>
+	        <tbody>
 		{{ recommendations }}
+	        </tbody>
 	    </table>
-	    <p>Download <a href="{{ export_url }}">a plain text file</a> containing the words from this lexicon.</p>
-	    <br> 
+	    <p>Download <a href="{{ export_url }}">lexicon as plain text</a>.</p>
+	    <br>
 	</div>
 </div>
-{% endblock %} 
+{% endblock %}
