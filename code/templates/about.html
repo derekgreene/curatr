@@ -24,14 +24,14 @@
 {% block content %}
 <div class="container">
   <div class="section text-center">
-  	<h2>About Curatr</h2>
+    <h2>About Curatr</h2>
     <h5 class="division">Project Overview</h5>
     <p class="text-justify"><i>Curatr</i> is a bespoke online platform designed to improve the accessibility of the
-    <a href="https://doi.org/10.21250/db14" target="_blank">British Library Nineteenth Century Digitised Books Collection</a>
+    <a href="https://doi.org/10.21250/db14" target="_blank" rel="noopener noreferrer">British Library Nineteenth Century Digitised Books Collection</a>
     (BL19). The collection is provided by British Library Labs and the platform was developed by the ERC-funded
-    <a href="https://projectvicteur.com/" target="_blank">VICTEUR project</a> at
-    <a href='http://www.ucd.ie/englishdramafilm/' target='_blank'>UCD English, Drama and Film</a>, in collaboration with
-    researchers at the <a href='http://www.insight-centre.org/' target='_blank'>Insight Research Ireland Centre for Data Analytics</a>
+    <a href="https://projectvicteur.com/" target="_blank" rel="noopener noreferrer">VICTEUR project</a> at
+    <a href='http://www.ucd.ie/englishdramafilm/' target='_blank' rel="noopener noreferrer">UCD English, Drama and Film</a>, in collaboration with
+    researchers at the <a href='http://www.insight-centre.org/' target='_blank' rel="noopener noreferrer">Insight Research Ireland Centre for Data Analytics</a>
     as part of Insight's Cultural Analytics Research Initiative. <i>Curatr</i> hosts digitised plain-text versions of all
     English-language books from the collection, corresponding to {{ num_books }} unique out-of-copyright English-language titles, both fiction and
     non-fiction, from {{ year_min }} to {{ year_max }}. Accounting for multi-volume works, this totals {{ num_volumes }} volumes of text.</p>
@@ -67,33 +67,29 @@
         or phrase within the collection, presented alongside its immediate linguistic context.</li>
       <li><strong><a href="{{ url_for('handle_lexicon') }}">Word Lexicons</a></strong>: create and manage curated lists of keywords
         related to a given research topic. Lexicons can be expanded automatically using a word embedding model to suggest semantically
-        similar terms, and used to drive searches and sub-corpus exports. </li>
+        similar terms, and used to drive searches and sub-corpus exports.</li>
       <li><strong><a href="{{ url_for('handle_corpora') }}">Sub-Corpora</a></strong>: define and export smaller, topic-specific
         sub-corpora of the collection, filtered thematically, chronologically, and by classification, for close reading and
-        offline analysis. </li>
+        offline analysis.</li>
     </ul>
 
     <h5 class="division">Resources &amp; Contact</h5>
     <p class="text-justify">A series of short instructional videos from VICTEUR project researchers on the use and functionality of Curatr is
-      <a href="https://projectvicteur.com/2023/01/10/curatr-videos/" target="_blank">available on the VICTEUR project website</a>.</p>
+      <a href="https://projectvicteur.com/2023/01/10/curatr-videos/" target="_blank" rel="noopener noreferrer">available on the VICTEUR project website</a>.</p>
 
-    <p class="text-justify">For queries on the use and development of <i>Curatr</i>, please contact us via <a href="mailto:ucdcuratr@gmail.com">email</a>. Code and data is made openly available on <a href="https://github.com/derekgreene" target='_blank'>Github</a>.</p>
+    <p class="text-justify">For queries on the use and development of <i>Curatr</i>, please contact us via <a href="mailto:ucdcuratr@gmail.com">email</a>. Code and data is made openly available on <a href="https://github.com/derekgreene" target='_blank' rel="noopener noreferrer">Github</a>.</p>
 
 
     <h5 class="division">Citing Curatr</h5>
-    <p class="text-justify">
-      If you use Curatr in an academic publication, we would appreciate citations to the following paper:
-      <p class="text-left" style="margin-left: 20px;">Leavy, S., Meaney, G., Wade, K. and Greene, D. (2019) <i>Curatr: A Platform for Semantic Analysis and Curation of Historical Literary Texts</i>, in <i>Proceedings of the 13th International Conference on Metadata and Semantics Research (MTSR 2019)</i> (pp. 354-366). Springer International Publishing.&nbsp;&nbsp;<a title="Download Paper PDF" href="{{staticprefix}}/paper/leavy19curatr.pdf" target="_blank">[PDF]</a>&nbsp;<a title="Download BibTeX reference" href="{{staticprefix}}/paper/leavy19curatr.bib" target="_blank">[BibTeX]</a>&nbsp;<a title="Download RIS reference" href="{{staticprefix}}/paper/leavy19curatr.ris" target="_blank">[RIS]</a></p>
-    </p>
-    <p class="text-justify">
-      If you wish to cite a specific version of a text identified on the Curatr platform, we recommend the following citation format:
-      <p class="text-left" style="margin-left: 20px;">Dickens, C. (1892) <i>The Old Curiosity Shop</i>. Available at: curatr.ucd.ie (Accessed: 16 March 2026).</p>
-    </p>
+    <p class="text-justify">If you use Curatr in an academic publication, we would appreciate citations to the following paper:</p>
+    <p class="text-left" style="margin-left: 20px;">Leavy, S., Meaney, G., Wade, K. and Greene, D. (2019) <i>Curatr: A Platform for Semantic Analysis and Curation of Historical Literary Texts</i>, in <i>Proceedings of the 13th International Conference on Metadata and Semantics Research (MTSR 2019)</i> (pp. 354-366). Springer International Publishing.&nbsp;&nbsp;<a title="Download Paper PDF" href="{{staticprefix}}/paper/leavy19curatr.pdf" target="_blank">[PDF]</a>&nbsp;<a title="Download BibTeX reference" href="{{staticprefix}}/paper/leavy19curatr.bib" target="_blank">[BibTeX]</a>&nbsp;<a title="Download RIS reference" href="{{staticprefix}}/paper/leavy19curatr.ris" target="_blank">[RIS]</a></p>
+    <p class="text-justify">If you wish to cite a specific version of a text identified on the Curatr platform, we recommend the following citation format:</p>
+    <p class="text-left" style="margin-left: 20px;">Dickens, C. (1892) <i>The Old Curiosity Shop</i>. Available at: curatr.ucd.ie (Accessed: 16 March 2026).</p>
     <h5 class="division">Acknowledgements</h5>
     <p class="text-justify">
-        This work is part of the <a href="https://projectvicteur.com/" target="_blank">VICTEUR project</a>, which has received funding from the <a target="_blank" href="https://erc.europa.eu/">European Research Council (ERC)</a> under the European Union's Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the <a href="http://www.ucd.ie/englishdramafilm/" target="_blank">UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href="http://www.insight-centre.org/" target="_blank">Insight Research Ireland Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank">UCD School of Computer Science</a>.
-        The BL19 digitised book collection was provided by British Library Labs. 
-        Curatr by <a href="https://cca.ucd.ie/" target="_blank">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 Licence</a>. Background image created by <a href="https://www.flickr.com/photos/stevecadman/486263551" target="_blank">Steven Cadman</a>.
+        This work is part of the <a href="https://projectvicteur.com/" target="_blank" rel="noopener noreferrer">VICTEUR project</a>, which has received funding from the <a target="_blank" rel="noopener noreferrer" href="https://erc.europa.eu/">European Research Council (ERC)</a> under the European Union's Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the <a href="http://www.ucd.ie/englishdramafilm/" target="_blank" rel="noopener noreferrer">UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href="http://www.insight-centre.org/" target="_blank" rel="noopener noreferrer">Insight Research Ireland Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank" rel="noopener noreferrer">UCD School of Computer Science</a>.
+        The BL19 digitised book collection was provided by British Library Labs.
+        Curatr by <a href="https://cca.ucd.ie/" target="_blank" rel="noopener noreferrer">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 Licence</a>. Background image created by <a href="https://www.flickr.com/photos/stevecadman/486263551" target="_blank" rel="noopener noreferrer">Steven Cadman</a>.
     </p>
     <p style="align: center; margin-top: 1.8em;">
         <a target="_blank" href="https://european-union.europa.eu"><img src="{{staticprefix}}/img/logo-eu.png" class="logo" style="width: 120px; margin-right: 50px;" alt="EU Flag"/></a>
