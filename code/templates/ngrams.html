@@ -1,7 +1,7 @@
-{% extends "layout.html" %} 
-{% block title %}Ngram Viewer{% endblock %} 
+{% extends "layout.html" %}
+{% block title %}Ngram Viewer{% endblock %}
 
-{% block headcustom %}    
+{% block headcustom %}
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -29,17 +29,24 @@
         <div class="section text-center">
             <h2>Collection Ngram Viewer</h2>
 
-            <p class="text-justify">To search the frequency of all unique words in English language volumes from the British Library Digital Collection texts, enter one or more comma-separated keywords below, and click "Search". The plot can be used to show either the number of volumes containing the query word(s) in each year, or the relative percentage of volumes per year containing the word(s). <b>Click</b> on a point on the plot to show the corresponding set of search results for that year. Click and drag the rectangle in the plot area to zoom in on a specific time range.</p>
+            <p class="text-justify">
+				Search the frequency of words across English-language volumes from the British
+				Library Nineteenth Century Digitised Books Collection (BL19) by entering one or
+				more comma-separated keywords below and clicking "Search". The plot shows either
+				the number of volumes containing the search term(s) per year, or the percentage
+				of volumes per year in which the term(s) appear. Click a point on the plot to
+				view the corresponding results for that year, or click and drag to zoom into a
+				specific time range.</p>
         </div>
         <form id="search" method="get" action="{{prefix}}/ngrams">
-            <div class="form-row form-block"> 
-                <div class="col">           
+            <div class="form-row form-block">
+                <div class="col">
                     <label for="qwords">Enter one or more keywords (comma separated)</label>
                     <input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
                 </div>
             </div>
             <div class="form-row form-block">
-                <div class="col">           
+                <div class="col">
                     <label for="year_start">Start Year</label>
                     <input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="{{ yearstart }}">
                 </div>
@@ -49,19 +56,19 @@
                 </div>
             </div>            
 			<div class="form-row form-block">
-				<div class="col">			
+				<div class="col">
 					<label for="collection">Collection</label>
 		            <select class="form-control dropdown" id="collection" name="collection" style="width: 25%;">
 						{{ collection_options }}
-					</select>				
+					</select>
 				</div>
-				<div class="col form-col-right">	
+				<div class="col form-col-right">
 					<label for="year_start">Plot Type</label>
 		            <select class="form-control dropdown" id="normalize" name="normalize" style="width: 40%;">
 			            {{ normalize_options }}
-		            </select>				
+		            </select>
 				</div>
-			</div>            
+			</div>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
         <br/>
@@ -203,7 +210,7 @@ $(document).ready(function()
 	});
 
 } );
-</script>    
+</script>
 
 
-{% endblock %} 
+{% endblock %}
