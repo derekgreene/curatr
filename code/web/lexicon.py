@@ -5,7 +5,7 @@ import urllib.parse, re, operator
 import logging as log
 from collections import defaultdict
 from flask import abort
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 # --------------------------------------------------------------
 
@@ -22,8 +22,8 @@ def populate_lexicon_create(context, db):
 	if lexicon_user_id is None:
 		abort(403, "Cannot create lexicon for anonymous user")
 	s_words = context.request.args.get("words", default = "")
-	s_words = re.sub("[,\.;\:]+", " ", s_words)
-	s_words = re.sub("\s+", " ", s_words)
+	s_words = re.sub(r"[,\.;\:]+", " ", s_words)
+	s_words = re.sub(r"\s+", " ", s_words)
 	seed_words = set()
 	for word in s_words.split(" "):
 		# NB: Lowercase the word and remove any commas that were added
@@ -92,7 +92,7 @@ def populate_lexicon_edit(context, db, lexicon_id):
 	reject_word = context.request.args.get("reject", default = "").strip().lower()
 	if len(reject_word) > 0:
 		if db.add_lexicon_ignore(lexicon_id, reject_word):
-			log.info("Ignorning recommended word '%s' from lexicon %s" % (reject_word, lexicon_id))	
+			log.info("Ignoring recommended word '%s' from lexicon %s" % (reject_word, lexicon_id))
 		else:
 			log.warning("Warning: Failed to ignore word '%s' to lexicon %s" % (reject_word, lexicon_id))
 	# get word recommendations 
@@ -106,7 +106,7 @@ def populate_lexicon_edit(context, db, lexicon_id):
 	if len(lexicon_words) == 0:
 		context["lexicon_summary"] = "This lexicon currently contains no keywords"
 	else:
-		context["lexicon_summary"] = "There are currently %d keywords in this lexicon:" % len(lexicon_words)
+		context["lexicon_summary"] = "This lexicon contains %d keywords." % len(lexicon_words)
 		context["lexicon_words"] = Markup(format_lexicon_words(context, lexicon_words, lexicon_id))	
 	# get the export URL
 	context["export_url"] = "%s/exportlexicon?lexicon_id=%d" % (context.prefix, lexicon_id)
@@ -142,11 +142,11 @@ def format_lexicon_list(context, db, max_words=20):
 		escaped_network_words = urllib.parse.quote_plus(", ".join(words))
 		url_network = '%s/networks?qwords=%s&neighbors=%d' % (context.prefix, escaped_network_words, default_k)
 		# create the HTML
-		html += "<td class='text-left lex'><i>%s</i></td><td class='text-left'>%s</td><td class='text-left'>%s</td>\n" % (lex.get("name", "Untitled"), lex.get("description", "No description"), s_words)
-		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/edit.png' width='30px' style=''/></a></td>\n" % (url_edit, context.staticprefix)
-		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/delete.png' width='30px' style=''/></a></td>\n" % (url_delete, context.staticprefix)
-		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/search.png' width='30px' style=''/></a></td>\n" % (url_search, context.staticprefix)
-		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/network.png' width='30px' style=''/></a></td>\n" % (url_network, context.staticprefix)
+		html += "<td class='text-left lex'><i>%s</i></td><td class='text-left'>%s</td><td class='text-left'>%s</td>\n" % (escape(lex.get("name", "Untitled")), escape(lex.get("description", "No description")), escape(s_words))
+		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/edit.png' width='30px'/></a></td>\n" % (url_edit, context.staticprefix)
+		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/delete.png' width='30px'/></a></td>\n" % (url_delete, context.staticprefix)
+		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/search.png' width='30px'/></a></td>\n" % (url_search, context.staticprefix)
+		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/network.png' width='30px'/></a></td>\n" % (url_network, context.staticprefix)
 		html += "</tr>\n"
 	return html
 
@@ -161,10 +161,9 @@ def format_lexicon_words(context, words, lexicon_id, cols = 5):
 			if len(html) > 0:
 				html += "</tr>\n"
 			html += "<tr>"
-		html += "<td width='%s' class='text-left lex-word'>%s" % (s_col_width, word)
+		html += "<td style='width:%s;' class='text-left lex-word'>%s" % (s_col_width, escape(word))
 		url_remove = "%s/lexiconedit?lexicon_id=%d&remove=%s" % (context.prefix, lexicon_id, urllib.parse.quote_plus(word))
 		html += "<a href='%s'><img src='%s/img/reject.png' width='26px' style='float: right;'/></a></td>\n" % (url_remove, context.staticprefix)
-		html += "</td>"
 	if len(html) > 0:
 		html += "</tr>\n"
 	return html
@@ -188,17 +187,17 @@ def format_lexicon_recommendations(context, lexicon_id, recommendations, top = 1
 		if len(similar_to[neighbor]) == 0:
 			explanation = "Word is not present in current lexicon"
 		elif len(similar_to[neighbor]) == 1:
-			explanation = "Similar to existing lexicon word %s" % similar_to[neighbor][0]
+			explanation = "Frequently appears with %s" % similar_to[neighbor][0]
 		elif len(similar_to[neighbor]) == 2:
-			explanation = "Similar to existing lexicon words %s and %s" % (similar_to[neighbor][0], similar_to[neighbor][1])
+			explanation = "Frequently appears with %s and %s" % (similar_to[neighbor][0], similar_to[neighbor][1])
 		else:
-			explanation = "Similar to existing lexicon words "
+			explanation = "Frequently appears with "
 			explanation += ", ".join(similar_to[neighbor])
 		html += "<tr class='lexicon'>\n"
 		html += "<td class='text-left lex'><i>%s</i></td><td class='text-left lex'>%s</td>\n" % (neighbor.replace("_"," "), explanation)
 		url_accept = "%s/lexiconedit?lexicon_id=%d&accept=%s" % (context.prefix, lexicon_id, urllib.parse.quote_plus(neighbor))
 		url_reject = "%s/lexiconedit?lexicon_id=%d&reject=%s" % (context.prefix, lexicon_id, urllib.parse.quote_plus(neighbor))
-		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/accept.png' width='26px' style=''/></a></td>\n" % (url_accept, context.staticprefix)
-		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/reject.png' width='26px' style=''/></a></td>\n" % (url_reject, context.staticprefix)
+		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/accept.png' width='26px'/></a></td>\n" % (url_accept, context.staticprefix)
+		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/reject.png' width='26px'/></a></td>\n" % (url_reject, context.staticprefix)
 		html += "</tr>\n"
 	return html
