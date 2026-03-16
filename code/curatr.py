@@ -496,7 +496,7 @@ def handle_classification():
 	context = app.get_context(request)
 	context["classification"] = Markup(format_classification_links(context))
 	context["subclassification"] = Markup(format_subclassification_links(context))
-	context["num_subclasses"] = len( app.core.cache["subclass_names"])
+	context["num_subclasses"] = len(app.core.cache["subclass_names"])
 	context["num_top_subsubclassifications"] = len(app.core.cache["top_subclass_counts"])
 	return render_template("classification.html", **context)
 
