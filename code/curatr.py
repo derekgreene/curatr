@@ -396,9 +396,8 @@ def handle_concordance():
 	# TODO: do we need the action?
 	action = request.args.get("action", default = "").strip().lower()
 	# is this an empty query? then show the concordance page
-	context = handle_empty_concordance(spec)
 	if len(query_string) == 0:
-		context = handle_empty_search(spec)
+		context = handle_empty_concordance(spec)
 		return render_template("concordance.html", **context)
 	# always working with segments for concordance
 	current_solr = app.core.get_solr("segments")
