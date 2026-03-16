@@ -5,7 +5,7 @@ import json, zipfile, threading, re, time
 from pathlib import Path
 import logging as log
 from flask import send_file, abort
-from markupsafe import Markup
+from markupsafe import Markup, escape
 # project imports
 from web.util import safe_int, parse_arg_int, format_year_range
 from web.format import type_name_map, field_name_map
@@ -174,7 +174,7 @@ def format_export_num_options(total_results = 100):
 def format_subcorpus_list(context, db):
 	user_id = context.user_id
 	if user_id is None:
-		log.warning("WARNING: No user specified for lexicons in format_subcorpus_list()")
+		log.warning("WARNING: No user specified for sub-corpora in format_subcorpus_list()")
 		abort(403, "Cannot list lexicons for anonymous user")
 	subcorpora = db.get_user_subcorpora(user_id)
 	if subcorpora is None:
@@ -188,7 +188,7 @@ def format_subcorpus_list(context, db):
 		# create the action URL
 		url_download = "%s/corpora?action=download&subcorpus_id=%s&ext=.zip" % (context.prefix, subcorpus_id)
 		# create the HTML for the table columns
-		html += "<td class='text-left subcorpus'><i>%s</i></td>" % subcorpus.get("name", "Untitled")
+		html += "<td class='text-left subcorpus'><i>%s</i></td>" % escape(subcorpus.get("name", "Untitled"))
 		num_documents = subcorpus.get("documents", 0)
 		html += "<td class='text-center subcorpus'>%s</td>" % "{:,}".format(num_documents)
 		html += "<td class='text-left subcorpus'>%s</td>" % export_format_map.get(subcorpus.get("format", "text"), "Full Text")
@@ -199,37 +199,37 @@ def format_subcorpus_list(context, db):
 				if db.has_lexicon(properties[key]):
 					lex = db.get_lexicon(properties[key])
 					if not lex is None:
-						summary += "<li>Lexicon: %s</li>\n" % lex.get("name","Untitled")
+						summary += "<li>Lexicon: %s</li>\n" % escape(lex.get("name","Untitled"))
 			elif key == "type" and subcorpus.get("format","") != "metadata":
-				summary += "<li>Document Type: %s</li>" % type_name_map.get(properties[key],"Volumes")
+				summary += "<li>Document Type: %s</li>" % escape(type_name_map.get(properties[key],"Volumes"))
 			elif key == "search_field":
-				summary += "<li>Search Field: %s</li>" % properties[key]
+				summary += "<li>Search Field: %s</li>" % escape(properties[key])
 			elif key == "date_range":
 				if type(properties[key]) == list and len(properties[key]) == 2:
 					s_year = format_year_range(properties[key][0], properties[key][1])
 					if len(s_year) > 0:
-						summary += "<li>Date Range: %s</li>" % s_year
+						summary += "<li>Date Range: %s</li>" % escape(s_year)
 					else:
-						summary += "<li>Date Range: All years</li>" 				
+						summary += "<li>Date Range: All years</li>"
 			elif key == "query":
 				if type(properties[key]) == list:
 					s_query = " ".join(properties[key])
 				else:
 					s_query = " ".join(properties[key].split(" "))
-				summary += "<li>Query: %s</li>" % s_query
+				summary += "<li>Query: %s</li>" % escape(s_query)
 			elif key == "classification":
 				if properties[key] == "*" or properties[key] == ""  or properties[key] == "all":
 					summary += "<li>Classification: All</li>"
 				else:
-					summary += "<li>Classification: %s</li>" % properties[key]
+					summary += "<li>Classification: %s</li>" % escape(properties[key])
 			elif key == "subclassification":
 				if not(properties[key] == "*" or properties[key] == ""):
-					summary += "<li>Sub-classification: %s</li>" % properties[key]
+					summary += "<li>Sub-classification: %s</li>" % escape(properties[key])
 		if len(summary) > 0:
 			summary = "<ul class='subcorpus'>\n%s</ul>\n" % (summary)
 		html += "<td class='text-left subcorpus'>%s</td>" % summary
 		# add the result
-		html += "<td class='text-center subcorpus'><a href='%s'><img src='%s/img/save.png' width='30px' style=''/></a></td>\n" % (url_download, context.staticprefix)
+		html += "<td class='text-center subcorpus'><a href='%s'><img src='%s/img/save.png' width='30px'/></a></td>\n" % (url_download, context.staticprefix)
 		html += "</tr>\n"
 	return html
 
