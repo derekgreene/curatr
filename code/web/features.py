@@ -165,13 +165,12 @@ def populate_bookmark_page(context, db, user_id):
 		# create the HTML
 		row = "<tr>"
 		row += "<td>%s</td>" % b["created_at"].strftime("%Y-%m-%d %H:%M")
-		s_title = book["title"]
+		s_title = escape(book["title"])
 		s_title_suffix = ""
 		if book["volumes"] > 1:
-			s_title_suffix = "&nbsp;&mdash;&nbsp(Volume %d/%d)" % (volume["num"], book["volumes"])
+			s_title_suffix = "&nbsp;&mdash;&nbsp;(Volume %d/%d)" % (volume["num"], book["volumes"])
 		row += "<td><a href='%s'>%s</a>%s</td>" % (url_link, s_title, s_title_suffix)
-		# row += "<td class='text-center lex'><a href='%s'><img src='%s/img/download.png' width='30px' style=''/></a></td>\n" % (url_download, context.staticprefix)
-		row += "<td class='text-center lex'><a href='%s'><img src='%s/img/delete.png' width='30px' style=''/></a></td>\n" % (url_delete, context.staticprefix)
+		row += "<td class='text-center lex'><a href='%s'><img src='%s/img/delete.png' width='30px'/></a></td>\n" % (url_delete, context.staticprefix)
 		row += "</tr>"
 		s_volumes += "\n\t\t" + row
 	context["volumebookmarks"] = Markup(s_volumes)
@@ -189,20 +188,18 @@ def populate_bookmark_page(context, db, user_id):
 		# create the link URL
 		url_link = "%s/segment?id=%s" % (context.prefix, b["segment_id"])
 		# create the action URLs
-		url_download = "%s/bookmarks?action=download&bookmark_id=%d" % (context.prefix, b["id"])
 		url_delete = "%s/bookmarks?action=delete&bookmark_id=%d" % (context.prefix, b["id"])
 		# create the HTML
 		row = "<tr>"
 		row += "<td>%s</td>" % b["created_at"].strftime("%Y-%m-%d %H:%M")
-		s_title = book["title"]
+		s_title = escape(book["title"])
 		s_title_suffix = ""
 		if book["volumes"] > 1:
 			s_title_suffix = " (Volume %d/%d)" % (volume["num"], book["volumes"])
 		segment_num = int(b["segment_id"].rsplit("_")[-1])
-		s_title_suffix = "&nbsp;&mdash;&nbsp" + s_title_suffix + " (Segment %d)" % segment_num
+		s_title_suffix = "&nbsp;&mdash;&nbsp;" + s_title_suffix + " (Segment %d)" % segment_num
 		row += "<td><a href='%s'>%s</a>%s</td>" % (url_link, s_title, s_title_suffix)
-		# row += "<td class='text-center lex'><a href='%s'><img src='%s/img/download.png' width='30px' style=''/></a></td>\n" % (url_download, context.staticprefix)
-		row += "<td class='text-center lex'><a href='%s'><img src='%s/img/delete.png' width='30px' style=''/></a></td>\n" % (url_delete, context.staticprefix)
+		row += "<td class='text-center lex'><a href='%s'><img src='%s/img/delete.png' width='30px'/></a></td>\n" % (url_delete, context.staticprefix)
 		row += "</tr>"
 		s_segments += "\n\t\t" + row	
 	context["segmentbookmarks"] = Markup(s_segments)
