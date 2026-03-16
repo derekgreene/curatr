@@ -63,7 +63,7 @@ def populate_concordance_results(context, db, current_solr, spec):
 		else:
 			filters["location_places"] = spec["location"]
 	# perform the actual Solr search
-	field_name = "all"
+	field_name = "text"
 	res = current_solr.query(query_string, field_name, filters, start, True, num_snippets, sort=sort_params, frag_size=frag_size)
 	# failed to connect to Solr?
 	if res is None:
