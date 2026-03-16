@@ -32,46 +32,46 @@
             <p class="text-justify">
 				Search the frequency of words across English-language volumes from the British
 				Library Nineteenth Century Digitised Books Collection (BL19) by entering one or
-				more comma-separated keywords below and clicking "Search". The plot shows either
+				more comma-separated keywords below and clicking &lsquo;Search&rsquo;. The plot shows either
 				the number of volumes containing the search term(s) per year, or the percentage
 				of volumes per year in which the term(s) appear. Click a point on the plot to
 				view the corresponding results for that year, or click and drag to zoom into a
 				specific time range.</p>
         </div>
-        <form id="search" method="get" action="{{prefix}}/ngrams">
-            <div class="form-row form-block">
-                <div class="col">
-                    <label for="qwords">Enter one or more keywords (comma separated)</label>
-                    <input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
-                </div>
-            </div>
-            <div class="form-row form-block">
-                <div class="col">
-                    <label for="year_start">Start Year</label>
-                    <input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="{{ yearstart }}">
-                </div>
-                <div class="col form-col-right">
-                    <label for="year_end">End Year</label>
-                    <input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" size="10" value="{{ yearend }}" >   
-                </div>
-            </div>            
+		<form id="search" method="get" action="{{prefix}}/ngrams">
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="qwords">Enter one or more keywords or phrases (comma separated)</label>
+					<input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+				</div>
+			</div>
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="year_start">Start Year</label>
+					<input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="{{ yearstart }}">
+				</div>
+				<div class="col form-col-right">
+					<label for="year_end">End Year</label>
+					<input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" size="10" value="{{ yearend }}">
+				</div>
+			</div>
 			<div class="form-row form-block">
 				<div class="col">
 					<label for="collection">Collection</label>
-		            <select class="form-control dropdown" id="collection" name="collection" style="width: 25%;">
+					<select class="form-control dropdown" id="collection" name="collection" style="width: 25%;">
 						{{ collection_options }}
 					</select>
 				</div>
 				<div class="col form-col-right">
 					<label for="normalize">Plot Type</label>
-		            <select class="form-control dropdown" id="normalize" name="normalize" style="width: 60%;">
-			            {{ normalize_options }}
-		            </select>
+					<select class="form-control dropdown" id="normalize" name="normalize" style="width: 60%;">
+						{{ normalize_options }}
+					</select>
 				</div>
 			</div>
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-        <br/>
+			<button type="submit" class="btn btn-primary">Search</button>
+		</form>
+		<br>
         <div id="plot"></div>
 	    {% if has_query %}
 	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Comma-Separated Values (CSV) file</a> containing the ngram counts for the plot above</p>
