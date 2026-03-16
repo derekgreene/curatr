@@ -193,7 +193,7 @@ def populate_segment(context, db, doc, spec, segment_id):
 		pagination_html += "<li class='page-item'><a href='%s' class='btn btn-primary link-button'>Previous Segment</a></li>\n" % url_previous
 	# last segment?
 	if segment >= max_segment:
-		pagination_html += "<li class='page-item disabled'><a href='#' class='btn btn-primary link-button>Next Segment</a></li>\n"
+		pagination_html += "<li class='page-item disabled'><a href='#' class='btn btn-primary link-button'>Next Segment</a></li>\n"
 	else:
 		id_next = "%s_%s_%06d" % (id_parts[0], id_parts[1], segment+1 )
 		url_next = "%s/segment?id=%s&qwords=%s&%s" % (context.prefix, id_next, quoted_query_string, url_spec)
@@ -215,7 +215,7 @@ def highlight_query(query_string, text):
 	i, m = 0, None
 	for m in regex.finditer(text):
 		output += "".join([text[i:m.start()], pre_highlight, text[m.start():m.end()], post_highlight])
-		i = m.end()#
+		i = m.end()
 	# no matches? just return the original text
 	if m is None:
 		return text
