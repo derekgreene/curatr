@@ -1,7 +1,7 @@
 """
 Implementation for basic semantic network-related features of the Curatr web interface
 """
-import urllib.parse
+import urllib.parse, json
 import io, re
 import logging as log
 from flask import send_file
@@ -15,20 +15,20 @@ from semantic import find_neighbors, neighborhood_sizes, default_num_k, default_
 # --------------------------------------------------------------
 
 def parse_seed_text(text):
-    """
-    Parse seed text into a unique, ordered list of words (dedup, keep order).
-    """
-    if not text:
-        return []
-    text = text.lower()
-    cleaned = re.sub(r"[,;\t]+", " ", text)
-    parts = re.split(r"\s+", cleaned.strip())
-    seen, out = set(), []
-    for p in parts:
-        if p and p not in seen:
-            seen.add(p)
-            out.append(p)
-    return out
+	"""
+	Parse seed text into a unique, ordered list of words (dedup, keep order).
+	"""
+	if not text:
+		return []
+	text = text.lower()
+	cleaned = re.sub(r"[,;\t]+", " ", text)
+	parts = re.split(r"\s+", cleaned.strip())
+	seen, out = set(), []
+	for p in parts:
+		if p and p not in seen:
+			seen.add(p)
+			out.append(p)
+	return out
 
 # --------------------------------------------------------------
 	
@@ -52,7 +52,7 @@ def populate_networks_page(context):
 		k = max(1, parse_arg_int(context.request, "k", default_k))
 		default_hops = context.core.config["networks"].getint("default_hops", default_num_hops)
 		hops = max(1, parse_arg_int(context.request, "hops", default_hops))
-	except Exception as e:
+	except (KeyError, ValueError) as e:
 		log.warning(f"Error parsing network parameters: {e}")
 		k = default_num_k
 		hops = default_num_hops
@@ -68,11 +68,12 @@ def populate_networks_page(context):
 	# If nothing specified, use the default query
 	if len(queries) > 0:
 		query_string = ", ".join(queries)
+		context["has_query"] = True
 	else:
 		query_string = context.core.config["networks"].get("default_query", "contagion")
 		queries = parse_seed_text(query_string)
+		context["has_query"] = False
 	context["query"] = query_string
-	context["querylist"] = Markup(str(queries))
 
 	# Build the network
 	nodes, edges, hop_dict = find_neighbors(context.core, embed_id, queries, k, hops)
@@ -86,7 +87,7 @@ def populate_networks_page(context):
 	for node in nodes:
 		if len(nodes_js) > 0:
 			nodes_js += ",\n"
-		nodes_js += f"\t\t{{id: '{node}', label: '{node}'"
+		nodes_js += f"\t\t{{id: {json.dumps(node)}, label: {json.dumps(node)}"
 		# First hop => seed node
 		if hop_dict[node] == 0:
 			nodes_js += f", group: 1, size : {seed_node_size}, font: {{ size : {seed_font_size} }}"
@@ -96,7 +97,7 @@ def populate_networks_page(context):
 	for e in edges:
 		if len(edges_js) > 0:
 			edges_js += ",\n"
-		edges_js += f"\t\t{{from: '{e[0]}', to: '{e[1]}'}}"
+		edges_js += f"\t\t{{from: {json.dumps(e[0])}, to: {json.dumps(e[1])}}}"
 
 	# Populate drop-down menus
 	context["neighbor_options"] = Markup(format_neighbor_options(k))
@@ -105,6 +106,12 @@ def populate_networks_page(context):
 	# Render the template
 	context["nodedata"] = Markup(nodes_js)
 	context["edgedata"] = Markup(edges_js)
+	context["node_count"] = len(nodes)
+	context["edge_count"] = len(edges)
+
+	# Navigation controls (on by default, disable with controls=false)
+	controls_param = context.request.args.get("controls", default="true").lower()
+	context["nav_controls"] = "false" if controls_param == "false" else "true"
 
 	# Add export URL
 	quoted_query_string = urllib.parse.quote_plus(query_string)
@@ -132,7 +139,7 @@ def export_network(context):
 		k = max(1, parse_arg_int(context.request, "k", default_k))
 		default_hops = context.core.config["networks"].getint("default_hops", default_num_hops)
 		hops = max(1, parse_arg_int(context.request, "hops", default_hops))
-	except Exception as e:
+	except (KeyError, ValueError) as e:
 		log.warning(f"Error parsing network parameters: {e}")
 		k = default_num_k
 		hops = default_num_hops
