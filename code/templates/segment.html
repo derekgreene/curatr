@@ -1,16 +1,16 @@
-{% extends "layout.html" %} 
-{% block title %}Segment {{ id }} - Curatr Search{% endblock %} 
-{% block headcustom %}    
+{% extends "layout.html" %}
+{% block title %}Segment {{ id }} - Curatr Search{% endblock %}
+{% block headcustom %}
 <!-- Include Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <!-- Custom Styles -->
 <style>
-	#nav-link-search 
-	{ 
-		color: #FF6600 !important; 
-	}	
+	#nav-link-search
+	{
+		color: #FF6600 !important;
+	}
 </style>
-{% endblock %} 
+{% endblock %}
 
 {% block content %}
 	<div class="container">
@@ -22,8 +22,8 @@
 		            <div class="container">
 		              <div class="row">
 		                <div class="act columns">
-		                  <a class="act" href="{{url_volume}}"><i class="act bi bi-arrow-up-left-square"></i></a>
-		                  <a class="act" href="{{url_volume}}"><p class="act">Complete Volume</p></a>
+		                  <a class="act" href="{{ url_volume }}"><i class="act bi bi-arrow-up-left-square"></i></a>
+		                  <a class="act" href="{{ url_volume }}"><p class="act">Complete Volume</p></a>
 		                </div>
 		              </div>
 <!-- 		              <div class="row">
@@ -35,18 +35,18 @@
  -->		              <div class="row">
 		                <div class="act columns">
 						{% if is_bookmarked %}
-		                  <a class="act" href="{{url_bookmark}}"><i class="act bi bi-bookmark-check"></i></a>
-		                  <a class="act" href="{{url_bookmark}}"><p class="act">Remove Bookmark</p></a>
+		                  <a class="act" href="{{ url_bookmark }}"><i class="act bi bi-bookmark-check"></i></a>
+		                  <a class="act" href="{{ url_bookmark }}"><p class="act">Remove Bookmark</p></a>
 						{% else %}
-		                  <a class="act" href="{{url_bookmark}}"><i class="act bi bi-bookmark"></i></a>
-		                  <a class="act" href="{{url_bookmark}}"><p class="act">Add Bookmark</p></a>
+		                  <a class="act" href="{{ url_bookmark }}"><i class="act bi bi-bookmark"></i></a>
+		                  <a class="act" href="{{ url_bookmark }}"><p class="act">Add Bookmark</p></a>
 						{% endif %}
 		                </div>
 		              </div>
 		              <div class="row">
 		                <div class="act columns">
-		                  <a class="act" href="{{url_download}}" target="_blank"><i class="act bi bi-save"></i></a>
-		                  <a class="act" href="{{url_download}}" target="_blank"><p class="act">Download Segment</p></a>
+		                  <a class="act" href="{{ url_download }}" target="_blank"><i class="act bi bi-save"></i></a>
+		                  <a class="act" href="{{ url_download }}" target="_blank"><p class="act">Download Segment</p></a>
 		                </div>
 		              </div>
 <!-- 		              <div class="row">
@@ -61,23 +61,23 @@
 		          <!-- Start Metadata -->
 		          <td style="vertical-align: top;">
 					<table class="table table-striped table-meta">
-						<tr><td class="meta" width="21%">Book Title:</td><td class="meta">{{title}}</td></tr>
-						<tr><td class="meta">Segment:</td><td class="meta">Volume {{volume}} of {{max_volume}}, Segment {{segment}} of {{max_segment}}</td></tr>
-						<tr><td class="meta">Author(s):</td><td class="meta">{{authors}}</td></tr>
-						<tr><td class="meta">Published:</td><td class="meta">{{year}} &ndash; {{location}} {{publisher}}</td></tr>
-						<tr><td class="meta">Edition:</td><td class="meta">{{edition}}</td></tr>
-						<tr><td class="meta">Physical Description:</td><td class="meta">{{description}}</td></tr>
-						<tr><td class="meta">Book Classification:</td><td class="meta">{{classification}}</td></tr>
-						<tr><td class="meta">Library Shelfmark(s):</td><td class="meta">{{shelfmarks}}</td></tr>
-						<tr><td class="meta">Library Catalogue:</td><td class="meta"><a href="{{url_bl_search}}" target="_blank">Search British Library catalogue for title</a></td></tr>
+						<tr><td class="meta" style="width:21%;">Book Title:</td><td class="meta">{{ title }}</td></tr>
+						<tr><td class="meta">Segment:</td><td class="meta">Volume {{ volume }} of {{ max_volume }}, Segment {{ segment }} of {{ max_segment }}</td></tr>
+						<tr><td class="meta">Author(s):</td><td class="meta">{{ authors }}</td></tr>
+						<tr><td class="meta">Published:</td><td class="meta">{{ year }} &ndash; {{ location }} {{ publisher }}</td></tr>
+						<tr><td class="meta">Edition:</td><td class="meta">{{ edition }}</td></tr>
+						<tr><td class="meta">Physical Description:</td><td class="meta">{{ description }}</td></tr>
+						<tr><td class="meta">Book Classification:</td><td class="meta">{{ classification }}</td></tr>
+						<tr><td class="meta">Library Shelfmark(s):</td><td class="meta">{{ shelfmarks }}</td></tr>
+						<tr><td class="meta">Library Catalogue:</td><td class="meta"><a href="{{ url_bl_search }}" target="_blank" rel="noopener noreferrer">Search British Library catalogue for title</a></td></tr>
 						<!-- <tr><td class="meta">Mudie's Library Author:</td><td class="meta">{{mudies}}</td></tr> -->
 		<!-- 				<tr><td class="meta">Related Links:</td><td class="meta">
 							{{other_urls1}}
 							<a href="{{url_similar}}">Find Similar Volumes</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;
 						{% if is_bookmarked %}
-						<a href="{{url_bookmark}}">Remove Bookmark</a>
+						<a href="{{ url_bookmark }}">Remove Bookmark</a>
 						{% else %}
-						<a href="{{url_bookmark}}">Add Bookmark</a>
+						<a href="{{ url_bookmark }}">Add Bookmark</a>
 						{% endif %}
 						</td></tr> -->		
 					</table>
@@ -85,10 +85,10 @@
 				</tr>
 			</table>
 			<div class="segment-text text-justify">
-			{{text}}
+			{{ text }}
 			</div>
 			<nav aria-label="Pagination">
-			    <ul class="pagination justify-content-center text-xs-center">
+			    <ul class="pagination justify-content-center">
 			        {{ pagination }}
 			    </ul>
 			</nav>	
