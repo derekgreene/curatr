@@ -2,25 +2,28 @@
 {% block title %}Semantic Networks{% endblock %} 
 
 {% block headcustom %}
-<style>#nav-link-networks { color: #FF6600 !important; }</style>
-<script type="text/javascript" src="{{staticprefix}}/assets/js/vis-network.min.js"></script>
-<link type="text/css" href="{{staticprefix}}/css/vis-network.min.css" rel="stylesheet"/>
 <style>
+#nav-link-networks { color: #FF6600 !important; }
 #mynetwork
 {
-	height: 550px; 
-	min-width: 310px; 
-	width: 100%; 
+	min-height: 400px;
+	height: 70vh;
+	max-height: 800px;
+	min-width: 310px;
+	width: 100%;
 	margin: 0;
+	margin-top: 16px;
 	margin-bottom: 10px;
-	border: 1px solid #ccc; 
-	padding-top: 5px; 
-	padding-left: 9.5px; 
-	padding-right: 9.5px; 
-	padding-bottom: 11px; 
+	border: 1px solid #ccc;
+	padding-top: 5px;
+	padding-left: 9.5px;
+	padding-right: 9.5px;
+	padding-bottom: 11px;
 	background-color: #ECF0F1;
 }
 </style>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<link type="text/css" href="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/styles/vis-network.min.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
@@ -30,41 +33,40 @@
             <h2>Semantic Network Visualisation</h2>
 			<p class="text-justify">To explore relationships between words and concepts in the British Library
 			Nineteenth Century Digitised Books Collection (BL19), this tool creates and
-			visualises <i>semantic networks</i>. In such a network, each node (circle) represents
-			a word, and each edge (link) between two nodes indicates a semantic association
-			between those words.</p>
-			<p class="text-justify">To create a network, enter one or more seed words below and click "Visualise".
-			Seed words appear as yellow nodes, and associated words as blue nodes.
-			Double-click a node to view the corresponding search results.</p>
+			visualises <i>semantic networks</i>. Each node (circle) represents a word or concept,
+			and each edge (link) between two nodes indicates a relationship. To create a network,
+			enter one or more seed words below and click &lsquo;Visualise&rsquo;. Seed words appear as yellow
+			nodes, and associated words as blue nodes. Double-click a node to view the relevant
+			search results from the BL19 collection. Use the navigation controls, or scroll,
+			to pan and zoom.</p>
         </div>
-        <form id="search" method="get" action="{{prefix}}/networks">
-            <div class="form-row form-block"> 
-                <div class="col">
-                    <label for="seeds">Enter one or more seed words</label>
-                    <input name="seeds" type="search" class="form-control mr-sm-2" placeholder="Enter seed words" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
-                </div>
-            </div>
+		<form id="search" method="get" action="{{prefix}}/networks">
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="seeds">Enter one or more seed words (space or comma separated)</label>
+					<input name="seeds" type="search" class="form-control mr-sm-2" placeholder="Enter seed words" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+				</div>
+			</div>
 			<div class="form-row form-block">
 				<div class="col">
 					<label for="k">Number of related words per keyword</label>
-		            <select class="form-control dropdown" id="k" name="k" style="width: 25%;">
-		            {{ neighbor_options }}
-		            </select>
+					<select class="form-control dropdown" id="k" name="k" style="width: 50%;">
+						{{ neighbor_options }}
+					</select>
 				</div>
-			</div>
-			<div class="form-row form-block">
-				<div class="col">
+				<div class="col form-col-right">
 					<label for="embedding">Collection</label>
-		            <select class="form-control dropdown" id="embedding" name="embedding" style="width: 25%;">
-		            {{ embedding_options }}
-		            </select>
+					<select class="form-control dropdown" id="embedding" name="embedding" style="width: 50%;">
+						{{ embedding_options }}
+					</select>
 				</div>
 			</div>
-            <button type="submit" class="btn btn-primary">Visualise</button>
-        </form>
-        <br>
+			<button type="submit" class="btn btn-primary">Visualise</button>
+		</form>
         <div id="mynetwork"></div>
-	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Graph Exchange XML Format (GEXF) file</a> for the network above</p>
+	    {% if has_query %}
+	    <p style="padding-top: 10px;"><b>Semantic network:</b> {{ node_count }} nodes, {{ edge_count }} edges &mdash; Download <a href="{{ export_url }}">GEXF file</a></p>
+	    {% endif %}
         <br>
         <br>
     </div>
@@ -86,48 +88,51 @@
     edges: edges
   };
   var options = {
-	nodes : {
-    	shape: 'dot',
+    nodes: {
+      shape: 'dot',
     },
-	edges: {
-		color: '#222'
-  	},
-  physics: {
-	enabled: true,
-	solver: 'barnesHut',
-	barnesHut: {
-		gravitationalConstant: -2000,
-		centralGravity: 0.20,
-		springLength: 95,
-		springConstant: 0.021,
-		damping: 0.09,
-		avoidOverlap: 0.15
+    edges: {
+      color: '#222'
     },
-    stabilization: {
-  		enabled: true,
-  		iterations: 200,
-  		updateInterval: 250,
-		  onlyDynamicEdges: false,
-		  fit: true
-		},
-		maxVelocity: 50,
-		minVelocity: 1     
-  	},
+    physics: {
+      enabled: true,
+      solver: 'barnesHut',
+      barnesHut: {
+        gravitationalConstant: -2000,
+        centralGravity: 0.20,
+        springLength: 95,
+        springConstant: 0.021,
+        damping: 0.09,
+        avoidOverlap: 0.15
+      },
+      stabilization: {
+        enabled: true,
+        iterations: 200,
+        updateInterval: 250,
+        onlyDynamicEdges: false,
+        fit: true
+      },
+      maxVelocity: 50,
+      minVelocity: 1
+    },
     layout: {
-    randomSeed: 2000,
-    improvedLayout: true
-    }    
+      randomSeed: 2000,
+      improvedLayout: true
+    },
+    interaction: {
+      navigationButtons: {{ nav_controls }}
+    }
   };
   var network = new vis.Network(container, data, options);
  
-  network.on( 'doubleClick', function(properties) 
-  	{
-        var q = properties.nodes[0];
-        var url = '{{prefix}}/search?action=search&qwords=' + q + '&field=all&type=volume&suggest=True';
-        if (url)
-            window.open(url);
-
-    });
+  network.on('doubleClick', function(properties)
+  {
+    if (properties.nodes.length > 0)
+    {
+      var q = properties.nodes[0];
+      window.open('{{prefix}}/search?action=search&qwords=' + q + '&field=all&type=volume&suggest=True');
+    }
+  });
 
 </script>
 
