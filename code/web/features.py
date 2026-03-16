@@ -1,11 +1,9 @@
 """
 Implementation for additional features of the Curatr web interface
 """
-import urllib.parse
-from markupsafe import Markup
+from markupsafe import Markup, escape
 from web.util import parse_arg_int
 from web.format import format_volume_list
-from preprocessing.cleaning import tidy_authors
 
 # --------------------------------------------------------------
 
@@ -30,10 +28,11 @@ def populate_author_page(context, db, author, author_page_size=10):
 	context["results"] = Markup(format_volume_list(context, db, current_volume_ids))
 	page_url_prefix = "%s/author?author_id=%s" % (context.prefix, author_id)
 	# create the summary
+	author_name = escape(author["author_name"])
 	if num_total_results == 1:
-		summary = "<strong>1</strong> matching volume was found for the author <span class='highlight'><b>%s</b></span>" % (author["author_name"])
+		summary = "<strong>1</strong> matching volume was found for the author <span class='highlight'><b>%s</b></span>" % author_name
 	else:
-		summary = "<strong>%d</strong> matching volumes were found for the author <span class='highlight'><b>%s</b></span>" % (num_total_results, author["author_name"])
+		summary = "<strong>%d</strong> matching volumes were found for the author <span class='highlight'><b>%s</b></span>" % (num_total_results, author_name)
 	# do we need pagination?
 	pagination_html = ""
 	if num_total_results > author_page_size:
