@@ -1,5 +1,5 @@
-{% extends "layout.html" %} 
-{% block title %}Administration{% endblock %} 
+{% extends "layout.html" %}
+{% block title %}Administration{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -14,33 +14,30 @@
     <table id="users" class="table table-striped table-users" style="width:100%; font-size:95%;">
         <thead>
             <tr>
-                <th width="6%" class="text-left">ID&nbsp;</th>
-                <th width="32%" class="text-left">Email</th>
-                <th width="21%" class="text-left">Created</th>
-                <th width="21%" class="text-left">Last Login</th>
-                <th width="12%" class="text-left"># Logins</th>
-                <th width="8%" class="text-center">Edit&nbsp;</th>
+                <th style="width:6%;" class="text-left">ID&nbsp;</th>
+                <th style="width:32%;" class="text-left">Email</th>
+                <th style="width:21%;" class="text-left">Created</th>
+                <th style="width:21%;" class="text-left">Last Login</th>
+                <th style="width:12%;" class="text-left"># Logins</th>
+                <th style="width:8%;" class="text-center">Edit&nbsp;</th>
             </tr>
         </thead>
     {{ userlist }}
     </table>
-      <!------------------------------------------------------>
+    <!-- Create New Users -->
     <h5 style="margin-top: 26px; margin-bottom: 18px; border-top: 1px solid #e5e5e5; padding-top: 16px;">Create New Users:</h5>
-    <p class="text-justify" style="margin-top: 18px; margin-bottom: 18px;">Add one or more new users to the <i>Curatr</i> system. 
+    <p class="text-justify" style="margin-top: 18px; margin-bottom: 18px;">Add one or more new users to the <i>Curatr</i> system.
     To create multiple users at once, input a list of email addresses separated by commas.</p>
     <form id="search" method="get" action="{{prefix}}/usercreate" style="margin-left: 10px; margin-right: 10px;">
-      <div class="form-block">    
+      <div class="form-block">
         <div class="form-group">
           <label for="name">Email Address(es)</label>
           <input name="emails" type="search" class="form-control mr-sm-2" placeholder="Email(s)" style="width: 100%;">
         </div>
       </div>
       <button type="submit" class="btn btn-primary">Create</button>
-    </form>   
-      <!------------------------------------------------------>
- </div>
-
+    </form>
+  </div>
 </div>
 
-{% endblock %} 
-
+{% endblock %}
