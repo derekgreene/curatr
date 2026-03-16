@@ -4,9 +4,8 @@ Various functions for implementing Curatr's concordance analysis functionality.
 import urllib.parse, re
 import logging as log
 from flask import abort
-from markupsafe import Markup
+from markupsafe import Markup, escape
 # project imports
-from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_location_places
 from web.util import parse_arg_int, parse_arg_bool
 from web.format import field_name_map, field_plural_map
 
@@ -23,6 +22,10 @@ def populate_concordance_results(context, db, current_solr, spec):
 	if len(spec["query"]) == 0:
 		abort(400, "No query provided for concordance")
 	query_string = spec["query"]
+	escaped_query_string = escape(query_string)
+	escaped_class = escape(spec["class"])
+	escaped_subclass = escape(spec["subclass"])
+	escaped_location = escape(spec["location"])
 	quoted_query_string = urllib.parse.quote_plus(query_string)
 	num_snippets = max_snippets
 	start = max(parse_arg_int(context.request, "start", 0), 0)
@@ -91,25 +94,25 @@ def populate_concordance_results(context, db, current_solr, spec):
 		else:
 			summary += "<strong>%s</strong> matching %s %s found" % (snum_total_results, field_description, was_were)
 		if query_string != "*" and len(query_string) > 0:
-			summary += " for <span class='highlight'><b>%s</b></span>" % query_string
+			summary += " for <span class='highlight'><b>%s</b></span>" % escaped_query_string
 	else:
 		if num_total_results == 0:
 			summary += "No matching results found"
 		else:
 			summary += "Page <strong>%d</strong> of <strong>%s</strong> matching %s" % (current_page, snum_total_results, field_description)
 		if query_string != "*":
-			summary += " for <span class='highlight'><strong>%s</strong></span>" % query_string
+			summary += " for <span class='highlight'><strong>%s</strong></span>" % escaped_query_string
 	if spec["class"].lower() == "all":
 		# do we still have a subclass specified?
 		if spec["subclass"].lower() != "all":
-			summary += " in the sub-classification <strong>%s</strong>" % spec["subclass"]
+			summary += " in the sub-classification <strong>%s</strong>" % escaped_subclass
 		else:
 			summary += ""
 	else:
-		summary += " in the classification <strong>%s</strong>" % spec["class"]
+		summary += " in the classification <strong>%s</strong>" % escaped_class
 		# any subclass?
 		if spec["subclass"].lower() != "all":
-			summary += " (<strong>%s</strong>)" % spec["subclass"]
+			summary += " (<strong>%s</strong>)" % escaped_subclass
 
 	# create the link URLs
 	page_url_suffix = "field=%s&class=%s&subclass=%s" % (spec["field"], urllib.parse.quote_plus(spec["class"]), urllib.parse.quote_plus(spec["subclass"]))
@@ -130,7 +133,7 @@ def populate_concordance_results(context, db, current_solr, spec):
 	# only in a specified location?
 	if spec["location"] != "" and spec["location"].lower() != "all":
 		page_url_suffix += "&location=%s" % urllib.parse.quote_plus(spec["location"])
-		summary += " published in %s" % spec["location"]
+		summary += " published in %s" % escaped_location
 	context["summary"] = Markup(summary)
 
 	# do we need search suggestions?
@@ -290,7 +293,7 @@ def format_concordance_results(context, db, spec, res, snippets):
 			html += "<tr>\n"
 			html += "<td class='text-center'>%d</td>" % doc["year"]
 			html += "<td class='context truncate-start'><div>[No preview]</div></td>"
-			html += "<td class='text-center'><a href='%s' class='result-title'>%s</a></td>" % (url_result, spec["query"])
+			html += "<td class='text-center'><a href='%s' class='result-title'>%s</a></td>" % (url_result, escape(spec["query"]))
 			html += "<td class='context truncate-end'><div>[No preview]</div></td>"
 			html += "</tr>\n"
 	return html
