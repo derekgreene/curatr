@@ -1,8 +1,8 @@
 """
-Generall formatting fuctions for display Curatr web content
+General formatting functions for displaying Curatr web content
 """
 import urllib.parse
-import logging as log
+from markupsafe import escape
 # project imports
 from preprocessing.cleaning import tidy_extract, tidy_authors, tidy_location_places
 
@@ -18,36 +18,36 @@ def format_classification_links(context):
 	""" Generate HTML formatting for links for book classifications on the classification index page. """
 	html = ""
 	class_counts = context.core.cache["class_counts"]
-	class_names = sorted(list(class_counts.keys()))
+	class_names = sorted(class_counts.keys())
 	for name in class_names:
 		if name.lower() == "all" or class_counts[name] == 0:
 			continue
-		label = name.replace("?","'")
+		label = escape(name.replace("?","'"))
 		escaped_name = urllib.parse.quote_plus(name)
 		url = '%s/search?qwords=*&class="%s"&type=volume' % (context.prefix, escaped_name)
 		if class_counts[name] == 1:
-			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (1 book)\n" % (url, label)
+			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (1 book)</li>\n" % (url, label)
 		else:
 			fmt_count = "{:,}".format(class_counts[name])
-			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (%s books)\n" % (url, label, fmt_count)
+			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (%s books)</li>\n" % (url, label, fmt_count)
 	return html
 
 def format_subclassification_links(context):
 	""" Generate HTML formatting for links for book subclassifications on the classification index page. """
 	html = ""
 	subclass_counts = context.core.cache["top_subclass_counts"]
-	subclass_names = sorted(list(subclass_counts.keys()))
+	subclass_names = sorted(subclass_counts.keys())
 	for name in subclass_names:
 		if name.lower() == "all" or subclass_counts[name] == 0:
 			continue
-		label = name
+		label = escape(name)
 		escaped_name = urllib.parse.quote_plus(name)
 		url = '%s/search?qwords=*&subclass="%s"&type=volume' % (context.prefix, escaped_name)
 		if subclass_counts[name] == 1:
-			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (1 book)\n" % (url, label)
+			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (1 book)</li>\n" % (url, label)
 		else:
 			fmt_count = "{:,}".format(subclass_counts[name])
-			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (%s books)\n" % (url, label, fmt_count)
+			html += "\t\t\t<li class='classification'><a href='%s'>%s</a> (%s books)</li>\n" % (url, label, fmt_count)
 	return html
 
 def format_classification_options(context, selected = "all"):
