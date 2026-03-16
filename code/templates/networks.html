@@ -100,10 +100,10 @@
       barnesHut: {
         gravitationalConstant: -2000,
         centralGravity: 0.20,
-        springLength: 95,
+        springLength: 110,
         springConstant: 0.021,
         damping: 0.09,
-        avoidOverlap: 0.15
+        avoidOverlap: 0.5
       },
       stabilization: {
         enabled: true,
@@ -124,7 +124,11 @@
     }
   };
   var network = new vis.Network(container, data, options);
- 
+
+  network.once('stabilized', function() {
+    network.fit();
+  });
+
   network.on('doubleClick', function(properties)
   {
     if (properties.nodes.length > 0)
