@@ -1,7 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}Word Lexicons{% endblock %}
 {% block headcustom %}
-<style>#nav-link-lexicon { color: #FF6600 !important; }</style>
+<style>
+  #nav-link-lexicon { color: #FF6600 !important; }
+  #lexicons td { vertical-align: top; }
+  #lexicons td:nth-child(4),
+  #lexicons td:nth-child(5),
+  #lexicons td:nth-child(6),
+  #lexicons td:nth-child(7) { vertical-align: middle; }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +23,7 @@
 	    <table id="lexicons" class="table table-striped" style="width:100%; font-size:95%;">
 	        <thead>
 	            <tr>
-	                <th style="width:13%;" class="text-left">Lexicon Name</th>
+	                <th style="width:13%;" class="text-left">Name</th>
 	                <th style="width:23%;" class="text-left">Description</th>
 	                <th style="width:35%;" class="text-left">Keywords</th>
 	                <th style="width:8%;" class="text-center">Edit</th>
