@@ -686,6 +686,32 @@ def handle_corpora():
 			return resp
 	# populate the template context
 	context = app.get_context(request)
+	context["message"] = ""
+	if action == "delete":
+		subcorpus_id = request.args.get("subcorpus_id", default = "").strip().lower()
+		if len(subcorpus_id) == 0:
+			log.warning("Warning: No subcorpus ID specified for delete")
+		else:
+			subcorpus = db.get_subcorpus(subcorpus_id)
+			if subcorpus is None:
+				log.warning("Warning: Cannot find subcorpus id=%s for deletion" % subcorpus_id)
+			elif str(subcorpus.get("user_id")) != str(context.user_id):
+				abort(403, description="You do not own this sub-corpus")
+			else:
+				hard_delete = False  # if True, also delete the ZIP file from disk
+				zip_filepath = app.core.get_subcorpus_zipfile(subcorpus_id)
+				if db.delete_subcorpus(subcorpus_id):
+					log.info("Deleted sub-corpus id=%s for user_id=%s" % (subcorpus_id, context.user_id))
+					if hard_delete:
+						if zip_filepath is not None and zip_filepath.exists():
+							zip_filepath.unlink()
+							log.info("Deleted ZIP file for sub-corpus id=%s: %s" % (subcorpus_id, zip_filepath))
+					else:
+						if zip_filepath is not None and zip_filepath.exists():
+							log.info("Soft delete: keeping ZIP file for sub-corpus id=%s: %s" % (subcorpus_id, zip_filepath))
+					context["message"] = "Deleted sub-corpus '%s'" % subcorpus.get("name", subcorpus_id)
+				else:
+					context["message"] = "Unable to delete sub-corpus '%s'" % subcorpus.get("name", subcorpus_id)
 	if action == "export":
 		context = handle_export_build(context, app.core, spec)
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])

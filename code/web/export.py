@@ -185,8 +185,9 @@ def format_subcorpus_list(context, db):
 		subcorpus_id = subcorpus["id"]
 		properties = db.get_subcorpus_metadata(subcorpus_id)
 		html += "<tr class='subcorpus'>\n"
-		# create the action URL
+		# create the action URLs
 		url_download = "%s/corpora?action=download&subcorpus_id=%s&ext=.zip" % (context.prefix, subcorpus_id)
+		url_delete = "%s/corpora?action=delete&subcorpus_id=%s" % (context.prefix, subcorpus_id)
 		# create the HTML for the table columns
 		html += "<td class='text-left subcorpus'><i>%s</i></td>" % escape(subcorpus.get("name", "Untitled"))
 		num_documents = subcorpus.get("documents", 0)
@@ -230,6 +231,7 @@ def format_subcorpus_list(context, db):
 		html += "<td class='text-left subcorpus'>%s</td>" % summary
 		# add the result
 		html += "<td class='text-center subcorpus'><a href='%s'><img src='%s/img/save.png' width='30px'/></a></td>\n" % (url_download, context.staticprefix)
+		html += "<td class='text-center subcorpus'><a href='%s'><img src='%s/img/delete.png' width='30px'/></a></td>\n" % (url_delete, context.staticprefix)
 		html += "</tr>\n"
 	return html
 
