@@ -332,7 +332,7 @@ def populate_search_results(context, db, current_solr, spec):
 	if suggest and len(spec["query"]) > 1:
 		page_url_suffix += "&suggest=True"
 		tidy_query = re.sub("[^a-zA-Z0-9_]", " ", spec["query"]).strip().lower()
-		parts = re.split("\s+", tidy_query)
+		parts = re.split(r"\s+", tidy_query)
 		query_words = []
 		for p in parts:
 			if len(p) > 1:
