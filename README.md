@@ -26,13 +26,14 @@ Additional dependencies:
 - A Java JDK supported by Apache Solr (tested with OpenJDK 17.0.7 and 19.0.1)
 
 Frontend dependencies (loaded from CDN):
+- Bootstrap Icons: https://icons.getbootstrap.com
 - Highcharts: https://www.highcharts.com (Ngram Viewer)
 - vis-network: https://visjs.github.io/vis-network (Semantic Networks)
 
 Dependencies for optional advanced network viewer:
-- dash
-- dash-bootstrap-components
-- dash-cytoscape
+- dash: https://dash.plotly.com
+- dash-bootstrap-components: https://dash-bootstrap-components.opensource.faculty.ai
+- dash-cytoscape: https://dash.plotly.com/cytoscape
 
 ## Platform Features
 
