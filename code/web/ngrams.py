@@ -1,7 +1,7 @@
 """
 Implementation for ngram-related features of the Curatr web interface
 """
-import urllib.parse, io
+import urllib.parse, io, json
 import logging as log
 from flask import send_file, abort
 from markupsafe import Markup
@@ -55,11 +55,13 @@ def populate_ngrams_page(context, app):
 	# if nothing specified, use the default query
 	if len(queries) > 0:
 		query_string = ", ".join(queries)
+		context["has_query"] = True
 	else:
 		query_string = app.core.config["ngrams"].get("default_query", "contagion")
 		queries = parse_keyword_query(query_string)
+		context["has_query"] = False
 	context["query"] = query_string
-	context["querylist"] = Markup(str(queries))
+	context["querylist"] = Markup(json.dumps(queries))
 	context["yearstart"] = year_start
 	context["yearend"] = year_end
 	if normalize:
@@ -135,8 +137,10 @@ def export_ngrams(context, app):
 						out.write(",0")
 				else:
 					out.write(",%d" % all_query_counts[query][year])
+			else:
+				out.write(",0")
 		out.write("\n")
-    # Creating the byteIO object from the StringIO Object
+	# Creating the BytesIO object from the StringIO Object
 	mem = io.BytesIO()
 	mem.write(out.getvalue().encode('utf-8'))
 	mem.seek(0)

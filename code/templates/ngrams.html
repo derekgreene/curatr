@@ -5,19 +5,19 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
-<style>#nav-link-ngrams { color: #FF6600 !important; }</style>
 <style>
+#nav-link-ngrams { color: #FF6600 !important; }
 #plot
 {
-	min-width: 310px; 
-	height: 550px; 
+	min-width: 310px;
+	height: 550px;
 	margin: 0;
 	margin-bottom: 10px;
-	border: 1px solid #ccc; 
-	padding-top: 5px; 
-	padding-left: 9.5px; 
-	padding-right: 9.5px; 
-	padding-bottom: 11px; 
+	border: 1px solid #ccc;
+	padding-top: 5px;
+	padding-left: 9.5px;
+	padding-right: 9.5px;
+	padding-bottom: 11px;
 	background-color: #ECF0F1;
 }
 </style>
@@ -63,8 +63,8 @@
 					</select>
 				</div>
 				<div class="col form-col-right">
-					<label for="year_start">Plot Type</label>
-		            <select class="form-control dropdown" id="normalize" name="normalize" style="width: 40%;">
+					<label for="normalize">Plot Type</label>
+		            <select class="form-control dropdown" id="normalize" name="normalize" style="width: 60%;">
 			            {{ normalize_options }}
 		            </select>
 				</div>
@@ -73,7 +73,9 @@
         </form>
         <br/>
         <div id="plot"></div>
+	    {% if has_query %}
 	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Comma-Separated Values (CSV) file</a> containing the ngram counts for the plot above</p>
+	    {% endif %}
 	    <br/> 
     </div>
 
