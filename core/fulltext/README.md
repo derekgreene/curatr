@@ -1,7 +1,3 @@
-# Fulltext Data
+# Full-Text Data
 
-The plain text files from the British Library Digital Collection should be placed in this directory for indexing by Curatr.
-
-For more information see:
-
-https://www.bl.uk/collection-guides/digitised-printed-books
+The full set of English-language plain-text files from the [British Library Nineteenth Century Digitised Books Collection](https://doi.org/10.21250/db14) (BL19) should be placed in this directory for indexing by Solr.
