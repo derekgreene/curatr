@@ -23,7 +23,11 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 Additional dependencies:
 - MySQL: https://www.mysql.com (tested with 5.7.40 and 8.0.33)
 - Apache Solr: https://solr.apache.org (tested with 8.11.2)
-- A Java JDK supported by Apache Solr (tested with OpenJDK 17.0.7 and 19.0.1) 
+- A Java JDK supported by Apache Solr (tested with OpenJDK 17.0.7 and 19.0.1)
+
+Frontend dependencies (loaded from CDN):
+- Highcharts: https://www.highcharts.com (Ngram Viewer)
+- vis-network: https://visjs.github.io/vis-network (Semantic Networks)
 
 Dependencies for optional advanced network viewer:
 - dash
