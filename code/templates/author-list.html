@@ -1,43 +1,44 @@
 {% extends "layout.html" %} 
 {% block title %}Authors{% endblock %} 
-{% block headcustom %}    
-	<style>#nav-link-authors { color: #FF6600 !important; }</style>
-	<script type="text/javascript" language="javascript" src="{{staticprefix}}/assets/js/jquery.dataTables.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="{{staticprefix}}/assets/css/jquery.dataTables.min.css">
-    <script type="text/javascript" class="init">
-    $(document).ready(function() 
-    {
-        /** initialize the catalogue table */
-        var table = $('#catalogue').DataTable( {
-            "pageLength": 20,
-            "lengthChange":false,
-            "ajax": {
-                url: "{{apiprefix}}/authors",
-                cache: true
-            },
-            "columns": [
-                { "data": "author_id", "visible" : false },
-                { "data": "author_name", "visible" : false },
-                { "data": "sort_name", "className": 'dt-body-left'},
-                { "data": "count", "className": 'dt-body-center', "searchable": false },
-                { "data": "start_year", "className": 'dt-body-center', "searchable": false },
-                { "data": "end_year", "className": 'dt-body-center', "searchable": false }
-            ],
-            "order": [[ 3, "desc" ]]
-        } ); 
+{% block headcustom %}
+<style>
+#nav-link-authors { color: #FF6600 !important; }
+#catalogue tbody tr { cursor: pointer; }
+</style>
+<script type="text/javascript" src="{{staticprefix}}/assets/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{staticprefix}}/assets/css/jquery.dataTables.min.css">
+<script type="text/javascript">
+$(document).ready(function()
+{
+    /** initialize the catalogue table */
+    var table = $('#catalogue').DataTable({
+        "pageLength": 20,
+        "lengthChange": false,
+        "ajax": {
+            url: "{{apiprefix}}/authors",
+            cache: true
+        },
+        "columns": [
+            { "data": "author_id", "visible": false },
+            { "data": "author_name", "visible": false },
+            { "data": "sort_name", "className": 'dt-body-left' },
+            { "data": "count", "className": 'dt-body-center', "searchable": false },
+            { "data": "start_year", "className": 'dt-body-center', "searchable": false },
+            { "data": "end_year", "className": 'dt-body-center', "searchable": false }
+        ],
+        "order": [[ 3, "desc" ]]
+    });
 
-        
-        $('#catalogue tbody').on('click', 'tr', function () 
-        {
-            var data = table.row( this ).data();
-            var author_id = data.author_id;
-            window.location.href = "{{prefix}}/author?author_id=" + author_id;
-        } );  
-                 
-    } );
-    </script>    
-    <!-- Ensure we include the custom styles after the other JQuery CSS files -->
-    <link href="{{staticprefix}}/css/default.css" rel="stylesheet">   
+    $('#catalogue tbody').on('click', 'tr', function()
+    {
+        var data = table.row(this).data();
+        var author_id = data.author_id;
+        window.location.href = "{{prefix}}/author?author_id=" + author_id;
+    });
+});
+</script>
+<!-- Ensure we include the custom styles after the other JQuery CSS files -->
+<link href="{{staticprefix}}/css/default.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -46,7 +47,7 @@
     <h2>Authors</h2>
         <p class="text-justify">The table lists {{ author_count }}
             authors of English-language texts in the British Library Nineteenth Century Digitised Books
-			Collection (BL19) from {{ year_min }} to {{ year_max }}.
+            Collection (BL19) from {{ year_min }} to {{ year_max }}.
             Use the search box on the right to filter by author.
             Click any row to view all volumes by that author.</p>
     </div>
