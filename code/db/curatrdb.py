@@ -834,6 +834,22 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_subcorpus(): %s" % str(e))
 			return []
 
+	def delete_subcorpus(self, subcorpus_id):
+		""" Delete the sub-corpus with the specified ID and its associated metadata. """
+		try:
+			sql = "DELETE FROM CorpusMetadata WHERE corpus_id = %s"
+			self.cursor.execute(sql, subcorpus_id)
+		except Exception as e:
+			log.error("SQL error in delete_subcorpus(): %s" % str(e))
+			return False
+		try:
+			sql = "DELETE FROM Corpora WHERE id = %s"
+			self.cursor.execute(sql, subcorpus_id)
+		except Exception as e:
+			log.error("SQL error in delete_subcorpus(): %s" % str(e))
+			return False
+		return True
+
 	def get_subcorpus_metadata(self, subcorpus_id):
 		""" Return the metadata associated with the sub-corpus with the specified ID """
 		properties = {}
