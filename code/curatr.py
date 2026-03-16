@@ -810,7 +810,7 @@ def handle_admin():
 	db.close()
 	return render_template("admin.html", **context)
 
-@app.route("/useredit")
+@app.route("/useredit", methods=['GET', 'POST'])
 @login_required
 def handle_user_edit():
 	"""
@@ -819,35 +819,59 @@ def handle_user_edit():
 	Returns:
 		Rendered HTML template for user editing page, or 403/404 error if unauthorised/not found.
 	"""
-	# confirm administration is allow
 	if current_user.is_anonymous:
 		log.info("Admin: anonymous user edit access attempt")
 		abort(403, description="Access not available to anonymous users")
 	if not current_user.admin:
 		log.info("Admin: non-admin user edit access attempt for user_id=%s" % current_user.id)
-		abort(403, description="Access not available to non-admin users")	
-	# make sure there is a valid user ID specified for editing
-	target_user_id = request.args.get("user_id", default = "").strip().lower()
+		abort(403, description="Access not available to non-admin users")
+	db = app.core.get_db()
+	context = app.get_context(request)
+	context["message"] = ""
+	context["error"] = ""
+	# get the target user ID from GET args (initial load) or POST form
+	if request.method == 'POST':
+		target_user_id = request.form.get("user_id", default = "").strip()
+	else:
+		target_user_id = request.args.get("user_id", default = "").strip()
 	if len(target_user_id) == 0:
 		abort(404, description="No user ID specified")
-	db = app.core.get_db()
-	context = app.get_context(request)	
-	# try to get details for the request user
 	target_user = db.get_user_by_id(target_user_id)
-	# check the action
-	action = request.args.get("action", default = "").strip().lower()
-	# TODO: fix
-	if action == "pwd":
-		# TODO: validate, change password
-		context["message"] = "Password successfully update for user %s" % target_user.email
-	# TODO: fix
-	elif action == "delete":
-		# TODO: validate, delete, change content
-		context["message"] = "Deletion confirmed for user %s" % target_user.email
-	# finished with the database
-	db.close()
 	if target_user is None:
-		abort(404, description="Cannot edit user. No user exists with ID %s" % target_user_id)	
+		db.close()
+		abort(404, description="Cannot edit user. No user exists with ID %s" % target_user_id)
+	# handle POST actions
+	if request.method == 'POST':
+		action = request.form.get("action", default = "").strip().lower()
+		if action == "pwd":
+			new_password = request.form.get("pwd", default = "").strip()
+			confirm = request.form.get("confirm", default = "").strip()
+			if new_password != confirm:
+				context["error"] = "Passwords do not match."
+			else:
+				is_valid, error_msg = validate_password(new_password)
+				if not is_valid:
+					context["error"] = error_msg
+				else:
+					hashed_passwd = password_to_hash(new_password)
+					if db.update_user_password(target_user_id, hashed_passwd):
+						log.info("Admin: password changed for user %s (id=%s)" % (target_user.email, target_user_id))
+						context["message"] = "Password successfully updated for user %s" % target_user.email
+					else:
+						context["error"] = "Failed to update password. Please try again."
+		elif action == "delete":
+			delete_confirm = request.form.get("delete_confirm", "")
+			if delete_confirm != "1":
+				context["error"] = "Please confirm deletion by checking the box."
+			else:
+				user_email = target_user.email
+				if db.delete_user(target_user_id):
+					log.info("Admin: deleted user %s (id=%s)" % (user_email, target_user_id))
+					db.close()
+					return redirect(url_for('handle_admin'))
+				else:
+					context["error"] = "Failed to delete user. Please try again."
+	db.close()
 	context["user_id"] = target_user_id
 	context["user_email"] = target_user.email
 	return render_template("user-edit.html", **context)
@@ -868,7 +892,7 @@ def handle_user_create():
 	# parse the list of specified addresses
 	raw_emails= request.args.get("emails", default = "").strip().lower()
 	candidate_emails = []
-	for email in re.split("[,; \t]+", raw_emails):
+	for email in re.split(r"[,; \t]+", raw_emails):
 		email = email.strip()
 		if len(email) > 0:
 			candidate_emails.append(email)
@@ -877,14 +901,13 @@ def handle_user_create():
 	if len(candidate_emails) == 0:
 		messages.append("No email addresses specified. Please specify a list of one or email addresses, separated by commas.")
 	else:
-		valid_emails = 	[]
 		for email in candidate_emails:
 			# valid email address?
 			if db.has_user_email(email):
 				messages.append("Cannot create user <b>%s</b>. A user with this email address already exists." % email)
 			# does a user with
 			elif not validate_email(email):
-				messages.append("Cannot create user <b>%s</b>. Invalid email address.'" % email)
+				messages.append("Cannot create user <b>%s</b>. Invalid email address." % email)
 			else:
 				# generate a suggested password
 				passwd = generate_password()
@@ -894,7 +917,7 @@ def handle_user_create():
 				user_id = db.add_user(email, hashed_passwd)
 				if user_id == -1:
 					log.error("Error: Failed to add new user '%s' to the database" % email)
-					messages.append("Cannot create user <b>%s</b>. We are currently unable to add this user to the database.'" % email)
+					messages.append("Cannot create user <b>%s</b>. We are currently unable to add this user to the database." % email)
 				else:
 					log.info("Created new system user '%s' (user_id=%d)" % (email, user_id))
 					messages.append("Created user <b>%s</b> with password <b>%s</b> (user ID=%d)" % (email, passwd, user_id))
