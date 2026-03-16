@@ -3,7 +3,8 @@ Various functions for implementing Curatr's concordance analysis functionality.
 """
 import urllib.parse, re
 import logging as log
-from flask import Markup, abort
+from flask import abort
+from markupsafe import Markup
 # project imports
 from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_location_places
 from web.util import parse_arg_int, parse_arg_bool
@@ -20,7 +21,7 @@ def populate_concordance_results(context, db, current_solr, spec):
 	""" Perform main HTML formatting for the Curatr concordance results page """
 	# no query? this shouldn't happen with concordance
 	if len(spec["query"]) == 0:
-		spec["query"] = "contagion"
+		abort(400, "No query provided for concordance")
 	query_string = spec["query"]
 	quoted_query_string = urllib.parse.quote_plus(query_string)
 	num_snippets = max_snippets
@@ -111,7 +112,7 @@ def populate_concordance_results(context, db, current_solr, spec):
 			summary += " (<strong>%s</strong>)" % spec["subclass"]
 
 	# create the link URLs
-	page_url_suffix = "field=%s&class=%s&subclass=%s" % (spec["field"], spec["class"], spec["subclass"])
+	page_url_suffix = "field=%s&class=%s&subclass=%s" % (spec["field"], urllib.parse.quote_plus(spec["class"]), urllib.parse.quote_plus(spec["subclass"]))
 	if not spec["sort_field"] is None:
 		page_url_suffix += "&sort=" + spec["sort_field"]
 		if not spec["sort_order"] is None:
@@ -246,15 +247,15 @@ def format_concordance_results(context, db, spec, res, snippets):
 	# construct required URL prefixes
 	target_page = "segment"
 	field_name = "all"
-	result_url_prefix = "%s/%s?qwords=%s&field=%s&class=%s&subclass=%s&location=%s" % (context.prefix, target_page, quoted_query_string, 
+	result_url_prefix = "%s/%s?qwords=%s&field=%s&class=%s&subclass=%s&location=%s" % (context.prefix, target_page, quoted_query_string,
 		field_name, quoted_class, quoted_subclass, quoted_location)
-		# process results
+	# process results
 	html = ""
 	for doc in res.docs:
+		url_result = "%s&id=%s" % (result_url_prefix, doc["id"])
+		rows_emitted = 0
 		# display the snippets for this doc, if available
-		if (not doc["id"] in snippets) or ( len(snippets[doc["id"]]) == 0 ):
-			pass
-		else:
+		if doc["id"] in snippets and len(snippets[doc["id"]]) > 0:
 			for snippet in snippets[doc["id"]].get("content",[]):
 				# no snippet?
 				if snippet is None or len(snippet) == 0:
@@ -262,9 +263,7 @@ def format_concordance_results(context, db, spec, res, snippets):
 				snippet = tidy_concordance_snippet(snippet)
 				target1 = "<span class='highlight'>"
 				target2 = "</span>"
-				snippet_num = 0
 				while snippet.count(target1) > 0:
-					snippet_num += 1
 					pos = snippet.index(target1)
 					# get the left context
 					left = snippet[max(0,pos-context_size):pos]
@@ -272,66 +271,26 @@ def format_concordance_results(context, db, spec, res, snippets):
 					left = tidy_concordance_left(left)
 					# get the right context
 					snippet = snippet[pos+len(target1):].strip()
-					pos = snippet.index(target2)
+					pos = snippet.find(target2)
 					if pos == -1:
 						continue
 					matched_query = snippet[0:pos]
 					right = snippet[pos+len(target2):min(pos+len(target2)+context_size, len(snippet))]
 					right = remove_tags(right)
 					right = tidy_concordance_right(right)
-					url_result = "%s&id=%s" % (result_url_prefix, doc["id"])
 					html += "<tr>\n"
 					html += "<td class='text-center'>%d</td>" % doc["year"]
 					html += "<td class='context truncate-start'><div>%s</div></td>" % left
 					html += "<td class='text-center'><a href='%s' class='result-title'>%s</a></td>" % (url_result, matched_query)
 					html += "<td class='context truncate-end'><div>%s</div></td>" % right
 					html += "</tr>\n"
-	return html
-
-def format_concordance_resultsx(context, db, spec, res, snippets):
-	""" Perform HTML formatting for the individual Curatr concordance results """
-	html = ""
-	# quote any strings that need to be used subsequently in URLs
-	quoted_query_string = urllib.parse.quote_plus(spec["query"])
-	quoted_class = urllib.parse.quote_plus(spec["class"])
-	quoted_subclass = urllib.parse.quote_plus(spec["subclass"])
-	quoted_location= urllib.parse.quote_plus(spec["location"])
-	# construct required URL prefixes
-	target_page = "segment"
-	field_name = "all"
-	result_url_prefix = "%s/%s?qwords=%s&field=%s&class=%s&subclass=%s&location=%s" % (context.prefix, target_page, quoted_query_string, 
-		field_name, quoted_class, quoted_subclass, quoted_location)
-	if spec["year_start"] > 0:
-		result_url_prefix += "&year_start=%d" % spec["year_start"]
-	if spec["year_end"] < 2000:
-		result_url_prefix += "&year_end=%d" % spec["year_end"]
-	# generate HTML	for each result
-	for i, doc in enumerate(res.docs):
-		doc_id = doc["id"]
-		title = tidy_title(doc["title"])
-		year = int(doc["year"])
-		volume = int(doc["volume"])
-		max_volume = int(doc["max_volume"])
-		segment = int(doc["segment"])
-		url_result = "%s&id=%s" % (result_url_prefix, doc_id)
-		html += "<p class='search-result'>\n"
-		html += "<div class='search-result-meta'>\n"
-		html += "<a href='%s' class='result-title'>%s&nbsp;&nbsp;(%d)&nbsp;&nbsp;&ndash;&nbsp;&nbspVolume %d, Segment %d</a>\n" % (url_result, title, year, volume, segment)
-		html += "</div>\n"
-		# add all of the relevant search result snippets
-		snippet_content = []
-		for snippet in snippets[doc["id"]].get("content",[]):
-			# no snippet?
-			if snippet is None or len(snippet) == 0:
-				snippet = "No text available."
-			else:
-				snippet = tidy_snippet(snippet)
-			snippet_content.append(snippet)
-		# actually format the snippets
-		html += "<ul class='search-snippets'>\n"
-		for snippet in snippet_content:
-			html += "<li class='snippet-text'>%s</li>\n" % snippet
-		html += "</ul>\n"
-		# finished result
-		html += "</p>\n"
+					rows_emitted += 1
+		# no rows produced for this doc: emit a placeholder to preserve pagination
+		if rows_emitted == 0:
+			html += "<tr>\n"
+			html += "<td class='text-center'>%d</td>" % doc["year"]
+			html += "<td class='context truncate-start'><div>[No preview]</div></td>"
+			html += "<td class='text-center'><a href='%s' class='result-title'>%s</a></td>" % (url_result, spec["query"])
+			html += "<td class='context truncate-end'><div>[No preview]</div></td>"
+			html += "</tr>\n"
 	return html
