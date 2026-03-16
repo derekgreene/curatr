@@ -1,4 +1,4 @@
-# Data Files
+# Metadata Files
 
 This directory contains cleaned, augmented metadata for the English-language books in the [British Library Nineteenth Century Digitised Books Collection](https://doi.org/10.21250/db14) (BL19). The original metadata was provided by British Library Labs. All metadata provided here is licensed under a [Creative Commons BY-NC-ND 4.0 Licence](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
