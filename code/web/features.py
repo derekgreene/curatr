@@ -107,9 +107,9 @@ def populate_similar_page(context, db, volume, recommendation_page_size = 10):
 		summary = "Page <b>%d</b> of <b>%d</b> volumes which are similar to " % (current_page, num_total_results)
 		# multi volume? then display the volume number
 		if volume["volumes"] > 1:
-			summary += "<b>%s&nbsp;&ndash;&nbsp;Volume %d</b> (%s)" % (volume["title"], volume["volume"], volume["year"])
+			summary += "<b>%s&nbsp;&ndash;&nbsp;Volume %d</b> (%s)" % (escape(volume["title"]), volume["volume"], volume["year"])
 		else:
-			summary += "<b>%s</b> (%s)" % (volume["title"], volume["year"])
+			summary += "<b>%s</b> (%s)" % (escape(volume["title"]), volume["year"])
 		if current_page == 1:
 			pagination_html += "<li class='page-item disabled'><a href='#' class='page-link'>Previous</a></li>\n"
 		else:
@@ -134,7 +134,7 @@ def populate_similar_page(context, db, volume, recommendation_page_size = 10):
 			page_url_string = "%s&start=%d" % (page_url_prefix, page_start)
 			pagination_html += "<li class='page-item'><a href='%s' class='page-link'>Next</a></li>\n" % page_url_string
 	else:
-		summary = "<b>%d</b> volume(s) which are similar to <b>%s</b>" % (num_total_results, volume["title"])			
+		summary = "<b>%d</b> volume(s) which are similar to <b>%s</b>" % (num_total_results, escape(volume["title"]))			
 	# populate and generate the HTML template
 	context["summary"] = Markup(summary)
 	context["pagination"] = Markup(pagination_html)	
