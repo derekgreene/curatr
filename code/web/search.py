@@ -4,7 +4,7 @@ Various functions for implementing Curatr's web search functionality.
 import urllib.parse, re
 import logging as log
 from flask import abort
-from markupsafe import Markup
+from markupsafe import Markup, escape
 # project imports
 from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_location_places
 from web.util import parse_arg_int, parse_arg_bool
@@ -256,6 +256,7 @@ def populate_search_results(context, db, current_solr, spec):
 				field_description = "volumes"
 		else:
 			field_description = "volume %s" % field_plural_map[spec["field"]]
+	escaped_query = escape(query_string)
 	if current_page == 1:
 		if num_total_results == 0:
 			summary = "No matching results found"
@@ -263,9 +264,9 @@ def populate_search_results(context, db, current_solr, spec):
 			summary = "<strong>%s</strong> matching %s %s found" % (snum_total_results, field_description, was_were)
 		if lexicon is None:
 			if query_string != "*" and len(query_string) > 0:
-				summary += " for <span class='highlight'><b>%s</b></span>" % query_string
+				summary += " for <span class='highlight'><b>%s</b></span>" % escaped_query
 		else:
-			summary += " for the lexicon <b><a href='%s'>%s</a></b></span>" % (lexicon_url, lexicon["name"])
+			summary += " for the lexicon <b><a href='%s'>%s</a></b>" % (lexicon_url, escape(lexicon["name"]))
 	else:
 		if num_total_results == 0:
 			summary = "No matching results found"
@@ -273,9 +274,9 @@ def populate_search_results(context, db, current_solr, spec):
 			summary = "Page <strong>%d</strong> of <strong>%s</strong> matching %s" % (current_page, snum_total_results, field_description)
 		if lexicon is None:
 			if query_string != "*":
-				summary += " for <span class='highlight'><strong>%s</strong></span>" % query_string
+				summary += " for <span class='highlight'><strong>%s</strong></span>" % escaped_query
 		else:
-			summary += " for the lexicon <b><a href='%s'>%s</a></b></span>" % (lexicon_url, lexicon["name"])
+			summary += " for the lexicon <b><a href='%s'>%s</a></b>" % (lexicon_url, escape(lexicon["name"]))
 	# only in a single book?
 	if spec["book_id"] != "":
 		# can we find the title for this book from solr?
@@ -288,20 +289,20 @@ def populate_search_results(context, db, current_solr, spec):
 		if spec["class"].lower() == "all":
 			# do we still have a subclass specified?
 			if spec["subclass"].lower() != "all":
-				summary += " in the sub-classification <strong>%s</strong>" % spec["subclass"]
+				summary += " in the sub-classification <strong>%s</strong>" % escape(spec["subclass"])
 			else:
 				summary += ""
 		else:
-			summary += " in the classification <strong>%s</strong>" % spec["class"]
+			summary += " in the classification <strong>%s</strong>" % escape(spec["class"])
 			# any subclass?
 			if spec["subclass"].lower() != "all":
-				summary += " (<strong>%s</strong>)" % spec["subclass"]
+				summary += " (<strong>%s</strong>)" % escape(spec["subclass"])
 	# filtered by Mudie's library
 	# TODO: fix Mudies
 	if spec["mudies_match"]:
 		summary += ", filtered by Mudie's library matches"
 	# create the link URLs
-	page_url_suffix = "field=%s&class=%s&subclass=%s&type=%s" % (spec["field"], spec["class"], spec["subclass"], spec["type"])
+	page_url_suffix = "field=%s&class=%s&subclass=%s&type=%s" % (spec["field"], urllib.parse.quote_plus(spec["class"]), urllib.parse.quote_plus(spec["subclass"]), spec["type"])
 	if not spec["sort_field"] is None:
 		page_url_suffix += "&sort=" + spec["sort_field"]
 		if not spec["sort_order"] is None:
@@ -323,7 +324,7 @@ def populate_search_results(context, db, current_solr, spec):
 	# only in a specified location?
 	if spec["location"] != "" and spec["location"].lower() != "all":
 		page_url_suffix += "&location=%s" % urllib.parse.quote_plus(spec["location"])
-		summary += " published in %s" % spec["location"]
+		summary += " published in %s" % escape(spec["location"])
 	context["summary"] = Markup(summary)
 	# do we need search suggestions?
 	suggest = parse_arg_bool(context.request, "suggest", False)
