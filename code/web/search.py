@@ -3,7 +3,8 @@ Various functions for implementing Curatr's web search functionality.
 """
 import urllib.parse, re
 import logging as log
-from flask import Markup, abort
+from flask import abort
+from markupsafe import Markup
 # project imports
 from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_location_places
 from web.util import parse_arg_int, parse_arg_bool

@@ -2,7 +2,7 @@
 Implementation for additional features of the Curatr web interface
 """
 import urllib.parse
-from flask import Markup
+from markupsafe import Markup
 from web.util import parse_arg_int
 from web.format import format_volume_list
 from preprocessing.cleaning import tidy_authors

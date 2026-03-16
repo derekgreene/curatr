@@ -1,6 +1,7 @@
 import logging as log
 # Flask logins
-from flask import Flask, Markup
+from flask import Flask
+from markupsafe import Markup
 from flask_login import current_user
 # project imports
 from core import CoreCuratr

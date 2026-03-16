@@ -16,7 +16,8 @@ from optparse import OptionParser
 from datetime import datetime, timedelta
 # Flask imports
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, confirm_login
-from flask import request, Response, render_template, Markup, session
+from flask import request, Response, render_template, session
+from markupsafe import Markup
 from flask import redirect, url_for, abort, send_file
 # project imports
 from server import CuratrServer
