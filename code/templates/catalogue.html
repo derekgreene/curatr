@@ -1,40 +1,42 @@
 {% extends "layout.html" %} 
 {% block title %}Catalogue{% endblock %} 
-{% block headcustom %}    
-    <style>#nav-link-catalogue { color: #FF6600 !important; }</style>
-	<script type="text/javascript" language="javascript" src="{{staticprefix}}/assets/js/jquery.dataTables.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="{{staticprefix}}/assets/css/jquery.dataTables.min.css">
-    <script type="text/javascript" class="init">
-    $(document).ready(function() 
-    {
-        /** initialize the catalogue table */
-        var table = $('#catalogue').DataTable( {
-            "pageLength": 20,
-            "lengthChange":false,
-            "ajax": {
-                url: "{{staticprefix}}/data/catalogue.json",
-                cache: true
-            },
-            "columns": [
-                { "data": "id", "visible": false, "searchable": false },
-                { "data": "year", "className": 'dt-body-center' },
-                { "data": "title", "className": 'dt-body-left' },
-                { "data": "authors", "className": 'dt-body-left' }
-            ],
-            "order": [[ 1, "asc" ]]
-        } );
+{% block headcustom %}
+<style>
+#nav-link-catalogue { color: #FF6600 !important; }
+#catalogue tbody tr { cursor: pointer; }
+</style>
+<script type="text/javascript" src="{{staticprefix}}/assets/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{staticprefix}}/assets/css/jquery.dataTables.min.css">
+<script type="text/javascript">
+$(document).ready(function()
+{
+    /** initialize the catalogue table */
+    var table = $('#catalogue').DataTable({
+        "pageLength": 20,
+        "lengthChange": false,
+        "ajax": {
+            url: "{{staticprefix}}/data/catalogue.json",
+            cache: true
+        },
+        "columns": [
+            { "data": "id", "visible": false, "searchable": false },
+            { "data": "year", "className": 'dt-body-center' },
+            { "data": "title", "className": 'dt-body-left' },
+            { "data": "authors", "className": 'dt-body-left' }
+        ],
+        "order": [[ 1, "asc" ]]
+    });
 
-        $('#catalogue tbody').on('click', 'tr', function () 
-        {
-            var data = table.row(this).data();
-            var book_id = data.id;
-            window.location.href = "{{prefix}}/volume?id=" + book_id + "_01";
-        } );  
-          
-    } );
-    </script>    
-    <!-- Ensure we include the custom styles after the other JQuery CSS files -->
-    <link href="{{staticprefix}}/css/default.css" rel="stylesheet">   
+    $('#catalogue tbody').on('click', 'tr', function()
+    {
+        var data = table.row(this).data();
+        var book_id = data.id;
+        window.location.href = "{{prefix}}/volume?id=" + book_id + "_01";
+    });
+});
+</script>
+<!-- Ensure we include the custom styles after the other JQuery CSS files -->
+<link href="{{staticprefix}}/css/default.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -42,9 +44,9 @@
   <div class="section text-center" style="padding-bottom: 10px;">
     <h2>Collection Catalogue</h2>
         <p class="text-justify">
-            The <i>catalogue</i> lists metadata for {{ num_books }}
+            The catalogue lists metadata for {{ num_books }}
             English-language texts in the British Library Nineteenth Century Digitised Books
-			Collection (BL19) from {{ year_min }} to {{ year_max }}.
+            Collection (BL19) from {{ year_min }} to {{ year_max }}.
             Use the search box on the right to filter the catalogue, and click any row to open that book for
             close reading.</p>
     </div>
@@ -58,4 +60,6 @@
             </tr>
         </thead>
     </table>
+</div>
+<br>
 {% endblock %} 
