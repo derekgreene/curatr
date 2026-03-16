@@ -586,3 +586,19 @@ img.victeurlogo
 	width: 400px; 
 	margin-bottom: 0.9em;
 }
+
+
+.callout
+{
+	padding: 1rem 1.25rem;
+	margin-top: 1.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid #adb5bd;
+	border-left: 4px solid #adb5bd;
+	border-radius: 0.25rem;
+}
+
+.callout-primary
+{
+	border-left-color: #007bff;
+}

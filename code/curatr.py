@@ -799,7 +799,7 @@ def handle_admin():
 		log.info("Admin: admin access for user_id=%s" % current_user.id)
 	db = app.core.get_db()
 	context = app.get_context(request)	
-	context["start_time"] = app.start_time.strftime('%d/%m/%Y-%H:%M')
+	context["start_time"] = app.start_time.strftime('%Y-%m-%d %H:%M')
 	current_solr = app.core.get_solr("segment")
 	if current_solr.ping():
 		context["solr_status"] = "Connection ok to Solr server at %s" % current_solr.host

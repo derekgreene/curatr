@@ -1,8 +1,7 @@
 """
-Implementation for corpus system administration-related features of the Curatr web interface
+Implementation for system administration-related features of the Curatr web interface
 """
 
-import operator
 from markupsafe import Markup, escape
 
 # --------------------------------------------------------------
@@ -10,8 +9,6 @@ from markupsafe import Markup, escape
 def format_user_list(context, db):
 	""" Produce a HTML formatted table containing details of users registered on the system """
 	users = db.get_all_users()
-	users.sort(key=operator.attrgetter('last_login'))
-	users.reverse()
 	html = ""
 	for user in users:
 		html += "\t<tr class='user'>\n"
@@ -25,15 +22,17 @@ def format_user_list(context, db):
 			suffix += " (Guest)"
 		html += "\t\t<td class='text-left user'>%s%s</td>" % (escape(user.email), suffix)
 		# user date created column
-		html += "\t\t<td class='text-left user'>%s</td>" % user.created_at.strftime('%Y-%m-%d %H:%M')
+		created_str = user.created_at.strftime('%Y-%m-%d %H:%M')
+		html += "\t\t<td class='text-left user' data-order='%s'>%s</td>" % (created_str, created_str)
 		# user last login column
 		if user.last_login is None or user.created_at == user.last_login:
-			html += "\t\t<td class='text-left user'>&mdash;</td>"
+			html += "\t\t<td class='text-left user' data-order='0'>&mdash;</td>"
 		else:
-			html += "\t\t<td class='text-left user'>%s</td>" % user.last_login.strftime('%Y-%m-%d %H:%M')
+			login_str = user.last_login.strftime('%Y-%m-%d %H:%M')
+			html += "\t\t<td class='text-left user' data-order='%s'>%s</td>" % (login_str, login_str)
 		# number of logins column
 		html += "\t\t<td class='text-left user'>%s</td>" % user.num_logins
-		# add actions
+		# add Edit action
 		url_edit = "%s/useredit?user_id=%d" % (context.prefix, user.id)
 		html += "\t\t<td class='text-center lex'><a href='%s'><img src='%s/img/edit.png' width='30px'></a></td>\n" % (url_edit, context.staticprefix)
 		html += "</tr>\n"
