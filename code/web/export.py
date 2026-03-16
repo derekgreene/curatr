@@ -4,7 +4,8 @@ Implementation for corpus export-related features of the Curatr web interface
 import json, zipfile, threading, re, time
 from pathlib import Path
 import logging as log
-from flask import Markup, send_file, abort
+from flask import send_file, abort
+from markupsafe import Markup
 # project imports
 from web.util import safe_int, parse_arg_int, format_year_range
 from web.format import type_name_map, field_name_map

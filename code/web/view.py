@@ -3,7 +3,7 @@ Various functions for implementing Curatr's volume and segment close reading fun
 """
 import urllib.parse, re
 import logging as log
-from flask import Markup, escape
+from markupsafe import Markup, escape
 from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_content, tidy_location_places
 from preprocessing.cleaning import tidy_shelfmarks, tidy_publisher, tidy_edition, tidy_description
 

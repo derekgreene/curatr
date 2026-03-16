@@ -3,7 +3,7 @@ Implementation for corpus system administration-related features of the Curatr w
 """
 
 import operator
-from flask import Markup
+from markupsafe import Markup
 
 # --------------------------------------------------------------
 

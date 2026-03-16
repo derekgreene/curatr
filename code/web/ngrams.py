@@ -3,7 +3,8 @@ Implementation for ngram-related features of the Curatr web interface
 """
 import urllib.parse, io
 import logging as log
-from flask import Markup, send_file, abort
+from flask import send_file, abort
+from markupsafe import Markup
 # project imports
 from web.util import parse_keyword_query, parse_arg_int
 

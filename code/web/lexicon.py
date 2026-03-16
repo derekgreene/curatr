@@ -4,7 +4,8 @@ Implementation for word lexicon-related features of the Curatr web interface
 import urllib.parse, re, operator
 import logging as log
 from collections import defaultdict
-from flask import Markup, abort
+from flask import abort
+from markupsafe import Markup
 
 # --------------------------------------------------------------
 

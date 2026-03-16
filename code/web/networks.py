@@ -4,7 +4,8 @@ Implementation for basic semantic network-related features of the Curatr web int
 import urllib.parse
 import io, re
 import logging as log
-from flask import Markup, send_file
+from flask import send_file
+from markupsafe import Markup
 from xml.sax.saxutils import escape
 from web.util import parse_arg_int
 from semantic import find_neighbors, neighborhood_sizes, default_num_k, default_num_hops
