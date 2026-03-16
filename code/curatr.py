@@ -182,6 +182,7 @@ def handle_about():
 	context = app.get_context(request)
 	# add key statistics
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
+	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
 	return render_template("about.html", **context)
@@ -687,6 +688,10 @@ def handle_corpora():
 	context = app.get_context(request)
 	if action == "export":
 		context = handle_export_build(context, app.core, spec)
+	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
+	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
 	context["subcorpuslist"] = Markup(format_subcorpus_list(context, db))
 	# finished with the db
 	db.close()

@@ -1,18 +1,19 @@
-{% extends "layout.html" %} 
+{% extends "layout.html" %}
 {% block title %}Word Lexicons{% endblock %} 
-{% block headcustom %}    
+{% block headcustom %}
 <style>#nav-link-lexicon { color: #FF6600 !important; }</style>
-{% endblock %} 
+{% endblock %}
 
 {% block content %}
 <div class="container">
 	<div class="section" style="padding-bottom: 14px;">
 	    <!------------------------------------------------------>
-		<h2 style="text-align: center;">Word Lexicons &mdash; {{ current_user.email }}</h2>
-		<!-- <h2 style="text-align: center;">Word Lexicons</h2> -->
-		<p class="text-justify"><i>Word lexicons</i>, which consist of curated lists of keywords related to a given topic, allow scholars to
-		further search the British Library collection, and to define sub-corpora related to that topic. A lexicon can be expanded based on
-		automatically recommended keywords, which frequently appear in the same context as existing words in the lexicon.</p>
+		<h2 style="text-align: center;">Word Lexicons</h2>
+		<p class="text-justify"><i>Word lexicons</i> are curated lists of keywords related to a given topic, allowing
+			scholars to search the British Library Nineteenth Century Digitised Books
+			Collection (BL19) and define sub-corpora on that topic. A lexicon can be
+			expanded using automatically recommended keywords that frequently appear in the
+			same context as existing lexicon terms.</p>
 
 		<div class="message">{{ message }}</div>
 		<h5 style="margin-top: 26px; margin-bottom: 18px;">Existing Word Lexicons</h5>
@@ -67,13 +68,9 @@
 				</div>
 			</div>
 			<button type="submit" class="btn btn-primary">Create</button>
-		</form>		
+		</form>
 	    <!------------------------------------------------------>
 	</div>
 </div>
 
-
-
-</script>
-	 
-{% endblock %} 
+{% endblock %}
