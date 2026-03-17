@@ -1,7 +1,26 @@
 {% extends "layout.html" %}
 {% block title %}Concordance{% endblock %}
 {% block headcustom %}
-<style>#nav-link-concordance { color: #FF6600 !important; }</style>
+<style>
+#nav-link-concordance { color: #FF6600 !important; }
+#advanced-filters {
+	overflow: hidden;
+	max-height: 0;
+	transition: max-height 0.35s ease;
+}
+#advanced-toggle {
+	display: inline-block;
+	margin: 10px 0 10px;
+	color: #3C4858;
+	text-decoration: none;
+	font-size: 1em;
+	cursor: pointer;
+}
+#advanced-toggle:hover {
+	color: #3C4858;
+	text-decoration: underline;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -9,14 +28,16 @@
 	<div class="section text-center" style="padding-bottom: 14px;">
 		<h2>Concordance</h2>
 		<p class="text-justify"><i>Concordance analysis</i> finds all instances of a word or phrase across the
-			{{ num_segments }} text segments drawn from English-language books in the British
-			Library Nineteenth Century Digitised Books Collection (BL19), presenting each
-			result alongside its immediate context.</p>
+			{{ num_segments }} text segments drawn from English-language books in the BL19 collection, presenting each
+			result alongside its immediate context. Use Advanced Filters to narrow
+			results by classification, date, or location.</p>
 	</div>
 	<div class="form-card" style="margin-bottom: 40px;">
 	<form id="search" method="get" action="{{prefix}}/concordance">
 		<input type="hidden" id="action" name="action" value="concordance">
 		<input type="hidden" id="suggest" name="suggest" value="True">
+
+		<!-- Always visible -->
 		<div class="form-block">
 			<div class="form-group">
 				<label for="qwords">Keyword / Keyphrase</label>
@@ -24,50 +45,88 @@
 			</div>
 		</div>
 
-		<div class="form-row form-block">
-			<div class="col">
-				<label for="class">Classification</label>
-		        <select class="form-control dropdown" id="class" name="class">
-		            {{ class_options }}
-		        </select>
+		<!-- Advanced filters toggle -->
+		<a href="#" id="advanced-toggle" onclick="return toggleAdvanced()">+ Show Advanced Filters</a>
+
+		<!-- Advanced filters (hidden by default) -->
+		<div id="advanced-filters">
+			<div class="form-row form-block" style="margin-top: 10px;">
+				<div class="col">
+					<label for="class">Classification</label>
+			        <select class="form-control dropdown" id="class" name="class">
+			            {{ class_options }}
+			        </select>
+				</div>
+				<div class="col form-col-right">
+					<label for="subclass">Sub-classification</label>
+			        <select class="form-control dropdown" id="subclass" name="subclass">
+			            {{ subclass_options }}
+			        </select>
+				</div>
 			</div>
-			<div class="col form-col-right">
-				<label for="subclass">Sub-classification</label>
-		        <select class="form-control dropdown" id="subclass" name="subclass">
-		            {{ subclass_options }}
-		        </select>
+
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="year_start">Start Year</label>
+					<input type="text" class="form-control filter" name="year_start" id="year_start" value="{{year_start}}" placeholder="Start YYYY" size="10">
+				</div>
+				<div class="col form-col-right">
+					<label for="year_end">End Year</label>
+					<input type="text" class="form-control filter" name="year_end" id="year_end" value="{{year_end}}" placeholder="End YYYY" size="10">
+				</div>
+			</div>
+
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="location">Publication Location</label>
+			        <select class="form-control dropdown" id="location" name="location">
+			            {{ location_options }}
+			        </select>
+				</div>
+				<div class="col form-col-right">
+					<label for="sort">Sort By</label>
+			        <select class="form-control dropdown" id="sort" name="sort">
+						<option value="year-asc" {{selected_sort_year_asc}}>Year (Oldest First)</option>
+						<option value="year-desc" {{selected_sort_year_desc}}>Year (Newest First)</option>
+					</select>
+				</div>
 			</div>
 		</div>
 
-		<div class="form-row form-block">
-			<div class="col">
-				<label for="year_start">Start Year</label>
-				<input type="text" class="form-control filter" name="year_start" id="year_start" value="{{year_start}}" placeholder="Start YYYY" size="10">
-			</div>
-			<div class="col form-col-right">
-				<label for="year_end">End Year</label>
-				<input type="text" class="form-control filter" name="year_end" id="year_end" value="{{year_end}}" placeholder="End YYYY" size="10">
-			</div>
-		</div>
-
-		<div class="form-row form-block">
-			<div class="col">
-				<label for="location">Publication Location</label>
-		        <select class="form-control dropdown" id="location" name="location">
-		            {{ location_options }}
-		        </select>
-			</div>
-			<div class="col form-col-right">
-				<label for="sort">Sort By</label>
-		        <select class="form-control dropdown" id="sort" name="sort">
-					<option value="year-asc" {{selected_sort_year_asc}}>Year (Oldest First)</option>
-					<option value="year-desc" {{selected_sort_year_desc}}>Year (Newest First)</option>
-				</select>
-			</div>
-		</div>
-		<button type="submit" class="btn btn-primary">Analyse</button>
+		<button type="submit" class="btn btn-primary" style="margin-top: 14px;">Analyse</button>
 	</form>
 	</div>
 </div>
+
+<script>
+function toggleAdvanced() {
+	var adv = document.getElementById('advanced-filters');
+	var toggle = document.getElementById('advanced-toggle');
+	if (adv.style.maxHeight && adv.style.maxHeight !== '0px') {
+		adv.style.maxHeight = '0px';
+		toggle.textContent = '+ Show Advanced Filters';
+	} else {
+		adv.style.maxHeight = adv.scrollHeight + 'px';
+		toggle.textContent = '\u2212 Hide Advanced Filters';
+	}
+	return false;
+}
+
+// Auto-expand if any advanced filter has a non-default value
+(function() {
+	var hasValues =
+		document.getElementById('class').selectedIndex > 0 ||
+		document.getElementById('subclass').selectedIndex > 0 ||
+		document.getElementById('year_start').value !== '' ||
+		document.getElementById('year_end').value !== '' ||
+		document.getElementById('location').selectedIndex > 0 ||
+		document.getElementById('sort').selectedIndex > 0;
+	if (hasValues) {
+		var adv = document.getElementById('advanced-filters');
+		adv.style.maxHeight = adv.scrollHeight + 'px';
+		document.getElementById('advanced-toggle').textContent = '\u2212 Hide Advanced Filters';
+	}
+})();
+</script>
 
 {% endblock %}

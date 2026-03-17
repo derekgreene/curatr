@@ -1,5 +1,5 @@
-{% extends "layout.html" %} 
-{% block title %}Catalogue{% endblock %} 
+{% extends "layout.html" %}
+{% block title %}Catalogue{% endblock %}
 {% block headcustom %}
 <style>
 #nav-link-catalogue { color: #FF6600 !important; }
@@ -10,10 +10,10 @@
 <script type="text/javascript">
 $(document).ready(function()
 {
-    /** initialize the catalogue table */
     var table = $('#catalogue').DataTable({
         "pageLength": 20,
         "lengthChange": false,
+        "dom": "rtip",
         "ajax": {
             url: "{{staticprefix}}/data/catalogue.json",
             cache: true
@@ -25,6 +25,10 @@ $(document).ready(function()
             { "data": "authors", "className": 'dt-body-left' }
         ],
         "order": [[ 1, "asc" ]]
+    });
+
+    $('#catalogue-search').on('keyup', function() {
+        table.search(this.value).draw();
     });
 
     $('#catalogue tbody').on('click', 'tr', function()
@@ -42,24 +46,23 @@ $(document).ready(function()
 {% block content %}
 <div class="container">
   <div class="section text-center" style="padding-bottom: 10px;">
-    <h2>Collection Catalogue</h2>
-        <p class="text-justify">
-            The catalogue lists metadata for {{ num_books }}
-            English-language texts in the British Library Nineteenth Century Digitised Books
-            Collection (BL19) from {{ year_min }} to {{ year_max }}.
-            Use the search box on the right to filter the catalogue, and click any row to open that book for
-            close reading.</p>
-    </div>
-    <table id="catalogue" class="display" style="width:100%; font-size:95%;">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Year</th>
-                <th>Title</th>
-                <th>Author(s)</th>
-            </tr>
-        </thead>
-    </table>
+    <h2>Catalogue</h2>
+    <p class="text-justify">Browse metadata for {{ num_books }} English-language books in the BL19 collection.
+        Click any row to open that book for close reading.</p>
+  </div>
+  <div class="form-card" style="margin-bottom: 16px; padding: 10px 28px;">
+    <input id="catalogue-search" type="search" class="form-control" placeholder="Filter catalogue..." style="width: 100%;">
+  </div>
+  <table id="catalogue" class="display" style="width:100%; font-size:95%;">
+      <thead>
+          <tr>
+              <th>Id</th>
+              <th>Year</th>
+              <th>Title</th>
+              <th>Author(s)</th>
+          </tr>
+      </thead>
+  </table>
 </div>
 <br>
-{% endblock %} 
+{% endblock %}

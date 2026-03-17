@@ -14,6 +14,7 @@ $(document).ready(function()
     var table = $('#catalogue').DataTable({
         "pageLength": 20,
         "lengthChange": false,
+        "dom": "rtip",
         "ajax": {
             url: "{{apiprefix}}/authors",
             cache: true
@@ -27,6 +28,10 @@ $(document).ready(function()
             { "data": "end_year", "className": 'dt-body-center', "searchable": false }
         ],
         "order": [[ 3, "desc" ]]
+    });
+
+    $('#authors-search').on('keyup', function() {
+        table.search(this.value).draw();
     });
 
     $('#catalogue tbody').on('click', 'tr', function()
@@ -45,13 +50,13 @@ $(document).ready(function()
 <div class="container">
   <div class="section text-center" style="padding-bottom: 10px;">
     <h2>Authors</h2>
-        <p class="text-justify">The table lists {{ author_count }}
-            authors of English-language texts in the British Library Nineteenth Century Digitised Books
-            Collection (BL19) from {{ year_min }} to {{ year_max }}.
-            Use the search box on the right to filter by author.
-            Click any row to view all volumes by that author.</p>
-    </div>
-    <table id="catalogue" class="display" style="width:100%; font-size:95%;">
+    <p class="text-justify">Browse {{ author_count }} authors of English-language texts in the BL19 collection.
+        Click any row to view all volumes by that author.</p>
+  </div>
+  <div class="form-card" style="margin-bottom: 16px; padding: 10px 28px;">
+    <input id="authors-search" type="search" class="form-control" placeholder="Filter authors..." style="width: 100%;">
+  </div>
+  <table id="catalogue" class="display" style="width:100%; font-size:95%;">
         <thead>
             <tr>
                 <th>Author Id</th>
