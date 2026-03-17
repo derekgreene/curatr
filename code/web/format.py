@@ -35,12 +35,15 @@ def format_classification_links(context):
 def format_subclassification_links(context):
 	""" Generate HTML formatting for links for book subclassifications on the classification index page. """
 	html = ""
+	display_name_map = {
+		"French & English Colonies in the United States of America": "French & English Colonies in the USA",
+	}
 	subclass_counts = context.core.cache["top_subclass_counts"]
 	subclass_names = sorted(subclass_counts.keys())
 	for name in subclass_names:
 		if name.lower() == "all" or subclass_counts[name] == 0:
 			continue
-		label = escape(name)
+		label = escape(display_name_map.get(name, name))
 		escaped_name = urllib.parse.quote_plus(name)
 		url = '%s/search?qwords=*&subclass="%s"&type=volume' % (context.prefix, escaped_name)
 		if subclass_counts[name] == 1:

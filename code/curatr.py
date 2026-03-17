@@ -497,7 +497,10 @@ def handle_classification():
 	context["classification"] = Markup(format_classification_links(context))
 	context["subclassification"] = Markup(format_subclassification_links(context))
 	context["num_subclasses"] = len(app.core.cache["subclass_names"])
-	context["num_top_subsubclassifications"] = len(app.core.cache["top_subclass_counts"])
+	class_counts = app.core.cache["class_counts"]
+	context["num_classifications"] = len([k for k, v in class_counts.items() if k.lower() != "all" and v != 0])
+	subclass_counts = app.core.cache["top_subclass_counts"]
+	context["num_top_subsubclassifications"] = len([k for k, v in subclass_counts.items() if k.lower() != "all" and v != 0])
 	return render_template("classification.html", **context)
 
 @app.route("/catalogue")
