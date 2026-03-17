@@ -1,37 +1,55 @@
-{% extends "layout.html" %} 
-{% block title %}Classification Index{% endblock %} 
+{% extends "layout.html" %}
+{% block title %}Classifications{% endblock %}
 {% block headcustom %}
-<style>#nav-link-classification { color: #FF6600 !important; }</style>
-{% endblock %} 
+<style>
+#nav-link-classification { color: #FF6600 !important; }
+.class-card-heading {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 14px 0;
+    color: #3C4858;
+}
+ul.classification {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+}
+ul.classification-top {
+    column-count: 3;
+    column-gap: 28px;
+}
+ul.classification-sub {
+    column-count: 2;
+    column-gap: 28px;
+}
+ul.classification-top li,
+ul.classification-sub li {
+    break-inside: avoid;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-    <div class="container">
-      <div class="section text-center">
-        <h2>Classification Index</h2>
-
-        <p class="text-justify">
-            From 1823 to the 1980s, the British Library used a topical index of pressmarks
-            indicating the physical arrangement of books on its shelves. This classification
-            index is organised across several levels of granularity, from broad top-level
-            categories (e.g. "Fiction", "Geography", "Medicine") down to more specific
-            topics (e.g. "Geography" → "Ireland and Scotland"). Using a combination of OCR
-            text recognition and manual annotation, we have digitised the higher levels of
-            the index. Browse volumes within these categories by clicking the links below.</p>
-        <div class="text-left">
-            <p>Top level classification of English-language books:</p>
-            <ul class="classification">
-                {{ classification }}
-            </ul>
-        </div>
-        <div class="text-left">
-            <p>The second, more granular level of classification has also been digitised.
-                Of the {{ num_subclasses }} categories at this level, the
-                {{ num_top_subsubclassifications }} most common are:</p>
-            <ul class="classification">
-                {{ subclassification }}
-            </ul>
-        </div>
-      </div>
-
-    </div>
-{% endblock %} 
+<div class="container">
+  <div class="section text-center" style="padding-bottom: 10px;">
+    <h2>Classifications</h2>
+    <p class="text-justify">Browse books by their British Library classification. Top-level categories are listed below, with more granular sub-classifications beneath.</p>
+  </div>
+  <div class="form-card" style="margin-bottom: 24px;">
+    <p class="class-card-heading">Top-level Classifications</p>
+    <p style="margin-bottom: 14px;">All {{ num_classifications }} top-level classifications:</p>
+    <ul class="classification classification-top">
+        {{ classification }}
+    </ul>
+  </div>
+  <div class="form-card">
+    <p class="class-card-heading">Sub-classifications</p>
+    <p style="margin-bottom: 14px;">The {{ num_top_subsubclassifications }} most common of {{ num_subclasses }} sub-classifications:</p>
+    <ul class="classification classification-sub">
+        {{ subclassification }}
+    </ul>
+  </div>
+</div>
+<br>
+{% endblock %}
