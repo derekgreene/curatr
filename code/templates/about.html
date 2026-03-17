@@ -48,27 +48,27 @@
     <p class="text-justify">Curatr provides a range of tools for searching, browsing, and analysing the BL19 collection:</p>
 
     <ul class="features">
-      <li><strong><a href="{{ url_for('handle_search') }}">Collection Search</a></strong>: a searchable index of over 12 million pages,
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_search') }}">Collection Search</a>{% else %}<i>Collection Search</i>{% endif %}</strong>: a searchable index of over 12 million pages,
         filterable by author, title, year, classification, publication location, and document type, with sorting by relevance, date, or title.</li>
-      <li><strong><a href="{{ url_for('handle_classification') }}">Classification Index</a></strong>: a browsable version of the hierarchical
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_classification') }}">Classification Index</a>{% else %}<i>Classification Index</i>{% endif %}</strong>: a browsable version of the hierarchical
         topical index used by the British Library from 1823 to 1985, from broad categories such as "Fiction" and "Geography" down to
         more fine-grained sub-topics.</li>
-      <li><strong><a href="{{ url_for('handle_catalogue') }}">Catalogue</a></strong>: a sortable and searchable table of all books in the
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_catalogue') }}">Catalogue</a>{% else %}<i>Catalogue</i>{% endif %}</strong>: a sortable and searchable table of all books in the
         collection, browsable by title, author, and year of publication.</li>
-      <li><strong><a href="{{ url_for('handle_authors') }}">Authors</a></strong>: browse the collection by author, with links to all
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_authors') }}">Authors</a>{% else %}<i>Authors</i>{% endif %}</strong>: browse the collection by author, with links to all
         associated volumes.</li>
-      <li><strong><a href="{{ url_for('handle_ngrams') }}">Ngram Viewer</a></strong>: plot the frequency of one or more words across the
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_ngrams') }}">Ngram Viewer</a>{% else %}<i>Ngram Viewer</i>{% endif %}</strong>: plot the frequency of one or more words across the
         collection over time, with the option to click through to the corresponding search results for any given year. Results can be
         exported as a CSV file.</li>
-      <li><strong><a href="{{ url_for('handle_networks') }}">Semantic Networks</a></strong>: visualise conceptual relationships in the
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_networks') }}">Semantic Networks</a>{% else %}<i>Semantic Networks</i>{% endif %}</strong>: visualise conceptual relationships in the
         collection by constructing interactive semantic networks from seed words, with associated words identified using word embedding
         models.</li>
-      <li><strong><a href="{{ url_for('handle_concordance') }}">Concordance</a></strong>: identify every occurrence of a particular word
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_concordance') }}">Concordance</a>{% else %}<i>Concordance</i>{% endif %}</strong>: identify every occurrence of a particular word
         or phrase within the collection, presented alongside its immediate linguistic context.</li>
-      <li><strong><a href="{{ url_for('handle_lexicon') }}">Word Lexicons</a></strong>: create and manage curated lists of keywords
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_lexicon') }}">Word Lexicons</a>{% else %}<i>Word Lexicons</i>{% endif %}</strong>: create and manage curated lists of keywords
         related to a given research topic. Lexicons can be expanded automatically using a word embedding model to suggest semantically
         similar terms, and used to drive searches and sub-corpus exports.</li>
-      <li><strong><a href="{{ url_for('handle_corpora') }}">Sub-Corpora</a></strong>: define and export smaller, topic-specific
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_corpora') }}">Sub-Corpora</a>{% else %}<i>Sub-Corpora</i>{% endif %}</strong>: define and export smaller, topic-specific
         sub-corpora of the collection, filtered thematically, chronologically, and by classification, for close reading and
         offline analysis.</li>
     </ul>
@@ -87,13 +87,13 @@
     <p class="text-left" style="margin-left: 20px;">Dickens, C. (1892) <i>The Old Curiosity Shop</i>. Available at: curatr.ucd.ie (Accessed: 16 March 2026).</p>
     <h5 class="division">Acknowledgements</h5>
     <p class="text-justify">
-        This work is part of the <a href="https://projectvicteur.com/" target="_blank" rel="noopener noreferrer">VICTEUR project</a>, which has received funding from the <a target="_blank" rel="noopener noreferrer" href="https://erc.europa.eu/">European Research Council (ERC)</a> under the European Union's Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the <a href="http://www.ucd.ie/englishdramafilm/" target="_blank" rel="noopener noreferrer">UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href="http://www.insight-centre.org/" target="_blank" rel="noopener noreferrer">Insight Research Ireland Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank" rel="noopener noreferrer">UCD School of Computer Science</a>.
+        This work is part of the <a href="https://projectvicteur.com/" target="_blank" rel="noopener noreferrer">VICTEUR project</a>, which has received funding from the <a target="_blank" rel="noopener noreferrer" href="https://erc.europa.eu/">European Research Council (ERC)</a> under the European Union's Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the <a href="https://www.ucd.ie/englishdramafilm/" target="_blank" rel="noopener noreferrer">UCD School of English, Drama and Film</a>, in collaboration with researchers from the <a href="https://www.insight-centre.org/" target="_blank" rel="noopener noreferrer">Insight Research Ireland Centre for Data Analytics</a> at the <a href="https://www.ucd.ie/cs/" target="_blank" rel="noopener noreferrer">UCD School of Computer Science</a>.
         The BL19 digitised book collection was provided by British Library Labs.
         Curatr by <a href="https://cca.ucd.ie/" target="_blank" rel="noopener noreferrer">UCD Centre for Cultural Analytics</a> is licensed under a <a rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons BY-NC-ND 4.0 Licence</a>. Background image created by <a href="https://www.flickr.com/photos/stevecadman/486263551" target="_blank" rel="noopener noreferrer">Steven Cadman</a>.
     </p>
     <p style="align: center; margin-top: 1.8em;">
         <a target="_blank" href="https://european-union.europa.eu"><img src="{{staticprefix}}/img/logo-eu.png" class="logo" style="width: 120px; margin-right: 50px;" alt="EU Flag"/></a>
-        <a target="_blank" href="http://erc.europa.eu"><img src="{{staticprefix}}/img/logo-erc.png" class="logo" style="width: 132px; margin-right: 35px;" alt="ERC Logo"/></a>
+        <a target="_blank" href="https://erc.europa.eu"><img src="{{staticprefix}}/img/logo-erc.png" class="logo" style="width: 132px; margin-right: 35px;" alt="ERC Logo"/></a>
         <a target="_blank" href="https://www.researchireland.ie"><img src="{{staticprefix}}/img/logo-ri.png" class="logo" style="width: 160px; margin-right: 10px;" alt="Research Ireland Logo"/></a>
         <a target="_blank" href="http://www.ucd.ie/"><img src="{{staticprefix}}/img/logo-ucd.png" class="logo" style="width: 130px;" alt="UCD Logo"/></a>
     </p>
