@@ -5,6 +5,7 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
 <style>
 #nav-link-ngrams { color: #FF6600 !important; }
 #plot
@@ -69,10 +70,12 @@
 			<button type="submit" class="btn btn-primary">Search</button>
 		</form>
 		</div>
+        <p class="text-center" style="margin-top: 16px; margin-bottom: 8px;">{% if not has_query %}Example {% endif %}{% if ',' in query %}Keywords{% else %}Keyword{% endif %}: <span style="font-weight: 600;">{{ query }}</span> &mdash; {{ yearstart }}–{{ yearend }}</p>
         <div id="plot"></div>
-	    {% if has_query %}
-	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Comma-Separated Values (CSV) file</a> containing the ngram counts for the plot above</p>
-	    {% endif %}
+	    <div style="margin-top: 8px; margin-bottom: 20px; display: flex; gap: 8px;">
+	        <button class="btn btn-primary" onclick="downloadPNG()">Export PNG</button>
+	        <a class="btn btn-primary" href="{{ export_url }}">Export CSV</a>
+	    </div>
 	    <br/> 
     </div>
 
@@ -209,6 +212,16 @@ $(document).ready(function()
 	});
 
 } );
+
+function downloadPNG() {
+    var filename = 'ngrams-{{ query }}-{{ yearstart }}-{{ yearend }}'.replace(/,\s*/g, '_');
+    var plotDiv = document.getElementById('plot');
+    chart.exportChartLocal({
+        type: 'image/png',
+        filename: filename,
+        chartOptions: { chart: { width: plotDiv.offsetWidth, height: plotDiv.offsetHeight, backgroundColor: '#ffffff' } }
+    });
+}
 </script>
 
 
