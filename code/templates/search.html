@@ -1,24 +1,43 @@
 {% extends "layout.html" %}
 {% block title %}Search{% endblock %}
 {% block headcustom %}
-<style>#nav-link-search { color: #FF6600 !important; }</style>
+<style>
+#nav-link-search { color: #FF6600 !important; }
+#advanced-filters {
+	overflow: hidden;
+	max-height: 0;
+	transition: max-height 0.35s ease;
+}
+#advanced-toggle {
+	display: inline-block;
+	margin: 10px 0 10px;
+	color: #3C4858;
+	text-decoration: none;
+	font-size: 1em;
+	cursor: pointer;
+}
+#advanced-toggle:hover {
+	color: #3C4858;
+	text-decoration: underline;
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container form-page-container">
 	<div class="section text-center" style="padding-bottom: 14px;">
 		<h2>Collection Search</h2>
-		<p class="text-justify">The <i>Curatr</i> platform indexes content and metadata
-			for {{ num_volumes }} volumes and {{ num_segments }} text segments from
-			{{ num_books }} English-language books dating from {{ year_min }} to
-			{{ year_max }}. Use the form below to search the entire BL19 collection or
-			a specific subset.
+		<p class="text-justify">Search content and metadata across {{ num_volumes }} volumes and {{ num_segments }} text segments
+			from {{ num_books }} English-language books in the BL19 collection.
+			Use Advanced Filters to narrow results by classification, date, or location.
 		</p>
 	</div>
 	<div class="form-card" style="margin-bottom: 27px;">
 	<form id="search" method="get" action="{{prefix}}/search">
 		<input type="hidden" id="action" name="action" value="search">
 		<input type="hidden" id="suggest" name="suggest" value="True">
+
+		<!-- Always visible fields -->
 		<div class="form-block">
 			<div class="form-group">
 				<label for="qwords">Search Keywords</label>
@@ -28,55 +47,14 @@
 
 		<div class="form-row form-block">
 			<div class="col">
-				<label for="field">Search Field</label>
-				<select class="form-control dropdown" id="field" name="field">
-					{{ field_options }}
-				</select>
-			</div>
-			<div class="col form-col-right">
 				<label for="type">Document Type</label>
 				<select class="form-control dropdown" id="type" name="type">
 					{{ type_options }}
 				</select>
 			</div>
-		</div>
-
-		<div class="form-row form-block">
-			<div class="col">
-				<label for="class">Classification</label>
-		        <select class="form-control dropdown" id="class" name="class">
-		            {{ class_options }}
-		        </select>
-			</div>
-			<div class="col form-col-right">
-				<label for="subclass">Sub-classification</label>
-		        <select class="form-control dropdown" id="subclass" name="subclass">
-		            {{ subclass_options }}
-		        </select>
-			</div>
-		</div>
-
-		<div class="form-row form-block">
-			<div class="col">
-				<label for="year_start">Start Year</label>
-				<input type="text" class="form-control filter" name="year_start" id="year_start" value="{{year_start}}" placeholder="Start YYYY" size="10">
-			</div>
-			<div class="col form-col-right">
-				<label for="year_end">End Year</label>
-				<input type="text" class="form-control filter" name="year_end" id="year_end" value="{{year_end}}" placeholder="End YYYY" size="10">
-			</div>
-		</div>
-
-		<div class="form-row form-block">
-			<div class="col">
-				<label for="location">Publication Location</label>
-		        <select class="form-control dropdown" id="location" name="location">
-		            {{ location_options }}
-		        </select>
-			</div>
 			<div class="col form-col-right">
 				<label for="sort">Sort By</label>
-		        <select class="form-control dropdown" id="sort" name="sort">
+				<select class="form-control dropdown" id="sort" name="sort">
 					<option value="rel" {{selected_sort_rel}}>Relevance</option>
 					<option value="year-asc" {{selected_sort_year_asc}}>Year (Oldest First)</option>
 					<option value="year-desc" {{selected_sort_year_desc}}>Year (Newest First)</option>
@@ -85,9 +63,88 @@
 				</select>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-primary">Search</button>
+
+		<!-- Advanced filters toggle -->
+		<a href="#" id="advanced-toggle" onclick="return toggleAdvanced()">+ Show Advanced Filters</a>
+
+		<!-- Advanced filters (hidden by default) -->
+		<div id="advanced-filters">
+			<div class="form-row form-block" style="margin-top: 10px;">
+				<div class="col">
+					<label for="field">Search Field</label>
+					<select class="form-control dropdown" id="field" name="field">
+						{{ field_options }}
+					</select>
+				</div>
+				<div class="col form-col-right">
+					<label for="class">Classification</label>
+			        <select class="form-control dropdown" id="class" name="class">
+			            {{ class_options }}
+			        </select>
+				</div>
+			</div>
+
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="subclass">Sub-classification</label>
+			        <select class="form-control dropdown" id="subclass" name="subclass">
+			            {{ subclass_options }}
+			        </select>
+				</div>
+				<div class="col form-col-right">
+					<label for="location">Publication Location</label>
+			        <select class="form-control dropdown" id="location" name="location">
+			            {{ location_options }}
+			        </select>
+				</div>
+			</div>
+
+			<div class="form-row form-block">
+				<div class="col">
+					<label for="year_start">Start Year</label>
+					<input type="text" class="form-control filter" name="year_start" id="year_start" value="{{year_start}}" placeholder="Start YYYY" size="10">
+				</div>
+				<div class="col form-col-right">
+					<label for="year_end">End Year</label>
+					<input type="text" class="form-control filter" name="year_end" id="year_end" value="{{year_end}}" placeholder="End YYYY" size="10">
+				</div>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-primary" style="margin-top: 14px;">Search</button>
 	</form>
 	</div>
 </div>
+
+<script>
+function toggleAdvanced() {
+	var adv = document.getElementById('advanced-filters');
+	var toggle = document.getElementById('advanced-toggle');
+	if (adv.style.maxHeight && adv.style.maxHeight !== '0px') {
+		adv.style.maxHeight = '0px';
+		toggle.textContent = '+ Show Advanced Filters';
+	} else {
+		adv.style.maxHeight = adv.scrollHeight + 'px';
+		toggle.textContent = '\u2212 Hide Advanced Filters';
+	}
+	return false;
+}
+
+// Auto-expand if any advanced filter has a non-default value
+(function() {
+	var hasValues =
+		document.getElementById('field').selectedIndex > 0 ||
+		document.getElementById('class').selectedIndex > 0 ||
+		document.getElementById('subclass').selectedIndex > 0 ||
+		document.getElementById('year_start').value !== '' ||
+		document.getElementById('year_end').value !== '' ||
+		document.getElementById('location').selectedIndex > 0;
+	if (hasValues) {
+		var adv = document.getElementById('advanced-filters');
+		adv.style.maxHeight = adv.scrollHeight + 'px';
+		document.getElementById('advanced-toggle').textContent = '\u2212 Hide Advanced Filters';
+	}
+})();
+</script>
 
 {% endblock %}
