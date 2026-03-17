@@ -26,18 +26,15 @@
 {% block content %}
 
     <div class="container">
-        <div class="section text-center">
-            <h2>Collection Ngram Viewer</h2>
+        <div class="section text-center" style="padding-bottom: 14px;">
+            <h2>Ngram Viewer</h2>
 
-            <p class="text-justify">
-				Search the frequency of words across English-language volumes from the British
-				Library Nineteenth Century Digitised Books Collection (BL19) by entering one or
-				more comma-separated keywords below and clicking &lsquo;Search&rsquo;. The plot shows either
-				the number of volumes containing the search term(s) per year, or the percentage
-				of volumes per year in which the term(s) appear. Click a point on the plot to
-				view the corresponding results for that year, or click and drag to zoom into a
-				specific time range.</p>
+            <p class="text-justify">Search the frequency of words across English-language volumes in the British
+				Library Nineteenth Century Digitised Books Collection (BL19). Enter one or more
+				comma-separated keywords and click &lsquo;Search&rsquo; to plot volume counts or percentages
+				per year. Click a point to view results for that year, or click and drag to zoom.</p>
         </div>
+		<div class="form-card" style="margin-bottom: 27px;">
 		<form id="search" method="get" action="{{prefix}}/ngrams">
 			<div class="form-row form-block">
 				<div class="col">
@@ -71,7 +68,7 @@
 			</div>
 			<button type="submit" class="btn btn-primary">Search</button>
 		</form>
-		<br>
+		</div>
         <div id="plot"></div>
 	    {% if has_query %}
 	    <p style="padding-top: 10px;">Download <a href="{{ export_url }}">a Comma-Separated Values (CSV) file</a> containing the ngram counts for the plot above</p>

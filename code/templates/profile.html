@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container form-page-container">
   <div class="section" style="padding-bottom: 14px;">
     <div class="text-center">
       <h2>User Profile</h2>
@@ -64,7 +64,8 @@
     </table>
 
     <h5 style="margin-top: 20px;">Change Password</h5>
-    <form id="changepassword" method="post" action="{{ prefix }}/profile" style="margin-left: 10px; margin-right: 10px;">
+    <div class="form-card" style="margin-bottom: 20px;">
+    <form id="changepassword" method="post" action="{{ prefix }}/profile">
       <input type="hidden" name="action" value="changepassword">
       <div class="form-block">
         <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
@@ -85,9 +86,11 @@
       </div>
       <button type="submit" class="btn btn-primary">Change Password</button>
     </form>
+    </div>
 
     <h5 style="margin-top: 10px;">Delete Account</h5>
-    <form id="deleteaccount" method="post" action="{{ prefix }}/profile" style="margin-left: 10px; margin-right: 10px;" onsubmit="return confirm('Are you sure you want to permanently delete your account? This action cannot be undone.');">
+    <div class="form-card" style="margin-bottom: 27px;">
+    <form id="deleteaccount" method="post" action="{{ prefix }}/profile" onsubmit="return confirm('Are you sure you want to permanently delete your account? This action cannot be undone.');">
       <input type="hidden" name="action" value="deleteaccount">
       <div class="form-block">
         <p style="color: #d9534f; font-weight: bold;">Warning: This action is permanent and cannot be undone.</p>
@@ -102,7 +105,7 @@
       </div>
       <button type="submit" class="btn btn-danger">Delete Account</button>
     </form>
-    <br>
+    </div>
   </div>
 </div>
 
