@@ -61,7 +61,7 @@
 		</form>
 		</div>
 	    {% if node_count %}
-	    <p class="text-center" style="margin-top: 16px; margin-bottom: 4px;">{% if not has_query %}Example {% endif %}Seeds: <span style="font-weight: 600;">{{ query }}</span> &mdash; {{ node_count }} nodes, {{ edge_count }} edges</p>
+	    <p class="text-center" style="margin-top: 16px; margin-bottom: 8px;">{% if not has_query %}Example {% endif %}{% if ',' in query %}Seeds{% else %}Seed{% endif %}: <span style="font-weight: 600;">{{ query }}</span> &mdash; {{ node_count }} nodes, {{ edge_count }} edges</p>
 	    {% endif %}
         <div id="mynetwork"></div>
 	    {% if node_count %}
