@@ -140,7 +140,7 @@ def format_lexicon_list(context, db, max_words=20):
 			url_search += "&class=%s" % urllib.parse.quote_plus(lex["class_name"])
 		default_k = context.core.config["networks"].getint("default_k", 5)
 		escaped_network_words = urllib.parse.quote_plus(", ".join(words))
-		url_network = '%s/networks?qwords=%s&neighbors=%d' % (context.prefix, escaped_network_words, default_k)
+		url_network = '%s/networks?seeds=%s&k=%d' % (context.prefix, escaped_network_words, default_k)
 		# create the HTML
 		html += "<td class='text-left lex'><i>%s</i></td><td class='text-left'>%s</td><td class='text-left'>%s</td>\n" % (escape(lex.get("name", "Untitled")), escape(lex.get("description", "No description")), escape(s_words))
 		html += "<td class='text-center lex'><a href='%s'><img src='%s/img/edit.png' width='30px'/></a></td>\n" % (url_edit, context.staticprefix)
