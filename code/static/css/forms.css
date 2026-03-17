@@ -1,0 +1,26 @@
+/* Shared form card panel used on pages with search/filter forms */
+
+.form-card {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e0d8cf;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 28px 28px 20px;
+    margin-top: -6px;
+}
+
+.form-card form {
+    margin-bottom: 0;
+}
+
+/* Override material-kit button defaults */
+.btn {
+    text-transform: none;
+    font-size: 0.95rem;
+}
+
+/* Applied to .container on pages where the form card is the last element,
+   to prevent margin collapse against the footer */
+.form-page-container {
+    padding-bottom: 5px;
+}

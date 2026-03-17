@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container form-page-container">
 	<div class="section text-center" style="padding-bottom: 14px;">
 		<h2>Concordance</h2>
 		<p class="text-justify"><i>Concordance analysis</i> finds all instances of a word or phrase across the
@@ -13,6 +13,7 @@
 			Library Nineteenth Century Digitised Books Collection (BL19), presenting each
 			result alongside its immediate context.</p>
 	</div>
+	<div class="form-card" style="margin-bottom: 40px;">
 	<form id="search" method="get" action="{{prefix}}/concordance">
 		<input type="hidden" id="action" name="action" value="concordance">
 		<input type="hidden" id="suggest" name="suggest" value="True">
@@ -45,7 +46,7 @@
 			</div>
 			<div class="col form-col-right">
 				<label for="year_end">End Year</label>
-				<input type="text" class="form-control filter" name="year_end" id="year_end" value="{{year_end}}" placeholder="End YYYY" size="10">				
+				<input type="text" class="form-control filter" name="year_end" id="year_end" value="{{year_end}}" placeholder="End YYYY" size="10">
 			</div>
 		</div>
 
@@ -66,7 +67,7 @@
 		</div>
 		<button type="submit" class="btn btn-primary">Analyse</button>
 	</form>
-	<br>
+	</div>
 </div>
 
 {% endblock %}

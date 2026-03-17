@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container form-page-container">
 	<div class="section" style="padding-bottom: 14px;">
 	    <!------------------------------------------------------>
 		<h2 style="text-align: center;">Word Lexicons</h2>
@@ -39,24 +39,25 @@
 	    <!------------------------------------------------------>
 		<h5 style="margin-top: 26px; margin-bottom: 18px; border-top: 1px solid #e5e5e5; padding-top: 16px;">Create New Lexicon</h5>
 		<p class="text-justify" style="margin-top: 18px; margin-bottom: 18px;">Alternatively, create a new lexicon below by adding one or more seed keywords.</p>
-		<form id="search" method="get" action="{{ prefix }}/lexicon" style="margin-left: 10px; margin-right: 10px;">
+		<div class="form-card" style="margin-bottom: 27px;">
+		<form id="search" method="get" action="{{ prefix }}/lexicon">
 			<input type="hidden" id="action" name="action" value="create">
 
-			<div class="form-block">		
+			<div class="form-block">
 				<div class="form-group">
 					<label for="name">Lexicon Name</label>
 		            <input id="name" name="name" type="text" class="form-control mr-sm-2" placeholder="Enter lexicon name" size="20" style="width: 50%;">
 				</div>
 			</div>
 
-			<div class="form-block">		
+			<div class="form-block">
 				<div class="form-group">
 					<label for="description">Lexicon Description</label>
 		            <input id="description" name="description" type="text" class="form-control mr-sm-2" placeholder="Enter lexicon description" size="40" style="width: 90%;">
 				</div>
 			</div>
 
-			<div class="form-block">		
+			<div class="form-block">
 				<div class="form-group">
 					<label for="class">Classification</label>
 			        <select class="form-control dropdown" id="class" name="class" style="width: 50%;">
@@ -65,7 +66,7 @@
 				</div>
 			</div>
 
-			<div class="form-block">		
+			<div class="form-block">
 				<div class="form-group">
 					<label for="words">Initial Lexicon Keywords</label>
 		            <input id="words" name="words" type="text" class="form-control mr-sm-2" placeholder="Enter one or more seed keywords" size="40" style="width: 90%;">
@@ -73,6 +74,7 @@
 			</div>
 			<button type="submit" class="btn btn-primary">Create</button>
 		</form>
+		</div>
 	    <!------------------------------------------------------>
 	</div>
 </div>

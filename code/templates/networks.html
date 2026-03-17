@@ -29,17 +29,14 @@
 {% block content %}
 
     <div class="container">
-        <div class="section text-center">
-            <h2>Semantic Network Visualisation</h2>
-			<p class="text-justify">To explore relationships between words and concepts in the British Library
-			Nineteenth Century Digitised Books Collection (BL19), this tool creates and
-			visualises <i>semantic networks</i>. Each node (circle) represents a word or concept,
-			and each edge (link) between two nodes indicates a relationship. To create a network,
-			enter one or more seed words below and click &lsquo;Visualise&rsquo;. Double-click a node to view the relevant
-			search results from the BL19 collection. Use the navigation controls, or scroll,
-			to pan and zoom. Use the export buttons below the network to save the visualisation
-			as a PNG image or download the network data as a GEXF file for use in tools such as Gephi.</p>
+        <div class="section text-center" style="padding-bottom: 14px;">
+            <h2>Semantic Networks</h2>
+			<p class="text-justify">Explore relationships between words and concepts in the British Library
+			Nineteenth Century Digitised Books Collection (BL19) using semantic network visualisations.
+			Enter one or more seed words and click &lsquo;Visualise&rsquo; to generate a semantic network.
+			Double-click any node to view related search results from the collection.</p>
         </div>
+		<div class="form-card" style="margin-bottom: 27px;">
 		<form id="search" method="get" action="{{prefix}}/networks">
 			<div class="form-row form-block">
 				<div class="col">
@@ -63,8 +60,9 @@
 			</div>
 			<button type="submit" class="btn btn-primary">Visualise</button>
 		</form>
+		</div>
 	    {% if node_count %}
-	    <p class="text-center" style="margin-top: 16px; margin-bottom: 4px;">Seeds: <span style="font-weight: 600;">{{ query }}</span> &mdash; {{ node_count }} nodes, {{ edge_count }} edges</p>
+	    <p class="text-center" style="margin-top: 16px; margin-bottom: 4px;">{% if not has_query %}Example {% endif %}Seeds: <span style="font-weight: 600;">{{ query }}</span> &mdash; {{ node_count }} nodes, {{ edge_count }} edges</p>
 	    {% endif %}
         <div id="mynetwork"></div>
 	    {% if node_count %}
