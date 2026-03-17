@@ -12,7 +12,7 @@
 	min-width: 310px;
 	width: 100%;
 	margin: 0;
-	margin-top: 16px;
+	margin-top: 6px;
 	margin-bottom: 10px;
 	border: 1px solid #ccc;
 	padding-top: 5px;
@@ -35,10 +35,10 @@
 			Nineteenth Century Digitised Books Collection (BL19), this tool creates and
 			visualises <i>semantic networks</i>. Each node (circle) represents a word or concept,
 			and each edge (link) between two nodes indicates a relationship. To create a network,
-			enter one or more seed words below and click &lsquo;Visualise&rsquo;. Seed words appear as yellow
-			nodes, and associated words as blue nodes. Double-click a node to view the relevant
+			enter one or more seed words below and click &lsquo;Visualise&rsquo;. Double-click a node to view the relevant
 			search results from the BL19 collection. Use the navigation controls, or scroll,
-			to pan and zoom.</p>
+			to pan and zoom. Use the export buttons below the network to save the visualisation
+			as a PNG image or download the network data as a GEXF file for use in tools such as Gephi.</p>
         </div>
 		<form id="search" method="get" action="{{prefix}}/networks">
 			<div class="form-row form-block">
@@ -63,11 +63,28 @@
 			</div>
 			<button type="submit" class="btn btn-primary">Visualise</button>
 		</form>
-        <div id="mynetwork"></div>
-	    {% if has_query %}
-	    <p style="padding-top: 10px;"><b>Semantic network:</b> {{ node_count }} nodes, {{ edge_count }} edges &mdash; Download <a href="{{ export_url }}">GEXF file</a></p>
+	    {% if node_count %}
+	    <p class="text-center" style="margin-top: 16px; margin-bottom: 4px;">Seeds: <span style="font-weight: 600;">{{ query }}</span> &mdash; {{ node_count }} nodes, {{ edge_count }} edges</p>
 	    {% endif %}
-        <br>
+        <div id="mynetwork"></div>
+	    {% if node_count %}
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 20px;">
+	        <div style="display: flex; gap: 8px;">
+	            <button class="btn btn-primary" onclick="downloadImage()">Export PNG</button>
+	            <a class="btn btn-primary" href="{{ export_url }}">Export GEXF</a>
+	        </div>
+	        <div style="display: flex; align-items: center; gap: 16px; font-size: 0.875em; line-height: 1.5;">
+	            <span style="display: flex; align-items: center; gap: 6px;">
+	                <span style="display: inline-block; width: 18px; height: 18px; border-radius: 50%; background-color: #FFFF00; border: 1px solid #FFA500; flex-shrink: 0;"></span>
+	                Seed word
+	            </span>
+	            <span style="display: flex; align-items: center; gap: 6px;">
+	                <span style="display: inline-block; width: 18px; height: 18px; border-radius: 50%; background-color: #97C2FC; border: 1px solid #2B7CE9; flex-shrink: 0;"></span>
+	                Related word
+	            </span>
+	        </div>
+	    </div>
+	    {% endif %}
         <br>
     </div>
 
@@ -127,6 +144,23 @@
 
   network.once('stabilized', function() {
     network.fit();
+    network.setOptions({ physics: false });
+  });
+
+  network.on('click', function(properties) {
+    if (properties.nodes.length > 0) {
+      var selected = properties.nodes[0];
+      var connected = network.getConnectedNodes(selected);
+      var allNodes = nodes.get();
+      allNodes.forEach(function(n) {
+        n.opacity = (n.id === selected || connected.indexOf(n.id) !== -1) ? 1.0 : 0.15;
+      });
+      nodes.update(allNodes);
+    } else {
+      var allNodes = nodes.get();
+      allNodes.forEach(function(n) { n.opacity = 1; });
+      nodes.update(allNodes);
+    }
   });
 
   network.on('doubleClick', function(properties)
@@ -137,6 +171,21 @@
       window.open('{{prefix}}/search?action=search&qwords=' + q + '&field=all&type=volume&suggest=True');
     }
   });
+
+  function downloadImage() {
+    var canvas = container.querySelector('canvas');
+    var exportCanvas = document.createElement('canvas');
+    exportCanvas.width = canvas.width;
+    exportCanvas.height = canvas.height;
+    var ctx = exportCanvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+    ctx.drawImage(canvas, 0, 0);
+    var link = document.createElement('a');
+    link.download = 'network-{{ k }}-{{ query }}'.replace(/,\s*/g, '_') + '.png';
+    link.href = exportCanvas.toDataURL('image/png');
+    link.click();
+  }
 
 </script>
 
