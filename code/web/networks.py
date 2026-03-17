@@ -108,6 +108,7 @@ def populate_networks_page(context):
 	context["edgedata"] = Markup(edges_js)
 	context["node_count"] = len(nodes)
 	context["edge_count"] = len(edges)
+	context["k"] = k
 
 	# Navigation controls (on by default, disable with controls=false)
 	controls_param = context.request.args.get("controls", default="true").lower()
