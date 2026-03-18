@@ -119,6 +119,39 @@ def populate_networks_page(context):
 	context["export_url"] = Markup(f"{context.prefix}/exportnetworks?k={k}&embedding={embed_id}&seeds={quoted_query_string}")
 	return context
 
+def network_gexf_api(context):
+	"""
+	Generate GEXF data for a semantic network for the public API endpoint.
+
+	Args:
+		context: Dictionary containing core, request, and other parameters
+
+	Returns:
+		GEXF XML string, or None if no queries provided
+	"""
+	try:
+		default_k = context.core.config["networks"].getint("default_k", default_num_k)
+		k = max(1, parse_arg_int(context.request, "k", default_k))
+		default_hops = context.core.config["networks"].getint("default_hops", default_num_hops)
+		hops = max(1, parse_arg_int(context.request, "hops", default_hops))
+	except (KeyError, ValueError) as e:
+		log.warning(f"Error parsing network parameters: {e}")
+		k = default_num_k
+		hops = default_num_hops
+	embed_id = context.request.args.get("embedding", default=context.core.default_embedding_id)
+
+	raw_query_string = context.request.args.get("seeds", default="").lower()
+	queries = parse_seed_text(raw_query_string)
+	if len(queries) == 0:
+		return None
+
+	nodes, edges, hop_dict = find_neighbors(context.core, embed_id, queries, k, hops)
+	log.info(f"API network GEXF: |V|={len(nodes)} |E|={len(edges)} k={k} seeds={','.join(queries)}")
+
+	out = io.StringIO()
+	create_gexf(out, queries, nodes, edges, hop_dict)
+	return out.getvalue()
+
 def export_network(context):
 	"""
 	Export a semantic network to an undirected network in GEXF format.
