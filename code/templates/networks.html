@@ -38,21 +38,21 @@
 		<div class="form-card" style="margin-bottom: 27px;">
 		<form id="search" method="get" action="{{prefix}}/networks">
 			<div class="form-row form-block">
-				<div class="col">
+				<div class="col-12">
 					<label for="seeds">Enter one or more seed words (space or comma separated)</label>
-					<input name="seeds" type="search" class="form-control mr-sm-2" placeholder="Enter seed words" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+					<input name="seeds" type="search" class="form-control mr-sm-2" placeholder="Enter seed words" aria-label="Search" size="32" value="{{ query }}" style="width: 100%;">
 				</div>
 			</div>
 			<div class="form-row form-block">
 				<div class="col">
 					<label for="k">Number of related words per keyword</label>
-					<select class="form-control dropdown" id="k" name="k" style="width: 50%;">
+					<select class="form-control dropdown" id="k" name="k" style="width: 100%;">
 						{{ neighbor_options }}
 					</select>
 				</div>
 				<div class="col form-col-right">
 					<label for="embedding">Collection</label>
-					<select class="form-control dropdown" id="embedding" name="embedding" style="width: 50%;">
+					<select class="form-control dropdown" id="embedding" name="embedding" style="width: 100%;">
 						{{ embedding_options }}
 					</select>
 				</div>
