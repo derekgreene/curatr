@@ -67,9 +67,9 @@
 	    {% if node_count %}
 	    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 20px;">
 	        <div style="display: flex; gap: 8px;">
-	            <button class="btn btn-primary" style="width: 140px;" onclick="downloadImage()">Export PNG</button>
-	            <a class="btn btn-primary" style="width: 140px; text-align: center;" href="{{ export_url }}">Export GEXF</a>
-	            <button class="btn btn-primary" style="width: 140px;" onclick="openInGephi()">Open in Gephi</button>
+	            <button class="btn btn-primary" style="width: 140px; display: inline-flex; justify-content: center; align-items: center;" onclick="downloadImage()">Export PNG</button>
+	            <a class="btn btn-primary" style="width: 140px; display: inline-flex; justify-content: center; align-items: center;" href="{{ export_url }}">Export GEXF</a>
+	            <button class="btn btn-primary" style="width: 140px; display: inline-flex; justify-content: center; align-items: center;" onclick="openInGephi()">Open in Gephi</button>
 	        </div>
 	        <div style="display: flex; align-items: center; gap: 16px; font-size: 1em; line-height: 1.5;">
 	            <span style="display: flex; align-items: center; gap: 7px;">
@@ -174,12 +174,11 @@
     var seeds = document.querySelector('input[name="seeds"]').value;
     var k = document.getElementById('k').value;
     var embedding = document.getElementById('embedding').value;
-    var gexfUrl = window.location.protocol + '//' + window.location.host
-      + '{{apiprefix}}/network/gexf'
+    var apiUrl = window.location.origin + '{{apiprefix}}/network/gexf'
       + '?seeds=' + seeds
       + '&k=' + k
       + '&embedding=' + embedding;
-    window.open('https://lite.gephi.org/?file=' + encodeURIComponent(gexfUrl), '_blank');
+    window.open('https://lite.gephi.org/?file=' + encodeURIComponent(apiUrl), '_blank');
   }
 
   function downloadImage() {
