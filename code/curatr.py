@@ -35,7 +35,7 @@ from web.admin import format_user_list
 from web.export import populate_export
 from web.api import author_list, ngram_counts
 from web.util import safe_int
-from web.networks import populate_networks_page, export_network
+from web.networks import populate_networks_page, export_network, network_gexf_api
 from user import validate_email, generate_password, password_to_hash, validate_password
 from advanced import create_dash_app
 
@@ -1167,6 +1167,23 @@ def handle_segment_text(segment_id):
 		abort(404, description=error_msg)
 	content = doc["content"] + "\n"
 	return Response(content, mimetype="text/plain")
+
+@app.route("/api/network/gexf")
+def handle_network_gexf():
+	"""
+	API endpoint: returns GEXF data for a semantic network.
+
+	Accepts seeds (comma-separated), k (neighbours per word), and embedding
+	query parameters. No authentication required. Returns application/xml with
+	CORS headers so tools like Gephi Lite can fetch it cross-origin.
+	"""
+	context = app.get_context(request)
+	gexf_data = network_gexf_api(context)
+	if gexf_data is None:
+		abort(404, description="No seeds specified for network")
+	response = Response(gexf_data.encode("utf-8"), mimetype="application/xml")
+	response.headers["Access-Control-Allow-Origin"] = "*"
+	return response
 
 # --------------------------------------------------------------
 # Error Handling
