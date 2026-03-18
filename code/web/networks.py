@@ -255,7 +255,9 @@ def create_gexf(out, queries, nodes, edges, hop_dict):
 	# Add the edges
 	out.write('\t\t<edges>\n')
 	for edge_id, e in enumerate(edges):
-		out.write(f'\t\t\t<edge id="{edge_id}" source="{escape(e[0])}" target="{escape(e[1])}"/>\n')
+		out.write(f'\t\t\t<edge id="{edge_id}" source="{escape(e[0])}" target="{escape(e[1])}">\n')
+		out.write('\t\t\t\t<viz:thickness value="2"/>\n')
+		out.write('\t\t\t</edge>\n')
 	out.write('\t\t</edges>\n')
 
 	# Finished network
