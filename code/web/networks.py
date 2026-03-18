@@ -238,9 +238,17 @@ def create_gexf(out, queries, nodes, edges, hop_dict):
 	# Add the nodes
 	out.write('\t\t<nodes>\n')
 	for node in nodes:
+		hop = hop_dict[node]
+		if hop == 0:
+			r, g, b = 255, 255, 0    # yellow — seed nodes (#FFFF00)
+			size = 20
+		else:
+			r, g, b = 151, 194, 252  # blue — related nodes (#97C2FC)
+			size = 10
 		out.write(f'\t\t\t<node id="{escape(node)}" label="{escape(node)}">\n')
-		# Add the hop attribute
-		out.write(f'\t\t\t\t<attvalues><attvalue for="0" value="{hop_dict[node]}"/></attvalues>\n')
+		out.write(f'\t\t\t\t<attvalues><attvalue for="0" value="{hop}"/></attvalues>\n')
+		out.write(f'\t\t\t\t<viz:color r="{r}" g="{g}" b="{b}"/>\n')
+		out.write(f'\t\t\t\t<viz:size value="{size}"/>\n')
 		out.write('\t\t\t</node>\n')
 	out.write('\t\t</nodes>\n')
 
