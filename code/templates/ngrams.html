@@ -38,31 +38,31 @@
 		<div class="form-card" style="margin-bottom: 27px;">
 		<form id="search" method="get" action="{{prefix}}/ngrams">
 			<div class="form-row form-block">
-				<div class="col">
+				<div class="col-12">
 					<label for="qwords">Enter one or more keywords or phrases (comma separated)</label>
-					<input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 80%;">
+					<input name="qwords" type="search" class="form-control mr-sm-2" placeholder="Enter search keywords" aria-label="Search" size="32" value="{{ query }}" style="width: 100%;">
 				</div>
 			</div>
 			<div class="form-row form-block">
 				<div class="col">
 					<label for="year_start">Start Year</label>
-					<input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" size="10" value="{{ yearstart }}">
+					<input type="text" class="form-control filter" name="year_start" id="year_start" placeholder="Start YYYY" value="{{ yearstart }}" style="width: 100%;">
 				</div>
 				<div class="col form-col-right">
 					<label for="year_end">End Year</label>
-					<input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" size="10" value="{{ yearend }}">
+					<input type="text" class="form-control filter" name="year_end" id="year_end" placeholder="End YYYY" value="{{ yearend }}" style="width: 100%;">
 				</div>
 			</div>
 			<div class="form-row form-block">
 				<div class="col">
 					<label for="collection">Collection</label>
-					<select class="form-control dropdown" id="collection" name="collection" style="width: 25%;">
+					<select class="form-control dropdown" id="collection" name="collection" style="width: 100%;">
 						{{ collection_options }}
 					</select>
 				</div>
 				<div class="col form-col-right">
 					<label for="normalize">Plot Type</label>
-					<select class="form-control dropdown" id="normalize" name="normalize" style="width: 60%;">
+					<select class="form-control dropdown" id="normalize" name="normalize" style="width: 100%;">
 						{{ normalize_options }}
 					</select>
 				</div>
