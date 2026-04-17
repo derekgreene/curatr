@@ -68,6 +68,21 @@ def populate_volume(context, db, doc, spec, volume_id):
 		url_spec += "&year_start=%d" % spec["year_start"]
 	if spec["year_end"] < 2000:
 		url_spec += "&year_end=%d" % spec["year_end"]
+	# Add volume navigation links for multi-volume works
+	max_vol = context["max_volume"]
+	if max_vol > 1:
+		volume_links_html = ""
+		for vol_num in range(1, max_vol + 1):
+			if vol_num == volume:
+				volume_links_html += "<strong>Volume %d</strong>" % vol_num
+			else:
+				url_vol = "%s/volume?id=%s_%02d&%s" % (context.prefix, id_parts[0], vol_num, url_spec)
+				volume_links_html += "<a href='%s'>Volume %d</a>" % (url_vol, vol_num)
+			if vol_num < max_vol:
+				volume_links_html += " &nbsp;&mdash;&nbsp; "
+		context["volume_links"] = Markup(volume_links_html)
+	else:
+		context["volume_links"] = None
 	context["url_similar"] = "%s/similar?volume_id=%s" % (context.prefix, volume_id)
 	# Text download link
 	context["url_download"] = "%s/volume/%s" % (context.apiprefix, volume_id)
