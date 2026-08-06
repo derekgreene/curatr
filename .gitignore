@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # VS Code
-.vscode/*
+.vscode/
 .history/
 *.vsix
 
@@ -137,3 +137,15 @@ dmypy.json
 *.bin
 *.kv
 *.npy
+
+# macOS
+.DS_Store
+
+# Curatr configuration files, which contain database credentials and the Flask
+# secret key. Only the placeholder sample configuration is tracked.
+core/*.ini
+!core/sample-config.ini
+
+# Local working material: deployment notes, SSL certificates, code snapshots
+misc/
+install.txt
