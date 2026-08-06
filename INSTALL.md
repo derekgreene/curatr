@@ -16,15 +16,15 @@ pandas
 numpy
 scikit-learn
 gensim
-nltk
 networkx
 ftfy
 passlib
+tabulate
 ```
 
 You can install these packages using pip:
 
-```pip install flask flask-login dash dash-bootstrap-components dash-cytoscape pymysql python-solrclient pandas numpy scikit-learn gensim nltk networkx ftfy passlib```
+```pip install flask flask-login dash dash-bootstrap-components dash-cytoscape pymysql python-solrclient pandas numpy scikit-learn gensim networkx ftfy passlib tabulate```
 
 ## Core Directory Setup
 

@@ -1,5 +1,6 @@
 import re, unicodedata
 import logging as log
+from itertools import islice
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from gensim.parsing.porter import PorterStemmer
@@ -20,6 +21,14 @@ def custom_tokenizer(s, min_term_length=2):
 	Tokenizer to split text based on any whitespace, keeping only terms of at least a certain length which start with an alphabetic character.
 	"""
 	return [x.lower() for x in token_pattern.findall(s) if (len(x) >= min_term_length and x[0].isalpha() ) ]
+
+def bigrams(tokens):
+	"""
+	Generate all consecutive pairs of tokens from the specified sequence of tokens.
+	Note that the input should be a sequence (e.g. a list) rather than a generator,
+	since it is iterated twice.
+	"""
+	return zip(tokens, islice(tokens, 1, None))
 
 def build_bow(docgen, stopwords=[], min_df=10, apply_tfidf=True, apply_norm=True):
 	""" 

@@ -17,7 +17,6 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - Flask: https://flask.palletsprojects.com/en/2.3.x/
 - Flask-Login: https://flask-login.readthedocs.io/en/latest/
 - NetworkX: https://networkx.org/
-- NLTK: https://www.nltk.org/
 - tabulate: https://pypi.org/project/tabulate
 
 Additional dependencies:
