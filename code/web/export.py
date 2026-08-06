@@ -400,9 +400,9 @@ class BulkExporter:
 			for doc in results:
 				fname = "%s.txt" % doc["id"]
 				if is_segments:
-					arc_path = Path("volumes") / fname
-				else:
 					arc_path = Path("segments") / fname
+				else:
+					arc_path = Path("volumes") / fname
 				zip.writestr(str(arc_path), doc["content"])
 			zip.close()
 		except Exception as e:
