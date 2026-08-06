@@ -15,10 +15,9 @@ import sys
 from optparse import OptionParser
 from pathlib import Path
 from collections import Counter
-import nltk
 from core import CoreCuratr
 from preprocessing.cleaning import clean_content
-from preprocessing.text import custom_tokenizer, load_stopwords, strip_accents_unicode
+from preprocessing.text import custom_tokenizer, load_stopwords, strip_accents_unicode, bigrams
 
 # --------------------------------------------------------------
 
@@ -38,7 +37,7 @@ def extract_tokens(volume_path, stopwords, use_bigrams=False, min_ngram_length=2
 			volume_tokens.add(token)
 		# add bigrams too?
 		if use_bigrams:
-			for b in nltk.bigrams(stripped_tokens):
+			for b in bigrams(stripped_tokens):
 				# first token too short/long or a stopword?
 				if len(b[0]) < min_ngram_length or len(b[0]) > max_ngram_length or b[0] in stopwords:
 					continue
