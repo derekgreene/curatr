@@ -10,7 +10,6 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - Pandas: https://pandas.pydata.org
 - PyMySQL: https://pypi.org/project/PyMySQL
 - scikit-learn: https://scikit-learn.org/stable
-- requests: https://docs.python-requests.org
 - SolrClient: https://github.com/moonlitesolutions/SolrClient
 - Gensim: https://radimrehurek.com/gensim
 - ftfy: https://pypi.org/project/ftfy
@@ -19,14 +18,16 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - Flask-Login: https://flask-login.readthedocs.io/en/latest/
 - NetworkX: https://networkx.org/
 - NLTK: https://www.nltk.org/
+- tabulate: https://pypi.org/project/tabulate
 
 Additional dependencies:
 - MySQL: https://www.mysql.com (tested with 5.7.40 and 8.0.33)
-- Apache Solr: https://solr.apache.org (tested with 8.11.2)
-- A Java JDK supported by Apache Solr (tested with OpenJDK 17.0.7 and 19.0.1)
+- Apache Solr: https://solr.apache.org (tested with 9.x)
+- A Java JDK supported by Apache Solr, i.e. Java 11 or later (tested with OpenJDK 17.0.7 and 19.0.1)
 
 Frontend dependencies (loaded from CDN):
 - Bootstrap Icons: https://icons.getbootstrap.com
+- Font Awesome: https://fontawesome.com
 - Highcharts: https://www.highcharts.com (Ngram Viewer)
 - vis-network: https://visjs.github.io/vis-network (Semantic Networks)
 
@@ -48,6 +49,16 @@ Curatr provides a range of tools for searching, browsing, and analysing the BL19
 - **Concordance**: identify every occurrence of a particular word or phrase within the collection, presented alongside its immediate linguistic context.
 - **Word Lexicons**: create and manage curated lists of keywords related to a given research topic. Lexicons can be expanded automatically using a word embedding model to suggest semantically similar terms, and used to drive searches and sub-corpus exports.
 - **Sub-Corpora**: define and export smaller, topic-specific sub-corpora of the collection, filtered thematically, chronologically, and by classification, for close reading and offline analysis.
+- **Related Volumes**: for any given volume, browse other volumes in the collection with similar content, based on pre-computed pairwise similarities.
+- **Bookmarks**: save volumes and individual text segments of interest to a personal reading list.
+
+Curatr also provides a read-only JSON API (under */api*) for the author catalogue, n-gram counts, individual volumes and segments, and semantic networks in GEXF format.
+
+## Documentation
+
+- [doc/install.md](doc/install.md): installation instructions and details of the setup scripts used to build the database, search index, and other derived data.
+- [doc/data.md](doc/data.md): the data formats used by the platform, covering the raw British Library source files, the cleaned metadata, the full-text corpus, the MySQL schema, the Solr indexes, and all export formats.
+- [doc/embeddings.md](doc/embeddings.md): how the word embedding models are trained, stored, and used at runtime.
 
 ## Acknowledgements
 
