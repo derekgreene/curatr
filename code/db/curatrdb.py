@@ -579,6 +579,74 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in extract_count(): %s" % str(e))
 			return 0
+
+	def total_word_count(self):
+		""" Return the total number of words across all volumes in the collection """
+		try:
+			self.cursor.execute("SELECT SUM(word_count) FROM Volumes")
+			result = self.cursor.fetchone()
+			# no volumes, or no word counts have been added yet?
+			if result is None or result[0] is None:
+				return 0
+			return int(result[0])
+		except Exception as e:
+			log.error("SQL error in total_word_count(): %s" % str(e))
+			return 0
+
+	def get_word_counts_by_classification(self):
+		""" Return volume and word counts, grouped by primary classification """
+		try:
+			sql = """SELECT c.overall AS classification, COUNT(*) AS volumes,
+				SUM(v.word_count) AS words FROM Volumes v
+				JOIN Classifications c ON c.book_id = v.book_id GROUP BY c.overall"""
+			return self._bulk_sql_to_dict(sql)
+		except Exception as e:
+			log.error("SQL error in get_word_counts_by_classification(): %s" % str(e))
+			return []
+
+	def missing_word_count_count(self):
+		""" Return the number of volumes which have no word count recorded """
+		try:
+			self.cursor.execute("SELECT COUNT(*) FROM Volumes WHERE word_count IS NULL OR word_count = 0")
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in missing_word_count_count(): %s" % str(e))
+			return 0
+
+	def missing_extract_count(self):
+		""" Return the number of volumes which have no extract stored """
+		try:
+			sql = """SELECT COUNT(*) FROM Volumes v LEFT JOIN VolumeExtracts e
+				ON e.volume_id = v.id WHERE e.volume_id IS NULL"""
+			self.cursor.execute(sql)
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in missing_extract_count(): %s" % str(e))
+			return 0
+
+	def missing_recommendation_count(self):
+		""" Return the number of volumes which have no recommendations stored """
+		try:
+			sql = """SELECT COUNT(*) FROM Volumes v LEFT JOIN Recommendations r
+				ON r.volume_id = v.id WHERE r.volume_id IS NULL"""
+			self.cursor.execute(sql)
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in missing_recommendation_count(): %s" % str(e))
+			return 0
+
+	def distinct_ngram_count(self, collection_id):
+		""" Return the number of distinct ngrams stored for the specified collection """
+		try:
+			self.cursor.execute("SELECT COUNT(DISTINCT ngram) FROM Ngrams WHERE collection=%s", collection_id)
+			result = self.cursor.fetchone()
+			return result[0]
+		except Exception as e:
+			log.error("SQL error in distinct_ngram_count(): %s" % str(e))
+			return 0
 			
 	def add_lexicon(self, name, user_id, description, classification, seed_words, ignore_words = []):
 		""" Add a new word lexicon to the datbase """
