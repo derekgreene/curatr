@@ -16,7 +16,9 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - Passlib: https://pypi.org/project/passlib
 - Flask: https://flask.palletsprojects.com/en/2.3.x/
 - Flask-Login: https://flask-login.readthedocs.io/en/latest/
+- MarkupSafe: https://pypi.org/project/MarkupSafe
 - NetworkX: https://networkx.org/
+- openpyxl: https://pypi.org/project/openpyxl
 - tabulate: https://pypi.org/project/tabulate
 
 Additional dependencies:
@@ -26,9 +28,9 @@ Additional dependencies:
 
 Frontend dependencies (loaded from CDN):
 - Bootstrap Icons: https://icons.getbootstrap.com
-- Font Awesome: https://fontawesome.com
 - Highcharts: https://www.highcharts.com (Ngram Viewer)
 - vis-network: https://visjs.github.io/vis-network (Semantic Networks)
+- Font Awesome: https://fontawesome.com
 
 Dependencies for optional advanced network viewer:
 - dash: https://dash.plotly.com
@@ -39,13 +41,13 @@ Dependencies for optional advanced network viewer:
 
 Curatr provides a range of tools for searching, browsing, and analysing the BL19 collection:
 
-- **Collection Search**: a searchable index of over 12 million pages, filterable by author, title, year, classification, publication location, and document type, with sorting by relevance, date, or title.
+- **Collection Search**: a searchable index of over 12 million text segments, searchable by full text, title, author, or publication location, and filterable by year, classification, and document type, with sorting by relevance, date, or title.
 - **Classification Index**: a browsable version of the hierarchical topical index used by the British Library from 1823 to 1985, from broad categories such as "Fiction" and "Geography" down to more fine-grained sub-topics.
 - **Catalogue**: a sortable and searchable table of all books in the collection, browsable by title, author, and year of publication.
 - **Authors**: browse the collection by author, with links to all associated volumes.
-- **Ngram Viewer**: plot the frequency of one or more words across the collection over time, with the option to click through to the corresponding search results for any given year. Results can be exported as a CSV file.
+- **Ngram Viewer**: plot the frequency with which one or more words occur across the collection over time, measured as the number of volumes per year containing each term, with the option to click through to the corresponding search results for any given year. Results can be exported as a CSV file.
 - **Semantic Networks**: visualise conceptual relationships in the collection by constructing interactive semantic networks from seed words, with associated words identified using word embedding models.
-- **Concordance**: identify every occurrence of a particular word or phrase within the collection, presented alongside its immediate linguistic context.
+- **Concordance**: identify occurrences of a particular word or phrase throughout the collection, presented alongside its immediate linguistic context.
 - **Word Lexicons**: create and manage curated lists of keywords related to a given research topic. Lexicons can be expanded automatically using a word embedding model to suggest semantically similar terms, and used to drive searches and sub-corpus exports.
 - **Sub-Corpora**: define and export smaller, topic-specific sub-corpora of the collection, filtered thematically, chronologically, and by classification, for close reading and offline analysis.
 - **Related Volumes**: for any given volume, browse other volumes in the collection with similar content, based on pre-computed pairwise similarities.
@@ -53,13 +55,9 @@ Curatr provides a range of tools for searching, browsing, and analysing the BL19
 
 Curatr also provides a read-only JSON API (under */api*) for the author catalogue, n-gram counts, individual volumes and segments, and semantic networks in GEXF format.
 
-## Documentation
-
-- [doc/install.md](doc/install.md): installation instructions and details of the setup scripts used to build the database, search index, and other derived data.
-- [doc/data.md](doc/data.md): the data formats used by the platform, covering the raw British Library source files, the cleaned metadata, the full-text corpus, the MySQL schema, the Solr indexes, and all export formats.
-- [doc/embeddings.md](doc/embeddings.md): how the word embedding models are trained, stored, and used at runtime.
-
 ## Acknowledgements
 
-This work is part of the [VICTEUR project](https://projectvicteur.com/), which has received funding from the [European Research Council (ERC)](https://erc.europa.eu/) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the [UCD School of English, Drama and Film](http://www.ucd.ie/englishdramafilm/), in collaboration with researchers from the [Insight Research Ireland Centre for Data Analytics](http://www.insight-centre.org/) at the [UCD School of Computer Science](https://www.ucd.ie/cs/). The BL19 digitised book collection was provided by British Library Labs. The Curatr source code is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), while the accompanying metadata in this repository is licensed under a [Creative Commons BY-NC-ND 4.0 Licence](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+This work is part of the [VICTEUR project](https://projectvicteur.com/), which has received funding from the [European Research Council (ERC)](https://erc.europa.eu/) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 884951), and is being undertaken by members of the [UCD School of English, Drama and Film](http://www.ucd.ie/englishdramafilm/), in collaboration with researchers from the [Insight Research Ireland Centre for Data Analytics](http://www.insight-centre.org/) at the [UCD School of Computer Science](https://www.ucd.ie/cs/). 
+
+The BL19 digitised book collection was provided by British Library Labs. The Curatr source code is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), while the accompanying metadata in this repository is licensed under a [Creative Commons BY-NC-ND 4.0 Licence](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
