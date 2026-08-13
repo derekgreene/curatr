@@ -1,5 +1,7 @@
 # Installation
 
+Curatr makes the English-language subset of the British Library Nineteenth Century Digitised Books Collection, referred to here as BL19, searchable and analysable.
+
 ## Python Requirements
 
 Curatr requires Python 3.8 or later. The following Python packages must be installed:
@@ -31,8 +33,8 @@ You can install these packages using pip:
 ## Core Directory Setup
 
 The Curatr *core* directory should contain all of the key required data for Curatr, with the following sub-directories:
-- metadata: Stores all of the key metadata for the British Library Digital Collection (i.e. book-metadata.json, book-classifications.csv, book-links.csv, book-volumes.csv).
-- fulltext: Stores all of the individual volume plain-text files for the British Library Digital Collection (e.g. fulltext/0139/013952747_01_text.txt).
+- metadata: Stores all of the key metadata for BL19 (i.e. book-metadata.json, book-classifications.csv, book-links.csv, book-volumes.csv).
+- fulltext: Stores all of the individual volume plain-text files for BL19 (e.g. fulltext/0139/013952747_01_text.txt).
 - embeddings: Stores word2vec embedding model files for word recommendations and semantic networks (e.g. bl-w2v-cbow-d100.bin).
 - export: Stores sub-corpora created by Curatr users. This directory will initially be empty.
 
@@ -42,7 +44,7 @@ To recreate all of the key metadata from the original raw data files from the Br
 
 ## Embedding Setup
 
-For word recommendations and semantic networks, run the commands below to create word2vec embeddings from the plain text files of the British Library Digital Collection. Note that this will take some time.
+For word recommendations and semantic networks, run the commands below to create word2vec embeddings from the plain text files of BL19. Note that this will take some time.
 
 ```python code/create-embedding.py core```
 
@@ -99,7 +101,7 @@ Then from the Solr home directory register the two Solr cores:
 
 ```./bin/solr create -c blsegments ```
 
-At this stage we can index the full text of the British Library Digital Collection, for both volumes and segments:
+At this stage we can index the full text of BL19, for both volumes and segments:
 
 ```python code/create-search.py core ```
 
