@@ -27,20 +27,21 @@
     <h2>About Curatr</h2>
     <h5 class="division">Project Overview</h5>
     <p class="text-justify">Curatr is a bespoke online platform designed to improve the accessibility of the
-    <a href="https://doi.org/10.21250/db14" target="_blank" rel="noopener noreferrer">British Library Nineteenth Century Digitised Books Collection</a>
-    (BL19). The collection is provided by British Library Labs and the platform was developed by the ERC-funded
+    <a href="https://doi.org/10.21250/db14" target="_blank" rel="noopener noreferrer">British Library Nineteenth Century Digitised Books Collection</a>.
+    The collection is provided by British Library Labs and the platform was developed by the ERC-funded
     <a href="https://projectvicteur.com/" target="_blank" rel="noopener noreferrer">VICTEUR project</a> at
     <a href='http://www.ucd.ie/englishdramafilm/' target='_blank' rel="noopener noreferrer">UCD English, Drama and Film</a>, in collaboration with
     researchers at the <a href='http://www.insight-centre.org/' target='_blank' rel="noopener noreferrer">Insight Research Ireland Centre for Data Analytics</a>
-    as part of Insight's Cultural Analytics Research Initiative. Curatr hosts digitised plain-text versions of all
-    English-language books from the collection, corresponding to {{ num_books }} unique out-of-copyright English-language titles, both fiction and
+    as part of Insight's Cultural Analytics Research Initiative. Curatr hosts digitised plain-text versions of the
+    English-language portion of the collection, referred to here as BL19, corresponding to {{ num_books }} unique out-of-copyright titles, both fiction and
     non-fiction, from {{ year_min }} to {{ year_max }}. Accounting for multi-volume works, this totals {{ num_volumes }} volumes of text.</p>
 
     <p class="text-justify">The platform combines search tools and visual semantic network maps to bring overlooked texts to light and
     reveal connections between related terms and ideas across the collection. By integrating machine learning techniques into
     literary scholarship, Curatr opens BL19 to a range of scholarly approaches through multiple entry points, making it
     accessible to researchers without specialist training in digital humanities. The platform also incorporates the first
-    digitised version of the topical classification index used by the British Library from the early nineteenth century until the 1980s.
+    digitised version of the topical classification index used by the British Museum Library from the early nineteenth
+    century until 1973, and subsequently by the British Library until the end of 1985.
     Since legibility varies in earlier texts, the platform is also designed to help researchers locate and evaluate relevant
     titles before consulting them in person at the Library.</p>
 
@@ -48,10 +49,11 @@
     <p class="text-justify">Curatr provides a range of tools for searching, browsing, and analysing the BL19 collection:</p>
 
     <ul class="features">
-      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_search') }}">Collection Search</a>{% else %}<i>Collection Search</i>{% endif %}</strong>: a searchable index of over 12 million pages,
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_search') }}">Collection Search</a>{% else %}<i>Collection Search</i>{% endif %}</strong>: a searchable index of {{ num_volumes }} volumes and {{ num_segments }} text segments,
         filterable by author, title, year, classification, publication location, and document type, with sorting by relevance, date, or title.</li>
       <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_classification') }}">Classification Index</a>{% else %}<i>Classification Index</i>{% endif %}</strong>: a browsable version of the hierarchical
-        topical index used by the British Library from 1823 to 1985, from broad categories such as "Fiction" and "Geography" down to
+        topical index used by the British Museum Library from the early nineteenth century until 1973, and subsequently by
+        the British Library until the end of 1985, from broad categories such as "Fiction" and "Geography" down to
         more fine-grained sub-topics.</li>
       <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_catalogue') }}">Catalogue</a>{% else %}<i>Catalogue</i>{% endif %}</strong>: a sortable and searchable table of all books in the
         collection, browsable by title, author, and year of publication.</li>
@@ -71,6 +73,10 @@
       <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_corpora') }}">Sub-Corpora</a>{% else %}<i>Sub-Corpora</i>{% endif %}</strong>: define and export smaller, topic-specific
         sub-corpora of the collection, filtered thematically, chronologically, and by classification, for close reading and
         offline analysis.</li>
+      <li><strong><i>Similar Volumes</i></strong>: for any given volume, browse the 50 most similar volumes in the
+        collection, based on pre-computed pairwise similarities.</li>
+      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_bookmarks') }}">Bookmarks</a>{% else %}<i>Bookmarks</i>{% endif %}</strong>: save volumes and individual
+        text segments of interest to a personal reading list.</li>
     </ul>
 
     <h5 class="division">Resources &amp; Contact</h5>
