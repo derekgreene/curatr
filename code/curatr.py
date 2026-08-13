@@ -184,6 +184,7 @@ def handle_about():
 	# add key statistics
 	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
 	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
+	context["num_segments"] =  "{:,}".format(app.core.cache["segment_count"])
 	context["year_min"] = app.core.cache["year_min"]
 	context["year_max"] = app.core.cache["year_max"]
 	return render_template("about.html", **context)
