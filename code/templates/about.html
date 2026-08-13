@@ -73,9 +73,9 @@
       <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_corpora') }}">Sub-Corpora</a>{% else %}<i>Sub-Corpora</i>{% endif %}</strong>: define and export smaller, topic-specific
         sub-corpora of the collection, filtered thematically, chronologically, and by classification, for close reading and
         offline analysis.</li>
-      <li><strong><i>Similar Volumes</i></strong>: for any given volume, browse the 50 most similar volumes in the
+<!--       <li><strong><i>Similar Volumes</i></strong>: for any given volume, browse the 50 most similar volumes in the
         collection, based on pre-computed pairwise similarities.</li>
-      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_bookmarks') }}">Bookmarks</a>{% else %}<i>Bookmarks</i>{% endif %}</strong>: save volumes and individual
+ -->      <li><strong>{% if not current_user.is_anonymous %}<a href="{{ url_for('handle_bookmarks') }}">Bookmarks</a>{% else %}<i>Bookmarks</i>{% endif %}</strong>: save volumes and individual
         text segments of interest to a personal reading list.</li>
     </ul>
 
