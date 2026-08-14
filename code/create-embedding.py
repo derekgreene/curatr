@@ -9,6 +9,7 @@ Default usage:
 Note that we can also create additional embeddings from subsets of the collection
 	python code/create-embedding.py core -c fiction
 	python code/create-embedding.py core -c nonfiction
+	python code/create-embedding.py core -c fiction --ymin 1864 --ymax 1880
 """
 import logging as log
 import sys
@@ -30,6 +31,8 @@ def main():
 		help="the maximum distance for Word2Vec to use between the current and predicted word within a sentence", default=5)
 	parser.add_option("-m", action="store", type="string", dest="embed_type", help="type of word embedding to build (sg or cbow)", default="cbow")
 	parser.add_option("-c","--collection", action="store", type="string", dest="collection", help="set of books to use (all, fiction, nonfiction)", default="all")
+	parser.add_option("--ymin", action="store", type="int", dest="year_min", help="start year", default=-1)
+	parser.add_option("--ymax", action="store", type="int", dest="year_max", help="end year", default=-1)
 	(options, args) = parser.parse_args()
 	if len(args) < 1:
 		parser.error("Must specify core directory")
@@ -60,6 +63,28 @@ def main():
 			log.error("Unknown collection subset: %s" % options.collection)
 			sys.exit(1)
 
+	# do we need to filter on year?
+	# year_prefix will be added to the filename if filtering by year range
+	year_prefix = ""
+	if options.year_min > 0 and options.year_max > 0:
+		# ensure year_min is within the available data range
+		year_min = max(options.year_min, df_books["year"].min())
+		year_max = options.year_max
+		# if year_max is before year_min, extend to the latest available year
+		if year_max < year_min:
+			year_max = df_books["year"].max()
+		# filter books to only include those within the specified date range
+		filtered_book_ids = []
+		for book_id, year in df_books["year"].items():
+			if not book_id in book_ids:
+				continue
+			if year >= year_min and year <= year_max:
+				filtered_book_ids.append(book_id)
+		book_ids = filtered_book_ids
+		log.info("Filtering based on date range [%d,%d] down to %d books" % (year_min, year_max, len(book_ids)))
+		# add year range to filename for identification
+		year_prefix = "_%d_%d" % (year_min, year_max)
+
 	# get default stopwords list
 	stopwords = core_prep.get_stopwords()
 	log.info("Using default list of %d stopwords" % len(stopwords))
@@ -81,21 +106,21 @@ def main():
 
 	# save the Word2Vec model in binary format
 	if options.collection == "all":
-		fname = "bl-w2v-%s-d%d.bin" % (options.embed_type, options.dimensions)
+		fname = "bl-w2v-%s%s-d%d.bin" % (options.embed_type, year_prefix, options.dimensions)
 	else:
-		fname = "bl%s-w2v-%s-d%d.bin" % (options.collection, options.embed_type, options.dimensions)
+		fname = "bl%s-w2v-%s%s-d%d.bin" % (options.collection, options.embed_type, year_prefix, options.dimensions)
 	out_path = core_prep.dir_embeddings / fname
 	log.info("Writing word embedding to %s ..." % out_path)
-	embed.wv.save_word2vec_format(out_path, binary=True) 
+	embed.wv.save_word2vec_format(out_path, binary=True)
 
 	# save the Word2Vec model in native Gensim .kv format
 	if options.collection == "all":
-		fname = "bl-w2v-%s-d%d.kv" % (options.embed_type, options.dimensions)
+		fname = "bl-w2v-%s%s-d%d.kv" % (options.embed_type, year_prefix, options.dimensions)
 	else:
-		fname = "bl%s-w2v-%s-d%d.kv" % (options.collection, options.embed_type, options.dimensions)
+		fname = "bl%s-w2v-%s%s-d%d.kv" % (options.collection, options.embed_type, year_prefix, options.dimensions)
 	out_path = core_prep.dir_embeddings / fname
 	log.info("Writing word embedding (Gensim format) to %s ..." % out_path)
-	embed.save(out_path)
+	embed.wv.save(str(out_path))
 	
 	log.info("Actions complete")
 
