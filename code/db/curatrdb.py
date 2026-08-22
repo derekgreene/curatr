@@ -7,7 +7,7 @@ from user import User, dict_to_user
 # --------------------------------------------------------------
 
 core_tables = ["Books", "Authors", "BookAuthors", "BookLocations", "BookShelfmarks",
-	"Volumes", "BookLinks", "Classifications", "Recommendations", "Ngrams", "VolumeExtracts",
+	"Volumes", "Classifications", "Recommendations", "Ngrams", "VolumeExtracts",
 	"Users", "Lexicons", "LexiconWords", "LexiconIgnores", "Corpora", "CorpusMetadata", "Bookmarks"]
 
 cache_tables = ["CachedAuthors", "CachedBookYears", "CachedVolumeYears", 
@@ -93,10 +93,6 @@ class CuratrDB(GenericDB):
 	def add_classification(self, book_id, overall, secondary, tertiary):
 		sql = "INSERT INTO Classifications (book_id, overall, secondary, tertiary) VALUES(%s,%s,%s,%s)"
 		self.cursor.execute(sql, (book_id, overall, secondary, tertiary))
-
-	def add_link(self, book_id, kind, url):
-		sql = "INSERT INTO BookLinks (book_id,kind,url) VALUES(%s,%s,%s)"
-		self.cursor.execute(sql, (book_id, kind, url))
 
 	def add_recommendation(self, volume_id, rec_volume_id, rank ):
 		sql = "INSERT INTO Recommendations (volume_id, rec_volume_id, rank_num) VALUES(%s,%s,%s)"
@@ -504,30 +500,6 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in get_author_gender_map(): %s" % str(e))
 		return gender_map
-
-	def link_count(self):
-		""" Return total number of links stored in the database """
-		try:
-			self.cursor.execute("SELECT COUNT(*) FROM BookLinks")
-			result = self.cursor.fetchone()
-			return result[0]
-		except Exception as e:
-			log.error("SQL error in link_count(): %s" % str(e))
-			return 0
-
-	def get_book_link_map(self):
-		""" Return back all links associated with all books. """
-		link_map = {}
-		try:
-			sql = "SELECT book_id,kind,url FROM BookLinks"
-			self.cursor.execute(sql)
-			for row in self.cursor.fetchall():
-				if not row[0] in link_map:
-					link_map[row[0]] = {}
-				link_map[row[0]][row[1]] = row[2]
-		except Exception as e:
-			log.error("SQL error in get_book_link_map(): %s" % str(e))
-		return link_map
 
 	def add_ngram_count(self, ngram, year, count, collection_id):
 		""" Add the count for the specific ngram for a given year """
