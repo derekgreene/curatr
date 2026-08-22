@@ -4,7 +4,7 @@ This script implements the functionality required to do initial setup of the MyS
 required by Curatr.
 
 Sample usage:
-``` python code/create-db.py core all ``` 
+``` python code/create-db.py core all ```
 """
 import sys, json
 import logging as log
@@ -21,278 +21,285 @@ from preprocessing.text import custom_tokenizer
 def create_tables(core):
 	""" Create all required empty database tables """
 	db = core.get_db()
-	# Create any missing tables
-	log.info("++ Creating database tables ...")
-	db.create_tables()
-	db.commit()
-	db.close()
+	try:
+		# Create any missing tables
+		log.info("++ Creating database tables ...")
+		db.create_tables()
+		db.commit()
+	finally:
+		db.close()
 
 def add_metadata(core):
 	""" Add all key metadata to the database """
 	core_prep = CorePrep(core.dir_root)
 	db = core.get_db()
+	try:
+		# ensure any required tables exist
+		for table_name in ["Books", "Authors", "BookAuthors", "Volumes", "Classifications"]:
+			db.ensure_table_exists(table_name)
 
-	# ensure any required tables exist
-	for table_name in ["Books", "Authors", "BookAuthors", "Volumes", "Classifications"]:
-		db.ensure_table_exists(table_name)
+		df_books = core_prep.get_book_metadata()
+		df_volumes = core_prep.get_volumes_metadata()
 
-	df_books = core_prep.get_book_metadata()
-	df_volumes = core_prep.get_volumes_metadata()	
+		# add default author
+		default_author = "Unknown"
+		db.add_author(1, default_author)
+		authors = {default_author: 1}
 
-	# add default author
-	default_author = "Unknown"
-	db.add_author(1, default_author)
-	authors = {default_author: 1}
-
-	# add core book metadata
-	log.info("Adding %d books ..." % len(df_books))
-	num_added = 0
-	for book_id, row in df_books.iterrows():
-		book = dict(row)
-		# add authors, if necessary
-		if book["authors"] is None:
-			book["authors"] = [default_author]
-		# do we have a full version?
-		if book["authors_full"] is None:
-			book["authors_full"] = json.dumps({"creator":default_author})
-		else:
-			# need to convert the JSON to a string
-			book["authors_full"] = json.dumps(book["authors_full"])
-		author_ids = []
-		for author in book["authors"]:
-			if author in authors:
-				author_ids.append(authors[author])
+		# add core book metadata
+		log.info("Adding %d books ..." % len(df_books))
+		num_added = 0
+		for book_id, row in df_books.iterrows():
+			book = dict(row)
+			# add authors, if necessary
+			if book["authors"] is None:
+				book["authors"] = [default_author]
+			# do we have a full version?
+			if book["authors_full"] is None:
+				book["authors_full"] = json.dumps({"creator":default_author})
 			else:
-				author_id = len(authors)+1
-				db.add_author(author_id, author)
-				authors[author] = author_id
-				author_ids.append(author_id)
-		book["publisher_full"] = clean(book["publisher_full"])
-		# add the published locations
-		if not book["publication_place"] is None:
-			for place in book["publication_place"]:
-				db.add_published_location(book_id, "place", place)
-		if not book["publication_country"] is None:
-			for country in book["publication_country"]:
-				db.add_published_location(book_id, "country", country)
-		# add the shelfmarks
-		if not book["shelfmarks"] is None:
-			for shelfmark in book["shelfmarks"]:
-				db.add_shelfmark(book_id, shelfmark)
-		# add the actual book
-		book["decade"] = int(str(book["year"])[0:3] + "0")
-		del book["authors"]
-		del book["publication_place"]
-		del book["publication_country"]
-		del book["shelfmarks"]
-		log.debug("%d/%d: Adding book %s" % ((num_added+1), len(df_books), book_id))
-		db.add_book(book_id, book, author_ids)
-		num_added += 1
-		if num_added % 5000 == 0:
-			log.info("Completed adding %d/%d books" % (num_added, len(df_books)))
-	db.commit()
-	log.info("Added %d books" % num_added)
-	log.info("Database now has %d books, %d authors, %d locations" % (db.book_count(), db.author_count(), db.published_location_count()))
+				# need to convert the JSON to a string
+				book["authors_full"] = json.dumps(book["authors_full"])
+			author_ids = []
+			for author in book["authors"]:
+				if author in authors:
+					author_ids.append(authors[author])
+				else:
+					author_id = len(authors)+1
+					db.add_author(author_id, author)
+					authors[author] = author_id
+					author_ids.append(author_id)
+			book["publisher_full"] = clean(book["publisher_full"])
+			# add the published locations
+			if not book["publication_place"] is None:
+				for place in book["publication_place"]:
+					db.add_published_location(book_id, "place", place)
+			if not book["publication_country"] is None:
+				for country in book["publication_country"]:
+					db.add_published_location(book_id, "country", country)
+			# add the shelfmarks
+			if not book["shelfmarks"] is None:
+				for shelfmark in book["shelfmarks"]:
+					db.add_shelfmark(book_id, shelfmark)
+			# add the actual book
+			book["decade"] = int(str(book["year"])[0:3] + "0")
+			del book["authors"]
+			del book["publication_place"]
+			del book["publication_country"]
+			del book["shelfmarks"]
+			log.debug("%d/%d: Adding book %s" % ((num_added+1), len(df_books), book_id))
+			db.add_book(book_id, book, author_ids)
+			num_added += 1
+			if num_added % 5000 == 0:
+				log.info("Completed adding %d/%d books" % (num_added, len(df_books)))
+		db.commit()
+		log.info("Added %d books" % num_added)
+		log.info("Database now has %d books, %d authors, %d locations" % (db.book_count(), db.author_count(), db.published_location_count()))
 
-	# add the classifications
-	df_classifications = core_prep.get_book_classifications()
-	for book_id, row in df_classifications.iterrows():
-		db.add_classification(book_id, row["primary"], row["secondary"], row["tertiary"])
-	db.commit()
-	log.info("Database now has %d classification entries" % db.classification_count())
+		# add the classifications
+		df_classifications = core_prep.get_book_classifications()
+		for book_id, row in df_classifications.iterrows():
+			db.add_classification(book_id, row["primary"], row["secondary"], row["tertiary"])
+		db.commit()
+		log.info("Database now has %d classification entries" % db.classification_count())
 
-	# add volume information
-	num_added = 0
-	df_volumes = core_prep.get_volumes_metadata()
-	for volume_id, row in df_volumes.iterrows():
-		volume = dict(row)
-		db.add_volume(volume_id, volume)
-		num_added += 1
-	db.commit()
-	log.info("Added %d volumes" % num_added)
-	log.info("Database now has %d volume entries" % db.volume_count())
-
-	db.close()
+		# add volume information
+		num_added = 0
+		df_volumes = core_prep.get_volumes_metadata()
+		for volume_id, row in df_volumes.iterrows():
+			volume = dict(row)
+			db.add_volume(volume_id, volume)
+			num_added += 1
+		db.commit()
+		log.info("Added %d volumes" % num_added)
+		log.info("Database now has %d volume entries" % db.volume_count())
+	finally:
+		db.close()
 
 def add_wordcounts(core):
 	""" Add all volume word counts to the database """
 	log.info("++ Adding volume word counts to database ...")
 	core_prep = CorePrep(core.dir_root)
 	db = core.get_db()
-	# get metadata for all volumes
-	volumes = db.get_volumes()
-	# process all volume files
-	counts = {}
-	num_volumes = 0
-	for volume in volumes:
-		num_volumes += 1
-		volume_id = volume["id"]
-		log.debug("Volume %d/%d: Counting tokens in %s" % (num_volumes, len(volumes), volume["path"]))
-		volume_path = core.dir_fulltext / volume["path"]
-		if not volume_path.exists():
-			log.error("Missing volume file %s" % volume_path)
-			continue
-		# process the content
-		with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
-			content = clean_content(fin.read())
-			tokens = custom_tokenizer(content)
-			db.set_volume_word_count(volume_id, len(tokens))	
-		if num_volumes % 5000 == 0:
-			log.info("Completed processing %d/%d volumes" % (num_volumes, len(volumes)))
-	log.info("Updated word counts for %d volumes" % num_volumes)
-	db.close()
+	try:
+		# get metadata for all volumes
+		volumes = db.get_volumes()
+		# process all volume files
+		counts = {}
+		num_volumes = 0
+		for volume in volumes:
+			num_volumes += 1
+			volume_id = volume["id"]
+			log.debug("Volume %d/%d: Counting tokens in %s" % (num_volumes, len(volumes), volume["path"]))
+			volume_path = core.dir_fulltext / volume["path"]
+			if not volume_path.exists():
+				log.error("Missing volume file %s" % volume_path)
+				continue
+			# process the content
+			with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
+				content = clean_content(fin.read())
+				tokens = custom_tokenizer(content)
+				db.set_volume_word_count(volume_id, len(tokens))
+			if num_volumes % 5000 == 0:
+				log.info("Completed processing %d/%d volumes" % (num_volumes, len(volumes)))
+		log.info("Updated word counts for %d volumes" % num_volumes)
+	finally:
+		db.close()
 
 def add_extracts(core, extract_length=450):
 	log.info("++ Adding volume extracts to database ...")
 	core_prep = CorePrep(core.dir_root)
 	db = core.get_db()
-	# get all volume details
-	volumes = db.get_volumes()
-	log.info("Processing %d volumes ..." % len(volumes))
-	# process all volumes
-	num_volumes = 0
-	for volume in volumes:
-		num_volumes += 1
-		volume_id = volume["id"]
-		volume_path = core.dir_fulltext / volume["path"]
-		if not volume_path.exists():
-			log.error("Missing volume file %s" % volume_path)
-			continue
-		# process the content of the current volume
-		with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
-			content = clean_content(fin.read())
-			# tidy the content
-			content = content.replace( '" ', '"' ).replace( '..', '.' ).replace( '. .', '.' ).replace( '..', '.').strip()
-			# find first alphanumeric
-			for start_pos in range(len(content)):
-				if content[start_pos].isalnum():
-					break
-			# create the final extract
-			actual_extract_length = min(extract_length, len(content)-start_pos)
-			extract = content[start_pos:actual_extract_length+start_pos] + "..."
-			# add it to the database
-			db.add_volume_extract(volume_id, extract)
-		if num_volumes % 5000 == 0:
-			log.info("Completed processing %d/%d volume extracts" % (num_volumes, len(volumes)))	
-	db.commit()
-	log.info("Database now has %d extracts" % db.extract_count())
-	db.close()
-	
+	try:
+		# get all volume details
+		volumes = db.get_volumes()
+		log.info("Processing %d volumes ..." % len(volumes))
+		# process all volumes
+		num_volumes = 0
+		for volume in volumes:
+			num_volumes += 1
+			volume_id = volume["id"]
+			volume_path = core.dir_fulltext / volume["path"]
+			if not volume_path.exists():
+				log.error("Missing volume file %s" % volume_path)
+				continue
+			# process the content of the current volume
+			with open(volume_path, 'r', encoding="utf8", errors='ignore') as fin:
+				content = clean_content(fin.read())
+				# tidy the content
+				content = content.replace( '" ', '"' ).replace( '..', '.' ).replace( '. .', '.' ).replace( '..', '.').strip()
+				# find first alphanumeric
+				for start_pos in range(len(content)):
+					if content[start_pos].isalnum():
+						break
+				# create the final extract
+				actual_extract_length = min(extract_length, len(content)-start_pos)
+				extract = content[start_pos:actual_extract_length+start_pos] + "..."
+				# add it to the database
+				db.add_volume_extract(volume_id, extract)
+			if num_volumes % 5000 == 0:
+				log.info("Completed processing %d/%d volume extracts" % (num_volumes, len(volumes)))
+		db.commit()
+		log.info("Database now has %d extracts" % db.extract_count())
+	finally:
+		db.close()
+
 def add_caches(core):
 	""" Add all of the additional cache tables which are used by Curatr for performance reasons """
 	log.info("++ Adding cache tables to database ...")
 	db = core.get_db()
-	# get the core book data that we need
-	books = db.get_books()
-	log.info("Building maps...")
-	volume_year_map = db.get_volume_year_map()
-	author_name_map = db.get_author_name_map()
-	log.info("Corpus contains %d books, %d volumes, %d authors ..." % 
-		(len(books), len(volume_year_map), len(author_name_map)))
-	corpus_year_min, corpus_year_max = db.get_book_year_range()
-	log.info("Corpus year range: [%d,%d]" % (corpus_year_min, corpus_year_max))
+	try:
+		# get the core book data that we need
+		books = db.get_books()
+		log.info("Building maps...")
+		volume_year_map = db.get_volume_year_map()
+		author_name_map = db.get_author_name_map()
+		log.info("Corpus contains %d books, %d volumes, %d authors ..." %
+			(len(books), len(volume_year_map), len(author_name_map)))
+		corpus_year_min, corpus_year_max = db.get_book_year_range()
+		log.info("Corpus year range: [%d,%d]" % (corpus_year_min, corpus_year_max))
 
-	# delete any cache tables and re-create them
-	db.clear_cache_tables()
-	
-	# populate CachedBookYears
-	log.info("Populating CachedBookYears ...")
-	year_counts = {}
-	for y in range(corpus_year_min,corpus_year_max+1):
-		year_counts[y] = 0
-	for book in books:
-		year_counts[book["year"]] += 1
-	# add to the database
-	for year in year_counts:
-		db.add_cached_book_years(year, year_counts[year])
-	db.commit()
+		# delete any cache tables and re-create them
+		db.clear_cache_tables()
 
-	# populate CachedVolumeYears
-	log.info("Populating CachedVolumeYears ...")
-	year_counts = {}
-	for y in range(corpus_year_min,corpus_year_max+1):
-		year_counts[y] = 0
-	for volume_id in volume_year_map:
-		year_counts[volume_year_map[volume_id]] += 1
-	# add to the database
-	for year in year_counts:
-		db.add_cached_volume_years(year, year_counts[year])
-	db.commit()
-
-	# populate CachedPlaceCounts & CachedCountryCounts
-	log.info("Populating CachedPlaceCounts and CachedCountryCounts ...")
-	num = 0
-	country_counts, place_counts = Counter(), Counter()
-	locations_map = db.get_published_locations_map()
-	for book_id in locations_map:
-		num += 1
-		if num % 5000 == 0:
-			log.info("Processed %d books" % num)
-		for pair in locations_map[book_id]:
-			if pair[0] == "country":
-				country_counts[pair[1]] += 1
-			elif pair[0] == "place":
-				place_counts[pair[1]] += 1
-	log.info("Adding counts for %d places to database" % len(place_counts))
-	# add to the database
-	for location in place_counts:
-		db.add_cached_place_count(location, place_counts[location])
-	db.commit()
-	log.info("Adding counts for %d countries to database" % len(country_counts))
-	for location in country_counts:
-		db.add_cached_country_count(location, country_counts[location])
-	db.commit()
-
-	# populate CachedClassificationCounts
-	log.info("Populating CachedClassificationCounts ...")
-	class_map = db.get_book_classifications_map()
-	class_counts = [Counter(), Counter(), Counter()]
-	for book_id in class_map:
-		primary, secondary, tertiary = class_map[book_id]
-		if not primary is None:
-			class_counts[0][primary] += 1
-		if not secondary is None:
-			class_counts[1][secondary] += 1
-		if not tertiary is None:
-			class_counts[2][tertiary] += 1
-	for level in range(0, 3):
-		log.info("Adding classification counts for %d classes at level %d" % (len(class_counts[level]), level))
-		for class_name in class_counts[level]:
-			db.add_cached_classification_count(class_name, level, class_counts[level][class_name])
+		# populate CachedBookYears
+		log.info("Populating CachedBookYears ...")
+		year_counts = {}
+		for y in range(corpus_year_min,corpus_year_max+1):
+			year_counts[y] = 0
+		for book in books:
+			year_counts[book["year"]] += 1
+		# add to the database
+		for year in year_counts:
+			db.add_cached_book_years(year, year_counts[year])
 		db.commit()
 
-	# populate CachedAuthors
-	log.info("Populating CachedAuthors ...")
-	# get the author stats
-	author_book_count = {}
-	author_min_year, author_max_year, author_sort_name = {}, {}, {}
-	num = 0
-	for book in books:
-		num += 1
-		if num % 5000 == 0:
-			log.info("Processed %d books" % num)
-		author_ids = db.get_book_author_ids(book["id"])
-		for author_id in author_ids:
-			if not author_id in author_book_count:
-				author_book_count[author_id] = 1	
-				author_min_year[author_id] = book["year"]
-				author_max_year[author_id] = book["year"]
-			else:
-				author_book_count[author_id] += 1
-				author_min_year[author_id] = min(book["year"], author_min_year[author_id])
-				author_max_year[author_id] = max(book["year"], author_max_year[author_id])
-			author_sort_name[author_id] = format_author_sortname(author_name_map[author_id])
-	log.info("Found %d authors" % len(author_book_count))
-	# add to the database
-	for author_id in author_book_count:
-		db.add_cached_author_details(author_id, author_name_map[author_id], author_sort_name[author_id], author_min_year[author_id], author_max_year[author_id], author_book_count[author_id])
-	db.commit()
-	# finished
-	db.close()
+		# populate CachedVolumeYears
+		log.info("Populating CachedVolumeYears ...")
+		year_counts = {}
+		for y in range(corpus_year_min,corpus_year_max+1):
+			year_counts[y] = 0
+		for volume_id in volume_year_map:
+			year_counts[volume_year_map[volume_id]] += 1
+		# add to the database
+		for year in year_counts:
+			db.add_cached_volume_years(year, year_counts[year])
+		db.commit()
+
+		# populate CachedPlaceCounts & CachedCountryCounts
+		log.info("Populating CachedPlaceCounts and CachedCountryCounts ...")
+		num = 0
+		country_counts, place_counts = Counter(), Counter()
+		locations_map = db.get_published_locations_map()
+		for book_id in locations_map:
+			num += 1
+			if num % 5000 == 0:
+				log.info("Processed %d books" % num)
+			for pair in locations_map[book_id]:
+				if pair[0] == "country":
+					country_counts[pair[1]] += 1
+				elif pair[0] == "place":
+					place_counts[pair[1]] += 1
+		log.info("Adding counts for %d places to database" % len(place_counts))
+		# add to the database
+		for location in place_counts:
+			db.add_cached_place_count(location, place_counts[location])
+		db.commit()
+		log.info("Adding counts for %d countries to database" % len(country_counts))
+		for location in country_counts:
+			db.add_cached_country_count(location, country_counts[location])
+		db.commit()
+
+		# populate CachedClassificationCounts
+		log.info("Populating CachedClassificationCounts ...")
+		class_map = db.get_book_classifications_map()
+		class_counts = [Counter(), Counter(), Counter()]
+		for book_id in class_map:
+			primary, secondary, tertiary = class_map[book_id]
+			if not primary is None:
+				class_counts[0][primary] += 1
+			if not secondary is None:
+				class_counts[1][secondary] += 1
+			if not tertiary is None:
+				class_counts[2][tertiary] += 1
+		for level in range(0, 3):
+			log.info("Adding classification counts for %d classes at level %d" % (len(class_counts[level]), level))
+			for class_name in class_counts[level]:
+				db.add_cached_classification_count(class_name, level, class_counts[level][class_name])
+			db.commit()
+
+		# populate CachedAuthors
+		log.info("Populating CachedAuthors ...")
+		# get the author stats
+		author_book_count = {}
+		author_min_year, author_max_year, author_sort_name = {}, {}, {}
+		num = 0
+		for book in books:
+			num += 1
+			if num % 5000 == 0:
+				log.info("Processed %d books" % num)
+			author_ids = db.get_book_author_ids(book["id"])
+			for author_id in author_ids:
+				if not author_id in author_book_count:
+					author_book_count[author_id] = 1
+					author_min_year[author_id] = book["year"]
+					author_max_year[author_id] = book["year"]
+				else:
+					author_book_count[author_id] += 1
+					author_min_year[author_id] = min(book["year"], author_min_year[author_id])
+					author_max_year[author_id] = max(book["year"], author_max_year[author_id])
+				author_sort_name[author_id] = format_author_sortname(author_name_map[author_id])
+		log.info("Found %d authors" % len(author_book_count))
+		# add to the database
+		for author_id in author_book_count:
+			db.add_cached_author_details(author_id, author_name_map[author_id], author_sort_name[author_id], author_min_year[author_id], author_max_year[author_id], author_book_count[author_id])
+		db.commit()
+	finally:
+		db.close()
 
 # --------------------------------------------------------------
 
-valid_actions = {"create":create_tables, "metadata":add_metadata, 
+valid_actions = {"create":create_tables, "metadata":add_metadata,
 "wordcounts":add_wordcounts, "extracts":add_extracts, "caches": add_caches}
 
 def main():
@@ -313,41 +320,45 @@ def main():
 	if not core.init_db():
 		sys.exit(1)
 
-	requested_actions = [x.lower() for x in args[1:]]
-	# note 'delete' overrides everything
-	if "delete" in requested_actions:
-		log.info("++ Applying delete tables operation ...")
-		db = core.get_db()
-		db.delete_tables()
-		db.commit()
-		db.close()
-		log.info("Action complete")
+	try:
+		requested_actions = [x.lower() for x in args[1:]]
+		# note 'delete' overrides everything
+		if "delete" in requested_actions:
+			log.info("++ Applying delete tables operation ...")
+			db = core.get_db()
+			try:
+				db.delete_tables()
+				db.commit()
+			finally:
+				db.close()
+			log.info("Action complete")
+			return
+		# note 'index' overrides everything
+		elif "index" in requested_actions:
+			log.info("++ Applying index tables operation ...")
+			db = core.get_db()
+			try:
+				db.index_tables()
+				db.commit()
+			finally:
+				db.close()
+			log.info("Action complete")
+			return
+		# note 'all' overrides everything
+		elif "all" in requested_actions:
+			requested_actions = valid_actions.keys()
+		# perform the required actions
+		for action in requested_actions:
+			if action == 'delete':
+				continue
+			elif not action in valid_actions:
+				log.error("Unknown action '%s'" % action)
+				sys.exit(1)
+			valid_actions[action](core)
+		# finished
+		log.info("Actions complete")
+	finally:
 		core.shutdown()
-		sys.exit(0)
-	# note 'index' overrides everything
-	elif "index" in requested_actions:
-		log.info("++ Applying index tables operation ...")
-		db = core.get_db()
-		db.index_tables()
-		db.commit()
-		db.close()
-		log.info("Action complete")
-		core.shutdown()
-		sys.exit(0)
-	# note 'all' overrides everything
-	elif "all" in requested_actions:
-		requested_actions = valid_actions.keys()
-	# perform the required actions
-	for action in requested_actions:
-		if action == 'delete':
-			continue
-		elif not action in valid_actions:
-			log.error("Unknown action '%s'" % action)
-			sys.exit(1)
-		valid_actions[action](core)
-	# finished
-	log.info("Actions complete")
-	core.shutdown()
 
 # --------------------------------------------------------------
 

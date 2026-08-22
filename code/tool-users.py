@@ -226,29 +226,30 @@ def main():
 	# connect to the database
 	if not core.init_db():
 		sys.exit(1)
-	db = core.get_db()
-
-	# perform the required action
-	if action == "add":
-		user_add(db)
-	elif action == "verify":
-		user_verify_password(db)
-	elif action == "list":
-		user_list(db)
-	elif action == "password":
-		user_change_password(db)
-	elif action == "remove":
-		user_remove(db)
-	elif action == "role":
-		user_change_role(db)
-	elif action == "lexicons":
-		user_lexicons(db)
-	elif action == "corpora":
-		user_subcorpora(db)
-
-	# finished
-	db.close()
-	core.shutdown()
+	try:
+		db = core.get_db()
+		try:
+			# perform the required action
+			if action == "add":
+				user_add(db)
+			elif action == "verify":
+				user_verify_password(db)
+			elif action == "list":
+				user_list(db)
+			elif action == "password":
+				user_change_password(db)
+			elif action == "remove":
+				user_remove(db)
+			elif action == "role":
+				user_change_role(db)
+			elif action == "lexicons":
+				user_lexicons(db)
+			elif action == "corpora":
+				user_subcorpora(db)
+		finally:
+			db.close()
+	finally:
+		core.shutdown()
 	
 # --------------------------------------------------------------
 

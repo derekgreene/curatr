@@ -75,76 +75,80 @@ def main():
 	# try connecting to the database
 	if not core.init_db():
 		sys.exit(1)
-	db = core.get_db()
 
-	# which books will we include?
-	classmap = db.get_book_classifications_map()
-	collection_id = options.collection.lower()
-	if collection_id == "all":
-		book_ids = set(classmap.keys())
-	else:
-		book_ids = set()
-		for book_id in classmap:
-			if collection_id == "fiction" and classmap[book_id][0] == "Fiction":
-				book_ids.add(book_id)
-			elif collection_id == "nonfiction" and classmap[book_id][0] == "Non-Fiction":
-				book_ids.add(book_id)
-	if len(book_ids) == 0:
-		log.error("No books available for collection from which to count ngrams")
-		sys.exit(1)
-	log.info("Processing %s books from collection '%s'..." % (len(book_ids), collection_id))
+	try:
+		db = core.get_db()
+		try:
+			# which books will we include?
+			classmap = db.get_book_classifications_map()
+			collection_id = options.collection.lower()
+			if collection_id == "all":
+				book_ids = set(classmap.keys())
+			else:
+				book_ids = set()
+				for book_id in classmap:
+					if collection_id == "fiction" and classmap[book_id][0] == "Fiction":
+						book_ids.add(book_id)
+					elif collection_id == "nonfiction" and classmap[book_id][0] == "Non-Fiction":
+						book_ids.add(book_id)
+			if len(book_ids) == 0:
+				log.error("No books available for collection from which to count ngrams")
+				sys.exit(1)
+			log.info("Processing %s books from collection '%s'..." % (len(book_ids), collection_id))
 
-	# read the stopword list
-	if options.use_stopwords:
-		stopwords = load_stopwords()
-		log.info("Stopwords: Using default list of %d stopwords" % len(stopwords))
-	else:
-		stopwords = set()
-		log.info("Stopwords: Not applying any stopword filtering")
-	# get year ranges
-	year_map = db.get_book_year_map()
-	year_min, year_max = db.get_book_year_range()
+			# read the stopword list
+			if options.use_stopwords:
+				stopwords = load_stopwords()
+				log.info("Stopwords: Using default list of %d stopwords" % len(stopwords))
+			else:
+				stopwords = set()
+				log.info("Stopwords: Not applying any stopword filtering")
+			# get year ranges
+			year_map = db.get_book_year_map()
+			year_min, year_max = db.get_book_year_range()
 
-	if options.bigrams:
-		log.info("Extracting unigrams and bigrams by year...")
-	else:
-		log.info("Extracting unigrams by year...")
+			if options.bigrams:
+				log.info("Extracting unigrams and bigrams by year...")
+			else:
+				log.info("Extracting unigrams by year...")
 
-	# process each year
-	num_volumes = 0
-	for year in range(year_min, year_max+1):
-		volumes = db.get_volumes_by_year(year)
-		if len(volumes) == 0:
-			continue
-		log.info("Processing year %d..." % year)
-		# process each volume from this year from the book IDs that are relevant
-		year_counts = Counter()
-		for volume in volumes:
-			# skip this one?
-			if not volume["book_id"] in book_ids:
-				continue
-			num_volumes += 1
-			log.info("Volume %d (%s): %s" % (num_volumes, year, volume["path"]))
-			volume_path = core.dir_fulltext / volume["path"]
-			if not volume_path.exists():
-				log.error("Error: Missing volume file %s" % volume_path)
-				continue
-			# get all the ngrams
-			volume_tokens = extract_tokens(volume_path, stopwords, options.bigrams)
-			log.info("Volume contains %d tokens" % len(volume_tokens))
-			for token in volume_tokens:
-				year_counts[token] += 1
-			log.debug("Year dictionary now contains %d ngrams" % len(year_counts))
-		# now update the database
-		log.info("Adding counts for %d ngrams to database" % len(year_counts))
-		for token in year_counts:
-			db.add_ngram_count(token, year, year_counts[token], collection_id)
-		db.commit()
+			# process each year
+			num_volumes = 0
+			for year in range(year_min, year_max+1):
+				volumes = db.get_volumes_by_year(year)
+				if len(volumes) == 0:
+					continue
+				log.info("Processing year %d..." % year)
+				# process each volume from this year from the book IDs that are relevant
+				year_counts = Counter()
+				for volume in volumes:
+					# skip this one?
+					if not volume["book_id"] in book_ids:
+						continue
+					num_volumes += 1
+					log.info("Volume %d (%s): %s" % (num_volumes, year, volume["path"]))
+					volume_path = core.dir_fulltext / volume["path"]
+					if not volume_path.exists():
+						log.error("Error: Missing volume file %s" % volume_path)
+						continue
+					# get all the ngrams
+					volume_tokens = extract_tokens(volume_path, stopwords, options.bigrams)
+					log.info("Volume contains %d tokens" % len(volume_tokens))
+					for token in volume_tokens:
+						year_counts[token] += 1
+					log.debug("Year dictionary now contains %d ngrams" % len(year_counts))
+				# now update the database
+				log.info("Adding counts for %d ngrams to database" % len(year_counts))
+				for token in year_counts:
+					db.add_ngram_count(token, year, year_counts[token], collection_id)
+				db.commit()
 
-	# finished
-	db.close()
-	log.info("Process complete: Added ngrams for %d volumes" % num_volumes)
-	core.shutdown()
+			# finished
+			log.info("Process complete: Added ngrams for %d volumes" % num_volumes)
+		finally:
+			db.close()
+	finally:
+		core.shutdown()
 
 # --------------------------------------------------------------
 
