@@ -70,7 +70,8 @@ class CorePrep(CoreBase):
 		df_classifications = pd.read_json(self.meta_classifications_path, orient="records", dtype={'book_id':object})
 		df_classifications = df_classifications.set_index("book_id")
 		# make sure we don't have any np.nan values as these won't work with MySQL
-		df_classifications = df_classifications.replace({np.nan: None})
+		# (df.replace({np.nan: None}) is unreliable across pandas versions for this)
+		df_classifications = df_classifications.where(df_classifications.notna(), None)
 		log.info("Read %d rows, %d columns" % df_classifications.shape)
 		return df_classifications		
 

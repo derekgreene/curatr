@@ -91,6 +91,10 @@ class CuratrDB(GenericDB):
 			volume["book_id"], volume["path"]))
 
 	def add_classification(self, book_id, overall, secondary, tertiary):
+		# guard against float NaN slipping through from pandas (MySQL rejects it outright)
+		overall = None if isinstance(overall, float) and overall != overall else overall
+		secondary = None if isinstance(secondary, float) and secondary != secondary else secondary
+		tertiary = None if isinstance(tertiary, float) and tertiary != tertiary else tertiary
 		sql = "INSERT INTO Classifications (book_id, overall, secondary, tertiary) VALUES(%s,%s,%s,%s)"
 		self.cursor.execute(sql, (book_id, overall, secondary, tertiary))
 
