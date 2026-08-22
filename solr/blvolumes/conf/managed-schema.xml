@@ -963,7 +963,6 @@
     <field name="title" type="string" stored="true"/>
     <field name="title_full" type="string" stored="true"/>
     <field name="title_text" type="text_general" multiValued="false" indexed="true" stored="false"/>
-    <field name="url_mudies" type="string" stored="true"/>
     <field name="volume" type="pint" stored="true"/>
     <field name="year" type="pint" stored="true"/>
     <!-- End Custom Fields for Curatr -->    
