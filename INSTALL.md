@@ -23,17 +23,16 @@ ftfy
 passlib
 tabulate
 markupsafe
-openpyxl
 ```
 
 You can install these packages using pip:
 
-```pip install flask flask-login dash dash-bootstrap-components dash-cytoscape pymysql python-solrclient pandas numpy scikit-learn gensim networkx ftfy passlib tabulate markupsafe openpyxl```
+```pip install flask flask-login dash dash-bootstrap-components dash-cytoscape pymysql python-solrclient pandas numpy scikit-learn gensim networkx ftfy passlib tabulate markupsafe```
 
 ## Core Directory Setup
 
 The Curatr *core* directory should contain all of the key required data for Curatr, with the following sub-directories:
-- metadata: Stores all of the key metadata for BL19 (i.e. book-metadata.json, book-classifications.csv, book-links.csv, book-volumes.csv).
+- metadata: Stores all of the key metadata for BL19 (i.e. book-metadata.json, book-classifications.csv, book-volumes.csv).
 - fulltext: Stores all of the individual volume plain-text files for BL19 (e.g. fulltext/0139/013952747_01_text.txt).
 - embeddings: Stores word2vec embedding model files for word recommendations and semantic networks (e.g. bl-w2v-cbow-d100.bin).
 - export: Stores sub-corpora created by Curatr users. This directory will initially be empty.

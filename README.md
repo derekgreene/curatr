@@ -18,7 +18,6 @@ The following Python 3 packages should be installed prior to installing Curatr, 
 - Flask-Login: https://flask-login.readthedocs.io/en/latest/
 - MarkupSafe: https://pypi.org/project/MarkupSafe
 - NetworkX: https://networkx.org/
-- openpyxl: https://pypi.org/project/openpyxl
 - tabulate: https://pypi.org/project/tabulate
 
 Additional dependencies:
