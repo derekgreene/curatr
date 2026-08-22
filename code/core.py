@@ -24,7 +24,6 @@ class CoreBase:
 		# metadata file paths
 		self.meta_books_path = self.dir_metadata / "book-metadata.json"
 		self.meta_classifications_path = self.dir_metadata / "book-classifications.json"
-		self.meta_links_path = self.dir_metadata / "book-links.csv"
 		self.meta_volumes_path = self.dir_metadata / "book-volumes.csv"
 		# read configuration file
 		self.config_path = self.dir_root / "config.ini"
