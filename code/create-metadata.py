@@ -72,33 +72,34 @@ def prep_book_metadata(core):
 def prep_book_classifications(core):
 	""" Function to export the Alston index book classification metadata for Curatr """
 	log.info("++ Preparing book classifications ...")
-	# load the original custom UCD metadata
-	df_original = core.get_original_rawdata()
+	# load the raw Alston classification data
+	alston_records = core.get_alston_rawdata()
 	# load the clean set of books
 	df_books = core.get_book_metadata()
 	# extract the classification information
 	log.info("Extracting classification information ...")
 	rows = []
-	for book_id, row_curatr in df_original.iterrows():
+	for record in alston_records:
+		book_id = record["book_id"]
 		if not book_id in df_books.index:
 			continue
-		book_class = row_curatr["ClassificationTitle"].strip()
-		book_subclass = row_curatr["ClassificationSubTitle"].strip()
-		if len(book_subclass) == 0 or book_subclass.lower() == "uncategorised":
-			book_subclass = None
-		row = {"book_id": book_id}
-		if book_class.lower() == "fiction":
-			row["primary"] = "Fiction"
+		# a book can have multiple shelfmarks (e.g. multiple volumes); use the
+		# first one that actually carries a classification
+		shelfmark = next((s for s in record["shelfmarks"] if s["category"] is not None), None)
+		if shelfmark is None:
+			# none of this book's shelfmarks are classified
+			primary, secondary, tertiary = "Non-Fiction", "Non-Fiction", "Uncategorised"
 		else:
-			row["primary"] = "Non-Fiction"
-		row["secondary"] = book_class
-		row["tertiary"] = book_subclass
+			primary = shelfmark["coarse_category"]
+			secondary = shelfmark["category"]
+			tertiary = shelfmark["sub_category"]
+		row = {"book_id": book_id, "primary": primary, "secondary": secondary, "tertiary": tertiary}
 		rows.append(row)
 	df_classifications = pd.DataFrame(rows).sort_values(by=["book_id"]).reset_index(drop=True)
 	# export the data
 	out_path = core.meta_classifications_path
 	log.info("Writing %d classifications to %s" % (len(df_classifications), out_path))
-	df_classifications.to_csv(out_path, index=False, sep="\t")
+	df_classifications.to_json(out_path, orient="records", indent=3)
 
 def prep_book_links(core):
 	""" Function to export the link metadata for Curatr """
@@ -107,8 +108,6 @@ def prep_book_links(core):
 	df_original = core.get_original_rawdata()
 	# load the clean set of books
 	df_books = core.get_book_metadata()
-	# get data with raw Ark links
-	df_ark = core.get_ark_rawdata()
 	# get PDF links
 	rows = []
 	for book_id, url in df_original["url_pdf"][df_original["url_pdf"].notna()].iteritems():
@@ -121,24 +120,10 @@ def prep_book_links(core):
 			continue
 		rows.append({"book_id": book_id, "kind": "flickr", "url": url})
 	df_links = pd.DataFrame(rows).sort_values(by=["book_id", "kind"]).reset_index(drop=True)
-	# match Ark links to books
-	aleph_col = "Aleph system no."
-	blrecord_col = "bl_record_id"
-	df_merged1 = df_books.reset_index()[["book_id", blrecord_col]].merge(df_ark[[aleph_col,'Ark','Link']], 
-							how="left", left_on=blrecord_col, right_on=aleph_col).copy()
-	df_merged1["kind"] = "ark"
-	df_merged2 = df_merged1[["book_id","kind","Link"]].copy()
-	df_merged2.rename(columns={"Link": "url"}, inplace=True)
-	log.info("Merged Curatr books and Ark links: %d rows" % len(df_merged2))
-	df_merged2.dropna(subset=["url"], inplace=True)
-	log.info("After dropping missing values, merged Curatr books and Ark links: %d rows" % len(df_merged2))
-	# add Ark links
-	df_links2 = pd.concat([df_links, df_merged2])
-	df_links2.sort_values(by=["book_id","kind"], inplace=True)
 	# export the data
 	out_path = core.meta_links_path
-	log.info("Writing %d links to %s" % (len(df_links2), out_path))
-	df_links2.to_csv(out_path, index=False, sep="\t")
+	log.info("Writing %d links to %s" % (len(df_links), out_path))
+	df_links.to_csv(out_path, index=False, sep="\t")
 
 def prep_book_volumes(core):
 	""" Function to export the link metadata for Curatr """

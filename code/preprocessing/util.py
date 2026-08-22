@@ -1,12 +1,13 @@
 """
 Various utlity code used for data preprocessing tasks when running Curatr setup.
 """
+import json
 import logging as log
 from core import CoreBase
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from preprocessing.text import load_stopwords 
+from preprocessing.text import load_stopwords
 
 # --------------------------------------------------------------
 
@@ -17,7 +18,7 @@ class CorePrep(CoreBase):
 		# file paths for raw data
 		self.original_path = self.dir_raw / "ucd_digitised_books_2021.json"
 		self.bl_path = self.dir_raw / "ms_digitised_books_2021-01-09.csv"
-		self.ark_path = self.dir_raw / "MicrosoftBooks_FullIndex_27_09_2018.xlsx"
+		self.alston_path = self.dir_raw / "alston-classifications.json"
 		self.filter_path = self.dir_raw / "books-filter.txt"
 		# ensure the key Core directories exist
 		self.ensure_directories_exists([self.dir_fulltext, self.dir_metadata, self.dir_embeddings, self.dir_export])
@@ -47,13 +48,13 @@ class CorePrep(CoreBase):
 		log.info("Read %d rows, %d columns" % (len(df_bl), len(df_bl.columns)))
 		return df_bl
 
-	def get_ark_rawdata(self):
-		""" Load and return raw Ark-related British Library metadata as a Pandas DataFrame """
-		log.info("Reading raw data from %s" % self.ark_path)
-		df_ark = pd.read_excel(self.ark_path)
-		df_ark = df_ark.sort_index()
-		log.info("Read %d rows, %d columns" % (len(df_ark), len(df_ark.columns)))
-		return df_ark
+	def get_alston_rawdata(self):
+		""" Load and return the raw Alston classification data as a list of records, one per book """
+		log.info("Reading raw data from %s" % self.alston_path)
+		with open(self.alston_path, "r", encoding="utf-8") as f:
+			records = json.load(f)
+		log.info("Read %d records" % len(records))
+		return records
 
 	def get_book_metadata(self):
 		""" Load and return the key book metadata as a Pandas DataFrame """
@@ -66,7 +67,7 @@ class CorePrep(CoreBase):
 	def get_book_classifications(self):
 		""" Return the book classification metadata as a Pandas DataFrame """
 		log.info("Reading classification metadata from %s" % self.meta_classifications_path)
-		df_classifications = pd.read_csv(self.meta_classifications_path, sep="\t", dtype={'book_id':object})
+		df_classifications = pd.read_json(self.meta_classifications_path, orient="records", dtype={'book_id':object})
 		df_classifications = df_classifications.set_index("book_id")
 		# make sure we don't have any np.nan values as these won't work with MySQL
 		df_classifications = df_classifications.replace({np.nan: None})

@@ -91,19 +91,6 @@ def populate_volume(context, db, doc, spec, volume_id):
 	context["url_bl_search"] += urllib.parse.quote_plus(context["title"])
 	context["url_bl_search"] += ",AND;rtype,exact,books&tab=Everything&search_scope=MyInst_and_CI&mode=advanced&searchInFulltext=false&vid=44BL_MAIN:BLL01_NDE&lang=en"
 
-	# Previous links that are no longer active
-	# context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
-	# if doc.get("url_ark", None) != None:
-	# 	context["url_ark"] = doc.get("url_ark")
-	# context["other_urls1"], context["other_urls2"] = "", ""
-	# if doc.get("url_ark", None) != None:
-	# 	context["other_urls1"] += "<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
-	# if doc.get("url_pdf", None) != None:
-	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
-	# if doc.get("url_images", None) != None:
-	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
-	# context["other_urls1"] = Markup(context["other_urls1"])
-	# context["other_urls2"] = Markup(context["other_urls2"])
 	return context
 
 def populate_segment(context, db, doc, spec, segment_id):
@@ -183,20 +170,6 @@ def populate_segment(context, db, doc, spec, segment_id):
 	context["url_bl_search"] += urllib.parse.quote_plus(context["title"])
 	context["url_bl_search"] += ",AND;rtype,exact,books&tab=Everything&search_scope=MyInst_and_CI&mode=advanced&searchInFulltext=false&vid=44BL_MAIN:BLL01_NDE&lang=en"
 
-	# Previous links that are no longer active
-	# do we have an Ark link?
-	# if doc.get("url_ark", None) != None:
-	# 	context["url_ark"] = doc.get("url_ark")
-	# context["url_bl_record"] = "http://explore.bl.uk/primo_library/libweb/action/display.do?frbrVersion=2&tabs=detailsTab&institution=BL&ct=display&fn=search&doc=BLL01%s&indx=1" % id_parts[0]
-	# context["other_urls1"], context["other_urls2"] = "", ""
-	# if doc.get("url_ark", None) != None:
-	# 	context["other_urls1"] += "&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Digitised Book</a>&nbsp;&nbsp;&mdash;&nbsp;&nbsp;" % doc.get("url_ark")
-	# if doc.get("url_pdf", None) != None:
-	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume PDF</a>" % doc.get("url_pdf")
-	# if doc.get("url_images", None) != None:
-	# 	context["other_urls2"] += "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;<a href='%s' target='_blank'>Volume Images</a>"  % doc.get("url_images")
-	# context["other_urls1"] = Markup(context["other_urls1"])
-	# context["other_urls2"] = Markup(context["other_urls2"])
 	# Add the Next/Previous/Full-text links
 	pagination_html = ""
 	# first segment?
