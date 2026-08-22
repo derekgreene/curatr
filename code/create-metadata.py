@@ -104,17 +104,8 @@ def prep_book_classifications(core):
 def prep_book_links(core):
 	""" Function to export the link metadata for Curatr """
 	log.info("++ Preparing book links ...")
-	# load the original custom UCD metadata
-	df_original = core.get_original_rawdata()
-	# load the clean set of books
-	df_books = core.get_book_metadata()
-	# get PDF links
-	rows = []
-	for book_id, url in df_original["url_pdf"][df_original["url_pdf"].notna()].iteritems():
-		if not book_id in df_books.index:
-			continue
-		rows.append({"book_id": book_id, "kind": "pdf", "url": url})
-	df_links = pd.DataFrame(rows).sort_values(by=["book_id", "kind"]).reset_index(drop=True)
+	# no link kinds are currently produced (ark, flickr and pdf have all been retired)
+	df_links = pd.DataFrame([], columns=["book_id", "kind", "url"])
 	# export the data
 	out_path = core.meta_links_path
 	log.info("Writing %d links to %s" % (len(df_links), out_path))

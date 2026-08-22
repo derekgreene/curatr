@@ -53,7 +53,6 @@ def create_segment_documents(book, volume, content, segment_size):
 			"title" : book["title"], 
 			"title_full": book["title_full"], 
 			"url_mudies": book["url_mudies"],
-			"url_pdf": book["url_pdf"],
 			"volume" : volume["num"],
 			"year" : book["year"], 
 			"content" : segment}
@@ -85,7 +84,6 @@ def create_volume_document(book, volume, content):
 		"title" : book["title"], 
 		"title_full": book["title_full"], 
 		"url_mudies": book["url_mudies"],
-		"url_pdf": book["url_pdf"],
         "volume" : volume["num"],
         "year" : book["year"], 
 		"content" : content}
@@ -137,7 +135,7 @@ def build_index(core, do_segment):
 		book["shelfmarks"] = shelfmark_map.get(book["id"], [])
 		book["category"], book["classification"], book["subclassification"] = classification_map.get(book["id"], (None, None, None))
 		# add extra link info
-		link_kinds = ["pdf", "mudies"]
+		link_kinds = ["mudies"]
 		for kind in link_kinds:
 			book["url_%s" % kind] = None
 		if book["id"] in link_map:
