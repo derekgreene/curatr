@@ -114,11 +114,6 @@ def prep_book_links(core):
 		if not book_id in df_books.index:
 			continue
 		rows.append({"book_id": book_id, "kind": "pdf", "url": url})
-	# add Flickr links
-	for book_id, url in df_original["url_images"][df_original["url_images"].notna()].iteritems():
-		if not book_id in df_books.index:
-			continue
-		rows.append({"book_id": book_id, "kind": "flickr", "url": url})
 	df_links = pd.DataFrame(rows).sort_values(by=["book_id", "kind"]).reset_index(drop=True)
 	# export the data
 	out_path = core.meta_links_path
