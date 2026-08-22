@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section" style="padding-bottom: 14px;">
+        <h2 style="text-align: center;">Page Not Found</h2>
+        <p style="text-align: center;">
+        The page you requested could not be found. </p>
+        <p style="text-align: center;">
+        <a href="{{ url_for('handle_index') }}">Return to the Curatr home page</a></p>
+    </div>
+</div>
+{% endblock %}

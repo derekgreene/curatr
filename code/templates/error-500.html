@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Server Error{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section" style="padding-bottom: 14px;">
+        <h2 style="text-align: center;">Something Went Wrong</h2>
+        <p style="text-align: center;">
+        An unexpected error occurred while processing your request.
+        {% if message %}{{ message }}{% endif %}</p>
+        <p style="text-align: center;">
+        <a href="{{ url_for('handle_index') }}">Return to the Curatr home page</a></p>
+    </div>
+</div>
+{% endblock %}
