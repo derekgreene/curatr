@@ -112,15 +112,6 @@ def add_metadata(core):
 	log.info("Added %d volumes" % num_added)
 	log.info("Database now has %d volume entries" % db.volume_count())
 
-	# add book links
-	num_added = 0
-	df_links = core_prep.get_book_links()
-	for _, row in df_links.iterrows():
-		db.add_link(row["book_id"], row["kind"], row["url"])
-		num_added += 1
-	db.commit()
-	log.info("Added %d links" % num_added)
-	log.info("Database now has %d link entries" % db.link_count())
 	db.close()
 
 def add_wordcounts(core):

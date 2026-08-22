@@ -75,14 +75,6 @@ CREATE TABLE Classifications (
 );
 """
 
-sql_statements["TableBookLinks"] = """
-CREATE TABLE BookLinks (
-	book_id VARCHAR(12) NOT NULL,
-	kind VARCHAR(20) NOT NULL,
-	url VARCHAR(2083) NOT NULL
-);
-"""
-
 sql_statements["TableRecommendations"] = """
 CREATE TABLE Recommendations (
 	volume_id VARCHAR(20) NOT NULL,
@@ -226,14 +218,6 @@ CREATE TABLE CachedPlaceCounts (
 sql_statements["TableCachedCountryCounts"] = """
 CREATE TABLE CachedCountryCounts (
 	location VARCHAR(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-	count INT NOT NULL
-);
-"""
-
-sql_statements["TableCachedClassificationCounts"] = """
-CREATE TABLE CachedClassificationCounts (
-	class_name VARCHAR(255) NOT NULL,
-	level SMALLINT NOT NULL,
 	count INT NOT NULL
 );
 """

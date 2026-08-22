@@ -96,7 +96,6 @@ def build_index(core, do_segment):
 	author_gender_map = db.author_gender_map()
 	classification_map = db.get_book_classifications_map()
 	shelfmark_map = db.get_book_shelfmarks_map()
-	link_map = db.get_book_link_map()
 	locations_map = db.get_published_locations_map()
 
 	# create a connection to the solr server
@@ -132,14 +131,6 @@ def build_index(core, do_segment):
 			book["author_genders"].append(author_gender_map[author_id])
 		book["shelfmarks"] = shelfmark_map.get(book["id"], [])
 		book["category"], book["classification"], book["subclassification"] = classification_map.get(book["id"], (None, None, None))
-		# add extra link info
-		link_kinds = []
-		for kind in link_kinds:
-			book["url_%s" % kind] = None
-		if book["id"] in link_map:
-			for kind in link_kinds:
-				if kind in link_map[book["id"]]:
-					book["url_%s" % kind] = link_map[book["id"]][kind]
 		# add extra published location info
 		book["location_countries"] = []
 		book["location_places"] = []

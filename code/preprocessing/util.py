@@ -74,13 +74,6 @@ class CorePrep(CoreBase):
 		log.info("Read %d rows, %d columns" % df_classifications.shape)
 		return df_classifications		
 
-	def get_book_links(self):
-		""" Return the book external link metadata as a Pandas DataFrame """
-		log.info("Reading link metadata from %s" % self.meta_links_path)
-		df_links = pd.read_csv(self.meta_links_path, sep="\t", dtype={'book_id':object})
-		log.info("Read %d rows, %d columns" % df_links.shape)
-		return df_links	
-
 	def get_volumes_metadata(self):
 		""" Return the book volumes metadata as a Pandas DataFrame """
 		log.info("Reading volume metadata from %s" % self.meta_volumes_path)

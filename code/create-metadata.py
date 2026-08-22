@@ -101,16 +101,6 @@ def prep_book_classifications(core):
 	log.info("Writing %d classifications to %s" % (len(df_classifications), out_path))
 	df_classifications.to_json(out_path, orient="records", indent=3)
 
-def prep_book_links(core):
-	""" Function to export the link metadata for Curatr """
-	log.info("++ Preparing book links ...")
-	# no link kinds are currently produced (ark, flickr and pdf have all been retired)
-	df_links = pd.DataFrame([], columns=["book_id", "kind", "url"])
-	# export the data
-	out_path = core.meta_links_path
-	log.info("Writing %d links to %s" % (len(df_links), out_path))
-	df_links.to_csv(out_path, index=False, sep="\t")
-
 def prep_book_volumes(core):
 	""" Function to export the link metadata for Curatr """
 	log.info("++ Preparing volume metadata ...")
@@ -181,15 +171,6 @@ def verify_data(core):
 		df_classifications = core.get_book_classifications()
 		log.info("Columns: %s" % list(df_classifications.columns))
 		log.info("Missing values\n%s" % df_classifications.isna().sum())
-	# check link data
-	log.info("Checking link metadata ...")
-	if not core.meta_links_path.exists():
-		log.warning("Missing link metdata: %s" % core.meta_links_path.absolute())
-	else:
-		df_links = core.get_book_links()
-		log.info("Columns: %s" % list(df_links.columns))	
-		log.info("Links associated with %d books" % len(df_links["book_id"].unique()) )
-		log.info("Missing values\n%s" % df_links.isna().sum())
 	# check volume data
 	log.info("Checking volume metadata ...")
 	if not core.meta_volumes_path.exists():
@@ -203,8 +184,7 @@ def verify_data(core):
 # --------------------------------------------------------------
 
 valid_actions = {"books":prep_book_metadata,
-	"classifications":prep_book_classifications, 
-	"links":prep_book_links, 
+	"classifications":prep_book_classifications,
 	"volumes":prep_book_volumes,
 	"verify":verify_data}
 
