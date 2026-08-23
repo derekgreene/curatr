@@ -16,7 +16,7 @@ class CorePrep(CoreBase):
 		super().__init__(dir_root)
 		self.dir_raw = self.dir_metadata / "raw"
 		# file paths for raw data
-		self.original_path = self.dir_raw / "ucd_digitised_books_2021.json"
+		self.original_path = self.dir_raw / "ucd_digitised_books_2026.json"
 		self.bl_path = self.dir_raw / "ms_digitised_books_2021-01-09.csv"
 		self.alston_path = self.dir_raw / "alston-classifications-annotated.json"
 		# ensure the key Core directories exist
