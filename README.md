@@ -41,7 +41,7 @@ Dependencies for optional advanced network viewer:
 Curatr provides a range of tools for searching, browsing, and analysing BL19:
 
 - **Collection Search**: a searchable index of 46,403 volumes and 12,322,488 text segments, searchable by full text, title, author, or publication location, and filterable by year, classification, and document type, with sorting by relevance, date, or title.
-- **Classification Index**: a browsable version of the hierarchical topical index used by the British Museum Library from the early nineteenth century until 1973, and subsequently by the British Library until the end of 1985, comprising 70 top-level categories such as "Fiction" and "Geography" and 148 more fine-grained sub-topics.
+- **Classification Index**: a browsable version of the hierarchical topical index used by the British Museum Library from the early nineteenth century until 1973, and subsequently by the British Library until the end of 1985, comprising 73 top-level categories such as "Fiction" and "Geography" and 142 more fine-grained sub-topics.
 - **Catalogue**: a sortable and searchable table of all books in the collection, browsable by title, author, and year of publication.
 - **Authors**: browse the collection by its 19,766 unique authors, with links to all associated volumes.
 - **Ngram Viewer**: plot the frequency with which one or more words occur across the collection over time, measured as the number of volumes per year containing each term, or as a percentage of the volumes published in that year. Results can be exported as a CSV file, and any year can be clicked through to the corresponding search results.

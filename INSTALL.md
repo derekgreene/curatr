@@ -13,7 +13,7 @@ dash
 dash-bootstrap-components
 dash-cytoscape
 pymysql
-python-solrclient
+SolrClient
 pandas
 numpy
 scikit-learn
@@ -27,7 +27,7 @@ markupsafe
 
 You can install these packages using pip:
 
-```pip install flask flask-login dash dash-bootstrap-components dash-cytoscape pymysql python-solrclient pandas numpy scikit-learn gensim networkx ftfy passlib tabulate markupsafe```
+```pip install flask flask-login dash dash-bootstrap-components dash-cytoscape pymysql SolrClient pandas numpy scikit-learn gensim networkx ftfy passlib tabulate markupsafe```
 
 ## Core Directory Setup
 
@@ -91,8 +91,8 @@ To improve performance, we then create a number of indexes on the MySQL database
 
 Firstly, install Solr 9 from [Apache Solr](https://solr.apache.org) which requires Java 11 or later (e.g. [OpenJDK](https://jdk.java.net/)). Once Solr is installed and running, create two core directories in the solr directory, one for indexing volumes and one for indexing segments. The `solr` directory in the Curatr Github repository provides schema files for these cores:
 
-- `solr/blvolumes/managed-schema.xml`
-- `solr/blsegments/managed-schema.xml`
+- `solr/blvolumes/conf/managed-schema.xml`
+- `solr/blsegments/conf/managed-schema.xml`
 
 Then from the Solr home directory register the two Solr cores:
 
