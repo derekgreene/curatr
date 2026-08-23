@@ -23,7 +23,6 @@ from preprocessing.cleaning import clean, clean_title, clean_shelfmarks, extract
 def prep_book_metadata(core):
 	""" Function to export the core book metadata for Curatr """
 	log.info("++ Preparing book metadata ...")
-	filter_book_ids = core.get_filter_book_ids()
 	# load the original custom UCD metadata
 	df_original = core.get_original_rawdata()
 	# load the British library metadata
@@ -33,7 +32,7 @@ def prep_book_metadata(core):
 	rows = []
 	matched = 0
 	for book_id, row_curatr in df_original.iterrows():
-		if (book_id in filter_book_ids) or (not book_id in df_bl.index):
+		if not book_id in df_bl.index:
 			continue
 		row_bl = df_bl.loc[book_id]
 		matched += 1

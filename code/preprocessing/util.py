@@ -19,7 +19,6 @@ class CorePrep(CoreBase):
 		self.original_path = self.dir_raw / "ucd_digitised_books_2021.json"
 		self.bl_path = self.dir_raw / "ms_digitised_books_2021-01-09.csv"
 		self.alston_path = self.dir_raw / "alston-classifications-annotated.json"
-		self.filter_path = self.dir_raw / "books-filter.txt"
 		# ensure the key Core directories exist
 		self.ensure_directories_exists([self.dir_fulltext, self.dir_metadata, self.dir_embeddings, self.dir_export])
 
@@ -81,20 +80,6 @@ class CorePrep(CoreBase):
 		df_volumes = pd.read_csv(self.meta_volumes_path, sep="\t", dtype={'book_id':object}).set_index("volume_id")
 		log.info("Read %d rows, %d columns" % df_volumes.shape)
 		return df_volumes	
-
-	def get_filter_book_ids(self):
-		""" Get list of book identifiers which are to be excluded from Curatr """
-		if not self.filter_path.exists():
-			log.warning("Filter list file does not exist: %s" % self.filter_path.absolute())
-			return set()
-		filter_book_ids = set()
-		with open(self.filter_path, "r") as fin:
-			for line in fin.readlines():
-				line = line.strip()
-				if len(line) > 0:
-					filter_book_ids.add(line)
-		log.info("Read filter list of %d book IDs from %s" % (len(filter_book_ids), self.filter_path.absolute()) )
-		return filter_book_ids
 
 	def get_stopwords(self):
 		""" Returns the default set of Curatr stopwords """
