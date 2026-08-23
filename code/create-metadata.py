@@ -86,16 +86,25 @@ def prep_book_classifications(core):
 		# a book can have multiple shelfmarks (e.g. multiple volumes); use the
 		# first one that actually carries a classification
 		shelfmark = next((s for s in record["shelfmarks"] if s["category"] is not None), None)
-		if shelfmark is None:
-			# none of this book's shelfmarks are classified
-			primary, secondary, tertiary = "Non-Fiction", "Non-Fiction", "Uncategorised"
-		else:
+		if shelfmark is not None:
 			primary = shelfmark["coarse_category"]
 			secondary = shelfmark["category"]
 			tertiary = shelfmark["sub_category"]
+		elif record.get("annotated_coarse_category"):
+			primary = record["annotated_coarse_category"]
+			if primary == "Fiction":
+				primary, secondary, tertiary = "Fiction", "Fiction", "Uncategorised"
+			else:
+				primary, secondary, tertiary = "Non-Fiction", "Uncategorised", None
+		else:
+			log.warning("No shelfmark classification or annotation for book %s" % book_id)
+			primary, secondary, tertiary = None, None, None
 		row = {"book_id": book_id, "primary": primary, "secondary": secondary, "tertiary": tertiary}
 		rows.append(row)
 	df_classifications = pd.DataFrame(rows).sort_values(by=["book_id"]).reset_index(drop=True)
+	# log the distribution of primary classifications, including any missing values
+	primary_counts = df_classifications["primary"].value_counts(dropna=False)
+	log.info("Primary classification counts:\n%s" % primary_counts.to_string())
 	# export the data
 	out_path = core.meta_classifications_path
 	log.info("Writing %d classifications to %s" % (len(df_classifications), out_path))
