@@ -187,11 +187,11 @@ def format_lexicon_recommendations(context, lexicon_id, recommendations, top = 1
 		if len(similar_to[neighbor]) == 0:
 			explanation = "Word is not present in current lexicon"
 		elif len(similar_to[neighbor]) == 1:
-			explanation = "Frequently appears with %s" % similar_to[neighbor][0]
+			explanation = "Used in similar contexts to %s" % similar_to[neighbor][0]
 		elif len(similar_to[neighbor]) == 2:
-			explanation = "Frequently appears with %s and %s" % (similar_to[neighbor][0], similar_to[neighbor][1])
+			explanation = "Used in similar contexts to %s and %s" % (similar_to[neighbor][0], similar_to[neighbor][1])
 		else:
-			explanation = "Frequently appears with "
+			explanation = "Used in similar contexts to "
 			explanation += ", ".join(similar_to[neighbor])
 		html += "<tr class='lexicon'>\n"
 		html += "<td class='text-left lex'><i>%s</i></td><td class='text-left lex'>%s</td>\n" % (neighbor.replace("_"," "), explanation)
