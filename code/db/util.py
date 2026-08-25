@@ -54,7 +54,7 @@ class GenericDB:
 		if table_name in tables:
 			log.info( "Table %s already exists" % table_name)
 		else:
-			if not table_name in self.sql_statements:
+			if not ("Table%s" % table_name) in self.sql_statements:
 				log.error("Cannot create unknown table %s" % table_name)
 				return
 			log.info("Creating table %s ..." % table_name)

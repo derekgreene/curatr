@@ -35,7 +35,7 @@ def add_metadata(core):
 	db = core.get_db()
 	try:
 		# ensure any required tables exist
-		for table_name in ["Books", "Authors", "BookAuthors", "Volumes", "Classifications"]:
+		for table_name in ["Books", "Authors", "BookAuthors", "BookLocations", "BookShelfmarks", "Volumes", "Classifications"]:
 			db.ensure_table_exists(table_name)
 
 		df_books = core_prep.get_book_metadata()
