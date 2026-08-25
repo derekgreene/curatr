@@ -16,7 +16,7 @@ class CorePrep(CoreBase):
 		super().__init__(dir_root)
 		self.dir_raw = self.dir_metadata / "raw"
 		# file paths for raw data
-		self.original_path = self.dir_raw / "ucd_digitised_books_2026.json"
+		self.original_path = self.dir_raw / "bl19_ucd_metadata-raw.json"
 		self.bl_path = self.dir_raw / "ms_digitised_books_2021-01-09.csv"
 		self.alston_path = self.dir_raw / "alston-classifications-annotated.json"
 		# ensure the key Core directories exist
@@ -35,7 +35,7 @@ class CorePrep(CoreBase):
 	def get_original_rawdata(self):
 		""" Load and return raw UCD Curatr metadata as a Pandas DataFrame """
 		log.info("Reading raw data from %s" % self.original_path)
-		df_original = pd.read_json(self.original_path, dtype={'identifier':object}).set_index("identifier").sort_index()
+		df_original = pd.read_json(self.original_path, orient="records", dtype={'identifier':object}).set_index("identifier").sort_index()
 		log.info("Read %d rows, %d columns" % (len(df_original), len(df_original.columns)))
 		return df_original
 

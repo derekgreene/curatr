@@ -493,18 +493,6 @@ class CuratrDB(GenericDB):
 			log.error("SQL error in get_author_name_map(): %s" % str(e))
 		return name_map
 
-	def author_gender_map(self):
-		""" Return a dictionary mapping each author ID to their corresponding gender """
-		gender_map = {}
-		try:
-			sql = "SELECT gender, id FROM Authors"
-			self.cursor.execute(sql)
-			for row in self.cursor.fetchall():
-				gender_map[row[1]] = row[0]
-		except Exception as e:
-			log.error("SQL error in get_author_gender_map(): %s" % str(e))
-		return gender_map
-
 	def add_ngram_count(self, ngram, year, count, collection_id):
 		""" Add the count for the specific ngram for a given year """
 		sql = "INSERT INTO Ngrams (ngram, year, count, collection) VALUES(%s,%s,%s,%s)"

@@ -9,6 +9,9 @@ CREATE TABLE Books (
 	id VARCHAR(12) NOT NULL,
 	year SMALLINT NOT NULL,
 	decade SMALLINT NOT NULL,
+	year_full VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+	year_uncertain BOOLEAN DEFAULT FALSE,
+	year_range BOOLEAN DEFAULT FALSE,
 	title VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT "Untitled",
 	title_full VARCHAR(2000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT "Untitled",
 	authors_full VARCHAR(2000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
@@ -27,7 +30,6 @@ sql_statements["TableAuthors"] = """
 CREATE TABLE Authors (
 	id MEDIUMINT NOT NULL,
 	name VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-	gender VARCHAR(20) DEFAULT "Unknown",
 	PRIMARY KEY (id)
 );
 """

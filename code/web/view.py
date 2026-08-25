@@ -7,6 +7,20 @@ from markupsafe import Markup, escape
 from preprocessing.cleaning import tidy_title, tidy_authors, tidy_snippet, tidy_content, tidy_location_places
 from preprocessing.cleaning import tidy_shelfmarks, tidy_publisher, tidy_edition, tidy_description
 
+def render_authors_html(context, db, doc, author_ids):
+	""" Build the linked Author(s) HTML for a volume/segment """
+	if len(author_ids) == 0:
+		# use the values from Solr
+		return tidy_authors(doc.get("authors", None))
+	author_html = ""
+	for author_id in author_ids:
+		if len(author_html) > 0:
+			author_html += " &ndash; "
+		author = db.get_cached_author(author_id)
+		url_author = "%s/author?author_id=%s" % (context.prefix, author_id)
+		author_html += "<a href='%s'>%s</a>" % (url_author, author["sort_name"])
+	return Markup(author_html)
+
 # --------------------------------------------------------------
 
 def populate_volume(context, db, doc, spec, volume_id):
@@ -40,19 +54,7 @@ def populate_volume(context, db, doc, spec, volume_id):
 	else:
 		context["classification"] = "Uncategorised"
 	# Add author info
-	if len(author_ids) == 0:
-		# use the values from Solr
-		context["authors"] = tidy_authors(doc.get("authors", None))
-	else:
-		# use richer author details
-		author_html = ""
-		for author_id in author_ids:
-			if len(author_html) > 0:
-				author_html += " &ndash; "
-			author = db.get_cached_author(author_id)
-			url_author = "%s/author?author_id=%s" % (context.prefix, author_id) 	
-			author_html += "<a href='%s'>%s</a>" % (url_author, author["sort_name"])
-		context["authors"] = Markup(author_html)
+	context["authors"] = render_authors_html(context, db, doc, author_ids)
 	# Add the main segment content
 	content = tidy_content(doc["content"])
 	html_text = str(escape(content))
@@ -129,19 +131,7 @@ def populate_segment(context, db, doc, spec, segment_id):
 	else:
 		context["classification"] = "Uncategorised"
 	# Add author info
-	if len(author_ids) == 0:
-		# use the values from Solr
-		context["authors"] = tidy_authors(doc.get("authors", None))
-	else:
-		# use richer author details
-		author_html = ""
-		for author_id in author_ids:
-			if len(author_html) > 0:
-				author_html += " &ndash; "
-			author = db.get_cached_author(author_id)
-			url_author = "%s/author?author_id=%s" % (context.prefix, author_id) 	
-			author_html += "<a href='%s'>%s</a>" % (url_author, author["sort_name"])
-		context["authors"] = Markup(author_html)		
+	context["authors"] = render_authors_html(context, db, doc, author_ids)
 	# Add the main segment content
 	content = tidy_content(doc["content"])
 	html_text = str(escape(content))

@@ -11,14 +11,22 @@ Note: The core directory should contain the required raw metadata files for the 
 Digital Collection.
 """
 import logging as log
-import math, sys
+import math, re, sys
 from optparse import OptionParser
 from pathlib import Path
 import pandas as pd
 from preprocessing.util import CorePrep
 from preprocessing.cleaning import clean, clean_title, clean_shelfmarks, extract_publication_location, extract_authors
+from preprocessing.cleaning import clean_author_name, parse_holdings_personal_name
 
 # --------------------------------------------------------------
+
+def _is_blank_raw(value):
+	""" True if a raw (uncleaned) pandas cell value is missing/empty """
+	if value is None:
+		return True
+	s = str(value).strip()
+	return len(s) == 0 or s.lower() == "nan"
 
 def prep_book_metadata(core):
 	""" Function to export the core book metadata for Curatr """
@@ -28,7 +36,7 @@ def prep_book_metadata(core):
 	# load the British library metadata
 	df_bl = core.get_bl_rawdata()
 	# process the books
-	log.info("Cleaning metadata for %d books ..." % len(df_bl))
+	log.info("Cleaning metadata for %d UCD books, matching against %d BL records ..." % (len(df_original), len(df_bl)))
 	rows = []
 	matched = 0
 	for book_id, row_curatr in df_original.iterrows():
@@ -39,34 +47,59 @@ def prep_book_metadata(core):
 		row = {"book_id": book_id}
 		# TODO: should we change this?
 		row["year"] = row_curatr["year"]
+		# handle the raw date field, which can carry uncertainty/range information that
+		# the parsed 'year' integer alone does not (e.g. '[1888]', '1861-63')
+		datefield = row_curatr["datefield"]
+		if _is_blank_raw(datefield):
+			row["year_full"], row["year_uncertain"], row["year_range"] = None, False, False
+		else:
+			datefield_str = str(datefield)
+			row["year_full"] = datefield_str
+			row["year_uncertain"] = bool(re.search(r"[\[\]\?]", datefield_str))
+			row["year_range"] = bool(re.search(r"\d[-,]", datefield_str))
 		# handle title
 		row["title"] = clean_title(row_bl["Title"])
 		row["title_full"] = clean(row_bl["Title"])
-		# handle authors
-		row["authors"] = extract_authors(row_curatr["authors"])
-		if row_curatr["authors"] is None or len(row_curatr["authors"]) == 0:
-			row["authors_full"] = None
+		# handle authors; if no personal-name author is recorded, fall back to the
+		# holdings_author_personal field, which sometimes carries a recoverable name
+		# (including life dates) that the structured 'authors' field is missing
+		personal_authors = row_curatr["authors"]
+		if personal_authors is None or type(personal_authors) is float or len(personal_authors) == 0:
+			fallback_raw = parse_holdings_personal_name(row_curatr["holdings_author_personal"])
+			fallback_name = clean_author_name(fallback_raw) if fallback_raw else None
+			if fallback_name is not None:
+				row["authors"] = [fallback_name]
+				row["authors_full"] = {"creator": [fallback_raw]}
+			else:
+				row["authors"] = None
+				row["authors_full"] = None
 		else:
-			row["authors_full"] = row_curatr["authors"]
+			row["authors"] = extract_authors(personal_authors)
+			row["authors_full"] = personal_authors
 		row["resource_type"] = clean(row_bl["Type of resource"])
 		# handle publisher
 		row["publisher"] = clean(row_bl["Publisher"])
 		row["publisher_full"] = clean(row_curatr["holdings_publication"])
-		# handle publication locations
+		# handle publication locations; fall back to the UCD 'place' field when the BL
+		# record has no place of publication
+		place_input = row_bl["Place of publication"]
+		if _is_blank_raw(place_input):
+			place_input = row_curatr["place"]
 		row["publication_place"], row["publication_country"] = extract_publication_location(
-			row_bl["Place of publication"], row_bl["Country of publication"])
-		# other fields
-		row["edition"] = clean(row_bl['Edition'])
-		row["physical_descr"] = clean(row_bl['Physical description'])
+			place_input, row_bl["Country of publication"])
+		# other fields; fall back to the UCD holdings_* fields when the BL record is blank
+		row["edition"] = clean(row_bl['Edition']) or clean(row_curatr["holdings_edition"])
+		row["physical_descr"] = clean(row_bl['Physical description']) or clean(row_curatr["holdings_physical_descr"])
 		row["shelfmarks"] = clean_shelfmarks(row_curatr["shelfmarks"])
 		row["bl_record_id"] = row_bl["BL record ID"]
 		rows.append(row)
 	df_books = pd.DataFrame(rows).set_index("book_id").sort_index()
+	log.info("Matched %d/%d UCD books to a BL record (%d unmatched)" % (matched, len(df_original), len(df_original) - matched))
 	log.info("Created %d rows, %d columns" % (len(df_books), len(df_books.columns)))
 	# export the data
 	out_path = core.meta_books_path
 	log.info("Writing %d books to %s" % (len(df_books), out_path))
-	df_books.reset_index().to_json(out_path, orient="records", indent=3)	
+	df_books.reset_index().to_json(out_path, orient="records", indent=3)
 
 def prep_book_classifications(core):
 	""" Function to export the Alston index book classification metadata for Curatr """

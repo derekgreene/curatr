@@ -90,6 +90,129 @@ def clean_shelfmarks(shelfmarks):
 		cleaned.append(shelfmark)
 	return cleaned
 
+def _clean_name_token(part):
+	""" Clean a single whitespace-delimited token from a raw author name/qualifier """
+	if not part:
+		return ""
+	if part[0] == "(":
+		part = part[1:]
+	if part and part[0] == "[":
+		part = part[1:]
+	if part and part[-1] == "]":
+		part = part[0:len(part)-1]
+	if part and part[-1] == ")":
+		part = part[0:len(part)-1]
+	if len(part) > 3 and part[-1] == ".":
+		part = part[0:len(part)-1]
+	return part.capitalize().strip()
+
+# Qualifiers that reveal gender (Mrs/Lady/Miss and their peerage equivalents), distinguish
+# otherwise-identical names across generations (the Elder/Younger, Junior/Senior, numbered
+# peerage titles), or preserve a life-date range (also disambiguating). Generic, non-
+# distinguishing honorifics/occupations (Sir, Dr, Novelist, of Somewhere, etc.) are still
+# discarded, as they were before.
+_qualifier_keep_patterns = [
+	re.compile(r"^mrs\.?$", re.IGNORECASE),
+	re.compile(r"^lady(\s|$)", re.IGNORECASE),
+	re.compile(r"^miss$", re.IGNORECASE),
+	re.compile(r"^baroness(\s|$)", re.IGNORECASE),
+	re.compile(r"^countess(\s|$)", re.IGNORECASE),
+	re.compile(r"^duchess(\s|$)", re.IGNORECASE),
+	re.compile(r"^viscountess(\s|$)", re.IGNORECASE),
+	re.compile(r"^marchioness(\s|$)", re.IGNORECASE),
+	re.compile(r"^the elder\.?$", re.IGNORECASE),
+	re.compile(r"^the younger\.?$", re.IGNORECASE),
+	re.compile(r"^(junior|jr|jnr)\.?$", re.IGNORECASE),
+	re.compile(r"^(senior|sr|snr)\.?$", re.IGNORECASE),
+	re.compile(r"^\d+(st|nd|rd|th)\s+(bart|baronet|earl|duke|viscount|marquis|marquess|baron|lord)", re.IGNORECASE),
+	re.compile(r"^\d{3,4}\??\s*-\s*\d{3,4}\??\.?$"),  # life-date range, e.g. '1821-1890'
+]
+
+_peerage_title_re = re.compile(r"^(lord|baron|earl|viscount|duke|marquis|marquess)\b\s*(.*)$", re.IGNORECASE)
+_peerage_connector_re = re.compile(r"^(of|de|d['’]|von|del)\s*", re.IGNORECASE)
+
+def _has_attached_peerage_title(component):
+	""" True if component is a peerage/office title WITH a specific attached name
+	(e.g. 'Lord Hailes', 'Earl of Dorset', 'Lord Mayor of London'), rather than a bare,
+	non-distinguishing honorific (e.g. 'Lord' alone) """
+	m = _peerage_title_re.match(component.strip())
+	if not m:
+		return False
+	remainder = _peerage_connector_re.sub("", m.group(2).strip()).strip()
+	remainder = remainder.rstrip(" .,").strip()
+	return len(remainder) > 0
+
+def _qualifies_component(component):
+	""" Decide whether a single comma-separated qualifier component should be preserved """
+	component = component.strip()
+	if not component:
+		return False
+	if re.search(r"\bafterwards\b", component, re.IGNORECASE):
+		return True
+	for pattern in _qualifier_keep_patterns:
+		if pattern.match(component):
+			return True
+	return _has_attached_peerage_title(component)
+
+_lowercase_connector_re = re.compile(r"\b(Of|De|Von|Del)\b")
+
+def _clean_qualifier_component(component):
+	""" Apply the same per-token cleanup used for names to a kept qualifier component """
+	tokens = [_clean_name_token(w) for w in re.split(r"\s+", component.strip())]
+	joined = " ".join(t for t in tokens if t).strip()
+	return _lowercase_connector_re.sub(lambda m: m.group(1).lower(), joined)
+
+def clean_author_name(fullname):
+	""" Clean a single raw author name string as found in the British Library Digital
+	Collection metadata (e.g. 'PEEL, Augustus - Mrs' -> 'Peel, Augustus, Mrs'). Qualifiers
+	that reveal gender or distinguish otherwise-identical names are preserved; generic
+	non-distinguishing titles (Sir, Dr, occupations, etc.) are discarded as before. """
+	fullname = ftfy.fix_text(fullname)
+	fullname = fullname.strip().replace(";","").strip()
+	if len(fullname) < 2:
+		return None
+	parts = re.split(r"\s+", fullname)
+	if "-" in parts:
+		idx = parts.index("-")
+		name_part = " ".join(parts[:idx]).strip()
+		qualifier_part = " ".join(parts[idx+1:]).strip()
+	else:
+		name_part = fullname
+		qualifier_part = ""
+	name_tokens = [t for t in (_clean_name_token(p) for p in re.split(r"\s+", name_part) if p) if t]
+	if len(name_tokens) == 0:
+		log.warning("Could not parse name '%s'" % fullname)
+		return None
+	cleaned_name = " ".join(name_tokens).strip()
+	if not qualifier_part:
+		return cleaned_name
+	kept = [_clean_qualifier_component(c) for c in qualifier_part.split(",") if _qualifies_component(c)]
+	kept = [c for c in kept if c]
+	if not kept:
+		return cleaned_name
+	return cleaned_name + ", " + ", ".join(kept)
+
+def parse_holdings_personal_name(raw):
+	""" Convert holdings_author_personal's 'Surname, Firstname, Title, dates.' convention
+	(e.g. 'Burton, Richard Francis, Sir, 1821-1890.') into the 'Name - qualifier' form used
+	elsewhere in authors_full, so it flows through clean_author_name() unchanged """
+	if raw is None or type(raw) is float:
+		return None
+	raw = raw.strip()
+	if raw.endswith("."):
+		raw = raw[:-1].strip()
+	if not raw:
+		return None
+	segments = [s.strip() for s in raw.split(",")]
+	segments = [s for s in segments if s.lower().rstrip(".") != "pseud"]
+	if len(segments) < 2:
+		return segments[0] if segments else None
+	name_part = "%s, %s" % (segments[0], segments[1])
+	qualifier_part = ", ".join(s for s in segments[2:] if s)
+	if qualifier_part:
+		return "%s - %s" % (name_part, qualifier_part)
+	return name_part
+
 def extract_authors(authors, default_value = None):
 	""" Extract a list of formatted author names from the string originally provided in
 	the metadata from the British Library Digital Collection """
@@ -98,29 +221,9 @@ def extract_authors(authors, default_value = None):
 	author_list = []
 	for fullname_list in authors.values():
 		for fullname in fullname_list:
-			fullname = ftfy.fix_text(fullname)
-			fullname = fullname.strip().replace(";","").strip()
-			if len(fullname) < 2:
-				continue
-			name_parts = []
-			for part in re.split("\s+",fullname):
-				if part == "-":
-					break
-				if part[0] == "(":
-					part = part[1:]
-				if part[0] == "[":
-					part = part[1:]
-				if part[-1] == "]":
-					part = part[0:len(part)-1]
-				if part[-1] == ")":
-					part = part[0:len(part)-1]
-				if len(part) > 3 and part[-1] == ".":
-					part = part[0:len(part)-1]
-				name_parts.append(part.capitalize().strip())
-			if len(name_parts) == 0:
-				log.warning("Could not parse name '%s'" % fullname)
-			else:
-				author_list.append(" ".join(name_parts).strip())
+			cleaned = clean_author_name(fullname)
+			if cleaned is not None:
+				author_list.append(cleaned)
 	if len(author_list) == 0:
 		return default_value
 	return author_list
@@ -177,44 +280,7 @@ def format_author_sortname(author):
 		if len(word) > 2 and word.isupper():
 			s = s.replace(word, word.capitalize())
 	# manual replacements
-	s = re.sub(" \- Sir$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Mrs$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Mr$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Dr$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Esq$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Lord$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Lady$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Esquire$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Esq\.,.*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- M\.P$", "", s, re.IGNORECASE)
-	s = re.sub(" \- M\.P\.$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Esq\.$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Right Hon.*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Artist$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Missionary$", "", s, re.IGNORECASE)
-	s = re.sub(" \- the Poet$", "", s, re.IGNORECASE)
-	s = re.sub(" \- a Poet$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Poet$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Anthropologist$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Minister at Etal$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Lecturer$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Esq\., of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Author of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Fellow of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Late Fellow of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Late of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Vicar of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Earl of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Mayor of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Baron of .*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Lord Protector.*$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Baron$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Novelist$", "", s, re.IGNORECASE)
-	s = re.sub(" \- Author$", "", s, re.IGNORECASE)
-	s = re.sub(" \- B\.A\.. *$", "", s, re.IGNORECASE)
 	s = re.sub("\(Margaret\)", "Margaret", s)
-	s = re.sub(" \- of the 62nd Regiment$", "", s, re.IGNORECASE)
 	s = s.replace(", the Historian","")
 	s = re.sub("\s+", " ", s)
 	if len(s) > 10 and s[-1] in "., -_?":

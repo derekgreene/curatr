@@ -33,8 +33,7 @@ def create_segment_documents(book, volume, content, segment_size):
 		doc = {"id" : "%s_%06d" % (volume["id"], (i+1)),
 			"authors" : book["authors"],
 			"authors_full" : book["authors_full"],
-			"authors_genders": book["author_genders"],
-			"book_id" : book["id"], 
+			"book_id" : book["id"],
 			"category" : book["category"],
 			"classification" : book["classification"],
 			"edition" : book["edition"],
@@ -53,7 +52,10 @@ def create_segment_documents(book, volume, content, segment_size):
 			"title" : book["title"], 
 			"title_full": book["title_full"],
 			"volume" : volume["num"],
-			"year" : book["year"], 
+			"year" : book["year"],
+			"year_full" : book["year_full"],
+			"year_uncertain" : book["year_uncertain"],
+			"year_range" : book["year_range"],
 			"content" : segment}
 		docs.append(doc)
 	return docs
@@ -63,8 +65,7 @@ def create_volume_document(book, volume, content):
 	doc = {"id" : volume["id"],
 		"authors" : book["authors"],
 		"authors_full" : book["authors_full"],
-		"authors_genders": book["author_genders"],
-		"book_id" : book["id"], 
+		"book_id" : book["id"],
 		"category" : book["category"],
 		"classification" : book["classification"],
 		"edition" : book["edition"],
@@ -83,7 +84,10 @@ def create_volume_document(book, volume, content):
 		"title" : book["title"], 
 		"title_full": book["title_full"],
         "volume" : volume["num"],
-        "year" : book["year"], 
+        "year" : book["year"],
+        "year_full" : book["year_full"],
+        "year_uncertain" : book["year_uncertain"],
+        "year_range" : book["year_range"],
 		"content" : content}
 	return doc
 
@@ -94,7 +98,6 @@ def build_index(core, do_segment):
 		log.info("Retrieving book metadata from database ...")
 		books = db.get_books()
 		author_name_map = db.get_author_name_map()
-		author_gender_map = db.author_gender_map()
 		classification_map = db.get_book_classifications_map()
 		shelfmark_map = db.get_book_shelfmarks_map()
 		locations_map = db.get_published_locations_map()
@@ -126,10 +129,9 @@ def build_index(core, do_segment):
 				book["title"] = "Untitled"
 			log.info("Book %d/%d: (%s) %s ..." % (num_books, len(books), book["id"], book["title"][:50]))
 			# add extra book metadata
-			book["authors"], book["author_genders"] = [], []
+			book["authors"] = []
 			for author_id in db.get_book_author_ids(book["id"]):
 				book["authors"].append(author_name_map[author_id])
-				book["author_genders"].append(author_gender_map[author_id])
 			book["shelfmarks"] = shelfmark_map.get(book["id"], [])
 			book["category"], book["classification"], book["subclassification"] = classification_map.get(book["id"], (None, None, None))
 			# add extra published location info

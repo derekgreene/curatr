@@ -939,7 +939,6 @@
     <!-- Start Custom Fields for Curatr -->
     <field name="authors" type="string" multiValued="true" stored="true"/>
     <field name="authors_full" type="string" stored="true"/>
-    <field name="authors_genders" type="string" multiValued="true" stored="true"/>
     <field name="authors_text" type="text_general" multiValued="true" indexed="true" stored="false"/>
     <field name="book_id" type="string" stored="true"/>
     <field name="category" type="string" default="unknown" stored="true"/>
@@ -965,6 +964,9 @@
     <field name="title_text" type="text_general" multiValued="false" indexed="true" stored="false"/>
     <field name="volume" type="pint" stored="true"/>
     <field name="year" type="pint" stored="true"/>
+    <field name="year_full" type="string" stored="true"/>
+    <field name="year_uncertain" type="boolean" indexed="true" stored="true"/>
+    <field name="year_range" type="boolean" indexed="true" stored="true"/>
     <!-- End Custom Fields for Curatr -->    
 
     <!-- Start Copy Fields for Curatr -->
