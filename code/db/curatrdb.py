@@ -60,10 +60,14 @@ class CuratrDB(GenericDB):
 		
 	def add_book(self, book_id, book, author_ids):
 		columns = self._get_table_columns("Books")
-		dbrow = {"id" : book_id} 
+		dbrow = {"id" : book_id}
 		for key in book:
 			if key in columns:
-				dbrow[key] = book[key]
+				value = book[key]
+				# MySQL has no representation for NaN; treat it as missing (NULL)
+				if isinstance(value, float) and value != value:
+					value = None
+				dbrow[key] = value
 		# add the book
 		placeholder = ", ".join(["%s"] * len(dbrow))
 		sql = "INSERT INTO Books ({columns}) VALUES ({values});".format(columns=",".join(dbrow.keys()), values=placeholder)
