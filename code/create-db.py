@@ -271,6 +271,7 @@ def add_caches(core):
 		# populate CachedAuthors
 		log.info("Populating CachedAuthors ...")
 		# get the author stats
+		book_author_ids_map = db.get_book_author_ids_map()
 		author_book_count = {}
 		author_min_year, author_max_year, author_sort_name = {}, {}, {}
 		num = 0
@@ -278,7 +279,7 @@ def add_caches(core):
 			num += 1
 			if num % 5000 == 0:
 				log.info("Processed %d books" % num)
-			author_ids = db.get_book_author_ids(book["id"])
+			author_ids = book_author_ids_map.get(book["id"], [])
 			for author_id in author_ids:
 				if not author_id in author_book_count:
 					author_book_count[author_id] = 1

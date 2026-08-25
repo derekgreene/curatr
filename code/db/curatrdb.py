@@ -50,13 +50,12 @@ class CuratrDB(GenericDB):
 
 	def index_tables(self):
 		""" Index all certain tables in the database to improve performance. """
-		try:
-			for x in sql_indexing_statements:
+		for x in sql_indexing_statements:
+			try:
 				log.info("Building database index '%s' ..." % x)
 				self.cursor.execute(sql_indexing_statements[x])
-		except Exception as e:
-			log.error("SQL error in index_tables(): %s" % str(e))
-			return 0
+			except Exception as e:
+				log.warning("Could not build index '%s' (may already exist): %s" % (x, str(e)))
 		
 	def add_book(self, book_id, book, author_ids):
 		columns = self._get_table_columns("Books")
@@ -356,11 +355,21 @@ class CuratrDB(GenericDB):
 	def get_book_volumes(self, book_id):
 		""" Return the details for all volumes associated with the specified book """
 		try:
-			sql = "SELECT * FROM Volumes WHERE book_id=%s" 
+			sql = "SELECT * FROM Volumes WHERE book_id=%s"
 			return self._bulk_sql_to_dict( sql, book_id )
 		except Exception as e:
 			log.error("SQL error in get_book_volumes(): %s" % str(e))
 			return []
+
+	def get_volumes_by_book_map(self):
+		""" Return a dictionary mapping each book_id to its list of volume detail dicts, in one query """
+		book_volumes_map = {}
+		try:
+			for vol in self.get_volumes():
+				book_volumes_map.setdefault(vol["book_id"], []).append(vol)
+		except Exception as e:
+			log.error("SQL error in get_volumes_by_book_map(): %s" % str(e))
+		return book_volumes_map
 
 	def get_volume_metadata(self, volume_id):
 		""" Return complete details for the volume with the specified ID, including
@@ -460,6 +469,20 @@ class CuratrDB(GenericDB):
 		except Exception as e:
 			log.error("SQL error in get_book_author_ids(): %s" % str(e))
 		return author_ids
+
+	def get_book_author_ids_map(self):
+		""" Return a dictionary mapping each book_id to its list of author IDs, in one query """
+		book_author_map = {}
+		try:
+			sql = "SELECT book_id, author_id FROM BookAuthors"
+			self.cursor.execute(sql)
+			for row in self.cursor.fetchall():
+				if not row[0] in book_author_map:
+					book_author_map[row[0]] = []
+				book_author_map[row[0]].append(row[1])
+		except Exception as e:
+			log.error("SQL error in get_book_author_ids_map(): %s" % str(e))
+		return book_author_map
 
 	def get_author_book_ids(self, author_id):
 		""" Return the IDs of all books by a given author """

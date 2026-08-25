@@ -98,9 +98,11 @@ def build_index(core, do_segment):
 		log.info("Retrieving book metadata from database ...")
 		books = db.get_books()
 		author_name_map = db.get_author_name_map()
+		book_author_ids_map = db.get_book_author_ids_map()
 		classification_map = db.get_book_classifications_map()
 		shelfmark_map = db.get_book_shelfmarks_map()
 		locations_map = db.get_published_locations_map()
+		book_volumes_map = db.get_volumes_by_book_map()
 
 		# create a connection to the solr server
 		if not core.init_solr():
@@ -130,7 +132,7 @@ def build_index(core, do_segment):
 			log.info("Book %d/%d: (%s) %s ..." % (num_books, len(books), book["id"], book["title"][:50]))
 			# add extra book metadata
 			book["authors"] = []
-			for author_id in db.get_book_author_ids(book["id"]):
+			for author_id in book_author_ids_map.get(book["id"], []):
 				book["authors"].append(author_name_map[author_id])
 			book["shelfmarks"] = shelfmark_map.get(book["id"], [])
 			book["category"], book["classification"], book["subclassification"] = classification_map.get(book["id"], (None, None, None))
@@ -146,7 +148,7 @@ def build_index(core, do_segment):
 			# process volumes for this book
 			docs = []
 			num_book_volumes = book["volumes"]
-			for vol in db.get_book_volumes(book["id"]):
+			for vol in book_volumes_map.get(book["id"], []):
 				volume_path = core.dir_fulltext / vol["path"]
 				if not volume_path.exists():
 					log.error("Missing volume file %s" % volume_path)
