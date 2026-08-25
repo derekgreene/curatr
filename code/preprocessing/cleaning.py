@@ -8,7 +8,7 @@ import ftfy
 
 # --------------------------------------------------------------
 
-re_brackets = re.compile("(\[.*\])")
+re_brackets = re.compile(r"(\[.*\])")
 
 title_remove_suffixes = ["selected and arranged by", "collected and arranged with notes by", "collected and arranged by",
 	"with. lllustrations", " with two maps", "with. diagrams",
@@ -22,7 +22,7 @@ def clean(s, default_value=None):
 		return default_value
 	s = ftfy.fix_text(s)
 	s = s.replace("-"," ").replace("?"," ")
-	s = re.sub("\s+", " ", s).strip()
+	s = re.sub(r"\s+", " ", s).strip()
 	if len(s) < 2:
 		return default_value
 	return s
@@ -37,12 +37,12 @@ def clean_title(title, default_title=None):
 	title = title.replace(" ... ", ". ")
 	title = title.replace("... ", ". ")
 	title = title.replace("...", ".")
-	title = re.sub("\s+", " ", title).strip()
+	title = re.sub(r"\s+", " ", title).strip()
 	matches = re_brackets.findall(title)
 	if len(matches) > 0:
 		for m in matches:
 			title = title.replace(m, " ")
-	title = re.sub("\s+", " ", title).strip()
+	title = re.sub(r"\s+", " ", title).strip()
 	for removal in title_remove_suffixes:
 		pos = title.lower().find(removal)
 		if pos > 0:
@@ -62,7 +62,7 @@ def clean_location(location, default_location=None):
 		return default_location
 	location = ftfy.fix_text(location)
 	location = location.replace("-"," ").replace("?"," ")
-	location = re.sub("\s+", " ", location).strip()
+	location = re.sub(r"\s+", " ", location).strip()
 	if len(location) < 2:
 		return default_location
 	# NB: convert to title case
@@ -86,7 +86,7 @@ def clean_shelfmarks(shelfmarks):
 	cleaned = []
 	for shelfmark in shelfmarks:
 		shelfmark = shelfmark.replace("British Library", "").replace(";",":")
-		shelfmark = re.sub("\s+", " ", shelfmark).strip()
+		shelfmark = re.sub(r"\s+", " ", shelfmark).strip()
 		cleaned.append(shelfmark)
 	return cleaned
 
@@ -272,17 +272,14 @@ def format_author_sortname(author):
 	title words removed """
 	if author is None or type(author) is float or author.lower() == "unknown":
 		return "Unknown"
-	s = re.sub("\[.*\]", "", author).strip()
+	s = re.sub(r"\[.*\]", "", author).strip()
 	# handle case
-	parts = re.split("[ ,\.'']", s)
+	parts = re.split(r"[ ,\.'']", s)
 	parts = sorted(parts, key=lambda x: len(x))[::-1]
 	for word in parts:
 		if len(word) > 2 and word.isupper():
 			s = s.replace(word, word.capitalize())
 	# manual replacements
-	s = re.sub("\(Margaret\)", "Margaret", s)
-	s = s.replace(", the Historian","")
-	s = re.sub("\s+", " ", s)
 	if len(s) > 10 and s[-1] in "., -_?":
 		s = s[0:len(s)-1]
 	return s.strip()
@@ -294,7 +291,7 @@ def tidy_title( title ):
 	if title is None:
 		return "Untitled"
 	title = title.replace("[", " ").replace("]", " ").replace(" ?", " ").replace("? ", " ")
-	title = re.sub( "\s+", " ", title ).strip()
+	title = re.sub( r"\s+", " ", title ).strip()
 	if len(title) < 2:
 		return "Untitled"
 	return title	
@@ -376,7 +373,7 @@ def tidy_edition(edition):
 		return "Unknown"
 	edition = ftfy.fix_text(edition)
 	edition = edition.replace("-"," ").replace("?"," ")
-	return re.sub("\s+", " ", edition).strip()
+	return re.sub(r"\s+", " ", edition).strip()
 
 def tidy_description(descr):
 	""" Tidy book physical description string """
@@ -384,7 +381,7 @@ def tidy_description(descr):
 		return "Unknown"
 	descr = ftfy.fix_text(descr)
 	descr = descr.replace("-"," ").replace("?"," ")
-	return re.sub("\s+", " ", descr).strip()
+	return re.sub(r"\s+", " ", descr).strip()
 	
 def tidy_publisher(publisher):
 	""" Tidy a string containing publisher information """
@@ -392,9 +389,8 @@ def tidy_publisher(publisher):
 		return "Unknown"
 	publisher = ftfy.fix_text(publisher)
 	publisher = publisher.replace("-"," ").replace("?"," ")
-	publisher = re.sub("\s+", " ", publisher).strip()
+	publisher = re.sub(r"\s+", " ", publisher).strip()
 	# remove trailing full-stop
 	if publisher.endswith("."):
 		publisher = publisher[0:len(publisher)-1]
 	return publisher
-
