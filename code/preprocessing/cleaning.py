@@ -87,7 +87,10 @@ def clean_shelfmarks(shelfmarks):
 	for shelfmark in shelfmarks:
 		shelfmark = shelfmark.replace("British Library", "").replace(";",":")
 		shelfmark = re.sub(r"\s+", " ", shelfmark).strip()
-		cleaned.append(shelfmark)
+		if len(shelfmark) > 0:
+			cleaned.append(shelfmark)
+	if len(cleaned) == 0:
+		return None
 	return cleaned
 
 def _clean_name_token(part):
@@ -254,14 +257,14 @@ def extract_publication_location(place_str, country_str):
 	countries_na = country_str.lower() == "nan"
 	out_places, out_countries = None, None
 	if not places_na:
-		out_places = [clean_location(x) for x in place_str.strip().split(";")]
-		if None in out_places:
-			out_places.remove(None)
+		out_places = [x for x in (clean_location(p) for p in place_str.strip().split(";")) if x is not None]
+		if len(out_places) == 0:
+			out_places = None
 	if not countries_na:
-		out_countries = [clean_location(x)for x in country_str.strip().split(";")]
-		if None in out_countries:
-			out_countries.remove(None)
-	elif not places_na and len(out_places) == 1:
+		out_countries = [x for x in (clean_location(c) for c in country_str.strip().split(";")) if x is not None]
+		if len(out_countries) == 0:
+			out_countries = None
+	elif not places_na and out_places is not None and len(out_places) == 1:
 		if out_places[0] in place_map:
 			out_countries = [place_map[out_places[0]]]
 	# missing country?
