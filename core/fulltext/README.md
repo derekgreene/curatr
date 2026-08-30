@@ -22,7 +22,5 @@ cp -R fiction/. core/fulltext/
 cp -R nonfiction/. core/fulltext/
 ```
 
-(`cp -R <dir>/. <dest>/` copies the *contents* of `<dir>` into `<dest>`, merging into any four-digit subdirectories that already exist there rather than nesting a copy inside them; if `rsync` is available, `rsync -a fiction/ core/fulltext/` works as a drop-in replacement for each `cp` line above.)
-
 This leaves `core/fulltext/` with a single flat set of four-digit subdirectories, ready for indexing by Solr.
 
