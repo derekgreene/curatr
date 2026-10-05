@@ -10,8 +10,8 @@ There is one plain-text `.txt` file per volume, UTF-8 encoded. The files are gro
 
 The BL19 full texts are available as two zip archives, split by primary classification:
 
-- Fiction: https://curatr.ucd.ie/files/bl19-fiction-fulltexts.zip (2.5 GB)
-- Non-fiction: https://curatr.ucd.ie/files/bl19-nonfiction-fulltexts.zip (6.3 GB)
+- Fiction: https://curatr.ucd.ie/data/bl19-fiction-fulltexts.zip (2.5 GB)
+- Non-fiction: https://curatr.ucd.ie/data/bl19-nonfiction-fulltexts.zip (6.3 GB)
 
 Each archive expands to a top-level `fiction/` or `nonfiction/` folder containing the same four-digit subdirectory structure described above, but restricted to that classification's volumes. Since the four-digit subdirectories group volumes by the first four digits of their book ID regardless of classification, the two archives contain different files within subdirectories of the same name (e.g. both include a `0000/` folder, each with a distinct set of volumes) rather than overlapping or conflicting. To populate this directory, unzip both archives and merge their contents in the Curatr `core/fulltext/` directory:
 
