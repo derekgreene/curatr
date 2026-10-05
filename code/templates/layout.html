@@ -105,7 +105,7 @@
             {% if not current_user.guest %}
               <li class="nav-item"><a class="nav-link" id="nav-link-concordance" href="{{ url_for('handle_concordance') }}">Concordance</a></li>
               <li class="nav-item"><a class="nav-link" id="nav-link-lexicon" href="{{ url_for('handle_lexicon') }}">Lexicons</a></li>
-              <li class="nav-item"><a class="nav-link" id="nav-link-corpora" href="{{ url_for('handle_corpora') }}">Corpora</a></li>
+              <li class="nav-item"><a class="nav-link" id="nav-link-corpora" href="{{ url_for('handle_corpora') }}">Export</a></li>
             {% endif %}
           {% endif %}
           <li class="nav-item"><a class="nav-link" id="nav-link-about" href="{{ url_for('handle_about') }}">About</a></li>
