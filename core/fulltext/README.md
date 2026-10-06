@@ -2,6 +2,8 @@
 
 Curatr makes the English-language subset of the [British Library Nineteenth Century Digitised Books Collection](https://bl.iro.bl.uk/entities/digitalcollection/d648767f-612a-4c6b-84fe-8ec49edf1e1a), referred to here as BL19, searchable and analysable. The full set of BL19 plain-text files should be placed in this directory for indexing by Solr.
 
+The collection was released by the British Library under the [Creative Commons Public Domain Mark 1.0](https://creativecommons.org/publicdomain/mark/1.0/).
+
 ## Structure
 
 There is one plain-text `.txt` file per volume, UTF-8 encoded. The files are grouped into four-digit subdirectories (e.g. `0000`–`0139`) to keep directory sizes manageable. The subdirectory names correspond to the first four digits of the British Library collection unique book identifiers. Filenames follow the pattern `<id>_<part>_text.txt`, e.g. `0000/000000037_01_text.txt`, where `<id>` is the full book identifier and `<part>` is a two-digit part number distinguishing multiple volumes of the same work.
