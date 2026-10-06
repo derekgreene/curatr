@@ -1,6 +1,6 @@
 # BL19 Full-Text Data
 
-Curatr makes the English-language subset of the [British Library Nineteenth Century Digitised Books Collection](https://doi.org/10.21250/db14), referred to here as BL19, searchable and analysable. The full set of BL19 plain-text files should be placed in this directory for indexing by Solr.
+Curatr makes the English-language subset of the [British Library Nineteenth Century Digitised Books Collection](https://bl.iro.bl.uk/entities/digitalcollection/d648767f-612a-4c6b-84fe-8ec49edf1e1a), referred to here as BL19, searchable and analysable. The full set of BL19 plain-text files should be placed in this directory for indexing by Solr.
 
 ## Structure
 
