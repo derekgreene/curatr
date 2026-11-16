@@ -14,12 +14,14 @@
 	height: 550px;
 	margin: 0;
 	margin-bottom: 10px;
-	border: 1px solid #ccc;
+	border: 1px solid #e0d8cf;
+	border-radius: 8px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 	padding-top: 5px;
 	padding-left: 9.5px;
 	padding-right: 9.5px;
 	padding-bottom: 11px;
-	background-color: #ECF0F1;
+	background-color: #ffffff;
 }
 </style>
 {% endblock %}
@@ -85,7 +87,10 @@ $(document).ready(function()
 	Highcharts.theme = {
 	    colors: ["#f1c40f", "#2ecc71", "#9b59b6", "#e74c3c", "#34495e", "#3498db", "#1abc9c", "#f39c12", "#d35400"],
 	    chart: {
-			backgroundColor: "#ECF0F1"
+			backgroundColor: "#ffffff"
+	    },
+	    credits: {
+	        enabled: false
 	    },
 	    title: {
 	        style: {
@@ -135,7 +140,8 @@ $(document).ready(function()
 	                text: '{{ yaxis }}',
 	                style:
 	                {
-	                    fontSize: '17px'
+	                    fontSize: '17px',
+	                    color: 'black'
 	                }
 	            },
 	            allowDecimals: {{ allowdecimals }},
@@ -143,7 +149,8 @@ $(document).ready(function()
 	            {
 	                style:
 	                {
-	                    fontSize: '14px'
+	                    fontSize: '14px',
+	                    color: 'black'
 	                }
 	            }
 	        },
@@ -154,15 +161,21 @@ $(document).ready(function()
 	                text: 'Year',
 	                style:
 	                {
-	                    fontSize: '17px'
+	                    fontSize: '17px',
+	                    color: 'black'
 	                }
 	            },
 	            allowDecimals: false,
+	            lineColor: 'black',
+	            lineWidth: 1,
+	            tickColor: 'black',
+	            tickWidth: 1,
 	            labels:
 	            {
 	                style:
 	                {
-	                    fontSize: '14px'
+	                    fontSize: '14px',
+	                    color: 'black'
 	                }
 	            }
 	        },

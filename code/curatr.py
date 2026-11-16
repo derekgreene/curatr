@@ -189,6 +189,22 @@ def handle_about():
 	context["year_max"] = app.core.cache["year_max"]
 	return render_template("about.html", **context)
 
+@app.route("/dataset")
+def handle_dataset():
+	"""
+	Render the Curatr datasets page.
+
+	Returns:
+		Rendered HTML template for the datasets page.
+	"""
+	context = app.get_context(request)
+	# add key statistics
+	context["num_books"] =  "{:,}".format(app.core.cache["book_count"])
+	context["num_volumes"] =  "{:,}".format(app.core.cache["volume_count"])
+	context["year_min"] = app.core.cache["year_min"]
+	context["year_max"] = app.core.cache["year_max"]
+	return render_template("dataset.html", **context)
+
 # --------------------------------------------------------------
 # Endpoints: Search
 # --------------------------------------------------------------
